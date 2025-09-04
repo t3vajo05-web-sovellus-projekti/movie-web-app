@@ -418,73 +418,55 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 -- Data for Name: group_invites; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.group_invites (id, groupid, user_id, created) FROM stdin;
-\.
 
 
 --
 -- Data for Name: group_members; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.group_members (id, user_id, memberof, joined) FROM stdin;
-\.
 
 
 --
 -- Data for Name: group_movies; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.group_movies (id, group_id, movietheater_id, movie_id, auditorium_id, show_start_time, runtime) FROM stdin;
-\.
 
 
 --
 -- Data for Name: groups; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.groups (id, name, created, owner, description) FROM stdin;
-\.
 
 
 --
 -- Data for Name: user_favorites; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.user_favorites (id, user_id, movie_id) FROM stdin;
-\.
 
 
 --
 -- Data for Name: user_ratings; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.user_ratings (id, user_id, movie_id, rating) FROM stdin;
-\.
 
 
 --
 -- Data for Name: user_reviews; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.user_reviews (id, user_id, movie_id, review_text, created) FROM stdin;
-\.
 
 
 --
 -- Data for Name: user_watchlist; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.user_watchlist (id, user_id, movie_id, status) FROM stdin;
-\.
 
 
 --
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.users (id, user_uuid, username, email, hashed_password, created) FROM stdin;
-1	c81a239c-1fc9-4c86-9860-6281164a754e	testuser	testuser@example.com	testpasswordhash	2025-09-04 16:49:58.673996
-\.
+INSERT INTO public.users VALUES (1, 'c81a239c-1fc9-4c86-9860-6281164a754e', 'testuser', 'testuser@example.com', 'testpasswordhash', '2025-09-04 16:49:58.673996');
 
 
 --
@@ -740,6 +722,132 @@ ALTER TABLE ONLY public.user_reviews
 
 ALTER TABLE ONLY public.user_watchlist
     ADD CONSTRAINT user_watchlist_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: TABLE group_invites; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.group_invites TO dbuser;
+
+
+--
+-- Name: SEQUENCE group_invites_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON SEQUENCE public.group_invites_id_seq TO dbuser;
+
+
+--
+-- Name: TABLE group_members; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.group_members TO dbuser;
+
+
+--
+-- Name: SEQUENCE group_members_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON SEQUENCE public.group_members_id_seq TO dbuser;
+
+
+--
+-- Name: TABLE group_movies; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.group_movies TO dbuser;
+
+
+--
+-- Name: SEQUENCE group_movies_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON SEQUENCE public.group_movies_id_seq TO dbuser;
+
+
+--
+-- Name: TABLE groups; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.groups TO dbuser;
+
+
+--
+-- Name: SEQUENCE groups_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON SEQUENCE public.groups_id_seq TO dbuser;
+
+
+--
+-- Name: TABLE user_favorites; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.user_favorites TO dbuser;
+
+
+--
+-- Name: SEQUENCE user_favorites_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON SEQUENCE public.user_favorites_id_seq TO dbuser;
+
+
+--
+-- Name: TABLE user_ratings; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.user_ratings TO dbuser;
+
+
+--
+-- Name: SEQUENCE user_ratings_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON SEQUENCE public.user_ratings_id_seq TO dbuser;
+
+
+--
+-- Name: TABLE user_reviews; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.user_reviews TO dbuser;
+
+
+--
+-- Name: SEQUENCE user_reviews_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON SEQUENCE public.user_reviews_id_seq TO dbuser;
+
+
+--
+-- Name: TABLE user_watchlist; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.user_watchlist TO dbuser;
+
+
+--
+-- Name: SEQUENCE user_watchlist_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON SEQUENCE public.user_watchlist_id_seq TO dbuser;
+
+
+--
+-- Name: TABLE users; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.users TO dbuser;
+
+
+--
+-- Name: SEQUENCE users_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON SEQUENCE public.users_id_seq TO dbuser;
 
 
 --
