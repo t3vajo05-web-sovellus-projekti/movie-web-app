@@ -27,5 +27,22 @@ const auth = (req, res, next) =>
         next()
     })
 }
+/*
+Example route showing how to use `req.user` after JWT authentication:
+
+- `auth` middleware verifies the token and attaches the decoded payload to `req.user`.
+- Inside the route, you can access `req.user` to get the user's info (id, username, email, etc.).
+- This pattern ensures the server knows which user is making the request without trusting the client.
+- DO NOT bypass the `auth` middleware in other routes if you need authenticated access.
+- Any sensitive user-specific operation should always check `req.user`.
+
+Example:
+
+app.get('/profile', auth, (req, res) =>
+{
+    res.json({ message: `Hello ${req.user.username}`, id: req.user.id })
+})
+    
+--chatgpt 2025*/
 
 export { auth }
