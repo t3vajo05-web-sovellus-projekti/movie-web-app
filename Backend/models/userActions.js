@@ -27,4 +27,14 @@ const getUserByUsername = async (username) =>
     return result.rows[0] || null
 }
 
-export { getAllUsers, addUser, getUserByEmail, getUserByUsername }
+const actionSignInByEmail = (email) =>
+{
+    return pool.query('SELECT * FROM users WHERE email = $1', [email])
+}
+
+const actionSignInByUsername = (username) =>
+{
+    return pool.query('SELECT * FROM users WHERE username = $1', [email])
+}
+
+export { getAllUsers, addUser, getUserByEmail, getUserByUsername, actionSignInByEmail, actionSignInByUsername }

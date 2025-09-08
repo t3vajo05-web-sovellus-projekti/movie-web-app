@@ -1,5 +1,5 @@
 import { hash, compare } from 'bcrypt'
-import { getAllUsers, addUser, getUserByEmail, getUserByUsername } from "../models/userActions.js";
+import { getAllUsers, addUser, getUserByEmail, getUserByUsername, actionSignInByEmail, actionSignInByUsername } from "../models/userActions.js";
 import { ApiError } from "../helper/apiError.js";
 import pkg from 'jsonwebtoken'
 
@@ -68,4 +68,76 @@ const signUp = async (req, res, next) =>
     
 }
 
-export { returnAllUsers, signUp }
+const signIn = async (req, res, next) =>
+{
+    try
+    {
+        const { user } = req.body
+
+        console.log(user)
+
+        if(!user || !user.identifier || !user.password) // Use identifier and password fields in body to log in
+        {
+            return next(new ApiError('Email or username and password are required', 400))
+        }
+
+        console.log('User is logging in')
+
+        // Checks if identified is email or not
+        let result
+
+        const emailRegex = /^.+@.+\..+$/
+
+        if(emailRegex.test(user.identifier))
+        {
+            // Tries to log in using email
+            result = await actionSignInByEmail(user.identifier)
+        }
+        else
+        {
+            // Tries to log in using username
+            result = await actionSignInByUsername(user.identifier)
+        }
+
+        if(result.rows.length === 0)
+        {
+            console.log('User not found')
+            return next(new ApiError('User not found', 404))
+        }
+
+        const dbUser = result.rows[0] // Data from user table
+        console.log('dbUser:', dbUser)
+
+        const isMatch = await compare(user.password, dbUser.hashed_password)
+
+        if(!isMatch)
+        {
+            console.log('Invalid password')
+            return next(new ApiError('Invalid password', 401))
+        }
+
+        // User infos for the token
+        const payload = 
+        {
+            id: dbUser.id,
+            uuid: dbUser.user_uuid,
+            email: dbUser.email,
+            username: dbUser.username
+        }
+
+
+        const token = sign(payload, process.env.JWT_SECRET_KEY) // Signs the token with all the user info from db
+
+        console.log(`User logged in: ${dbUser.username}`)
+        return res.status(200).json({
+            token
+        })
+    }
+    catch(err)
+    {
+        console.error('SignIn error:', err)
+        return res.status(500).json({ error: err.message })
+    }
+}
+
+export { returnAllUsers, signUp, signIn }
