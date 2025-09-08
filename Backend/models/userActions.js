@@ -34,7 +34,7 @@ const actionSignInByEmail = (email) =>
 
 const actionSignInByUsername = (username) =>
 {
-    return pool.query('SELECT * FROM users WHERE username = $1', [email])
+    return pool.query('SELECT * FROM users WHERE username = $1', [username])
 }
 
 export { getAllUsers, addUser, getUserByEmail, getUserByUsername, actionSignInByEmail, actionSignInByUsername }
