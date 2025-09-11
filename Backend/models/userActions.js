@@ -37,4 +37,17 @@ const actionSignInByUsername = (username) =>
     return pool.query('SELECT * FROM users WHERE username = $1', [username])
 }
 
-export { getAllUsers, addUser, getUserByEmail, getUserByUsername, actionSignInByEmail, actionSignInByUsername }
+const actionDeleteUserById = async (id) => {
+    const result = await pool.query('DELETE FROM users WHERE id = $1 RETURNING *', [id])
+    return result.rows[0] || null
+}
+
+export { 
+    getAllUsers, 
+    addUser, 
+    getUserByEmail, 
+    getUserByUsername, 
+    actionSignInByEmail, 
+    actionSignInByUsername, 
+    actionDeleteUserById 
+}
