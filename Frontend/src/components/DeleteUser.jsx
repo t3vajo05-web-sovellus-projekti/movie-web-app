@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { deleteUser } from "../services/userService";
+//import { deleteUser } from "../services/userService";
+import { useUser } from "../context/useUser";
 
 export default function DeleteUser({ token, setToken }) {
+    const { deleteUserAccount } = useUser()
     const [confirming, setConfirming] = useState(false)
     const [password, setPassword] = useState('')
 
@@ -11,9 +13,10 @@ export default function DeleteUser({ token, setToken }) {
 
     const handleDelete = async () => {
         try {
-            const res = await deleteUser(token, password)
+            const res = await deleteUserAccount(password)
             alert(res.data.message)
-            setToken(null)
+            //setPassword('')
+            //setConfirming(false)
         } catch(err) {
             alert(err.response?.data?.error || 'Delete failed')
         }
@@ -21,9 +24,8 @@ export default function DeleteUser({ token, setToken }) {
 
     return (
         <div>
-            <h2>Delete My Account</h2>
             {!confirming ? (
-                <button onClick={handleFirstClick} disabled ={!token}>Delete Account</button>
+                <button onClick={handleFirstClick}>Delete Account</button>
             ) : (
                 <div>
                     <input 
