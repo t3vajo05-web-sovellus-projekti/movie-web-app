@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import { pool } from './helper/db.js'
 import userRouter from './routers/userRouter.js'
+import groupRouter from './routers/groupRouter.js'
 
 const port = 3001
 const app = express()
@@ -15,6 +16,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/users',userRouter)
+app.use('/groups', groupRouter)
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`)
