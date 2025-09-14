@@ -9,49 +9,13 @@ import TheatreBrowser from '../components/BrowseEvents.jsx'
 import { useUser } from '../context/useUser.js'
 
 function App() {
-  /*
-  const [token, setToken] = useState(localStorage.getItem('token') || null)
+
   const [view, setView] = useState('signup')
 
-  const saveToken = (newToken) => {
-    if(newToken) {
-      localStorage.setItem('token', newToken)
-    } else {
-      localStorage.removeItem('token')
-    }
-    setToken(newToken)
-  }
-
-  const logout = () => {
-    saveToken(null)
-  }
-  */
 
   const { user, logout } = useUser()
 
   return (
-    /*
-    <div>
-      {!token ? (
-        <>
-          <div>
-            <button onClick={() => setView('signin')}>Sign in</button>
-            <button onClick={() => setView('signup')}>Sign up</button>
-          </div>
-          {view === 'signin' && <SignIn setToken={saveToken} />}
-          {view === 'signup' && <SignUp />}
-        </>
-      ) : (
-        <>
-          <DeleteUser token={token} setToken={saveToken} />
-          <button onClick={logout}>Logout</button>
-          <button onClick={() => setView('finnkino')}>Browse Shows</button>
-          {view === 'finnkino' && <TheatreBrowser />}
-        </>
-        
-      )}
-    </div>
-    */
 
     <div>
       {user && user.token ? (
@@ -59,6 +23,8 @@ function App() {
           <h2>Welcome, {user.username}!</h2>
           <DeleteUser />
           <button onClick={logout}>Logout</button>
+          <button onClick={() => setView('finnkino')}>Browse Shows</button>
+          {view === 'finnkino' && <TheatreBrowser />}
         </>
       ) : (
         <h2>Please sign in</h2>

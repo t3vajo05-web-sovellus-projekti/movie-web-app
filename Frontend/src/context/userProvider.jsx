@@ -10,7 +10,6 @@ export default function UserProvider({children}) {
         const headers = {headers: {'Content-Type': 'application/json'}}
         const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/signup`, 
             { user: {username: userData.username, email: userData.email, password: userData.password} }, headers)
-        //setUser({username: '', email: '', password: ''})
         return response
     }
     const signIn = async(userData) => {

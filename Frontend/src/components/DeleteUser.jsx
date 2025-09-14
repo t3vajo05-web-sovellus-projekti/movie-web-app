@@ -1,5 +1,4 @@
 import { useState } from "react";
-//import { deleteUser } from "../services/userService";
 import { useUser } from "../context/useUser";
 
 export default function DeleteUser({ token, setToken }) {
@@ -15,8 +14,6 @@ export default function DeleteUser({ token, setToken }) {
         try {
             const res = await deleteUserAccount(password)
             alert(res.data.message)
-            //setPassword('')
-            //setConfirming(false)
         } catch(err) {
             alert(err.response?.data?.error || 'Delete failed')
         }

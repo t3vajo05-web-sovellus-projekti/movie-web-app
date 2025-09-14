@@ -1,21 +1,3 @@
-/*
-import SignIn from "../components/SignIn"
-import SignUp from "../components/SignUp"
-
-export const AuthenticationMode = Object.freeze({
-    SignIn: 'Login',
-    SignUp: 'SignUp'
-})
-
-export default function Authentication({ authenticationMode }) {
-    return (
-        <div>
-            {authenticationMode === AuthenticationMode.SignIn ? <SignIn /> : <SignUp />}
-        </div>
-    )
-}
-*/
-
 import { useState } from "react"
 import { useUser } from "../context/useUser"
 import { useNavigate, Link } from "react-router-dom"
@@ -53,14 +35,6 @@ export default function Authentication({ authenticationMode }) {
         } catch(err) {
             setMessage(err.response?.data?.error || "Authentication failed")
         }
-        /*
-        const signFunction = authenticationMode === AuthenticationMode.SignUp ? signUp : signIn
-
-        signFunction(form).then(() => {
-            navigate(authenticationMode === AuthenticationMode.SignUp ? "/signin" : "/")
-        })
-        .catch((err) => setMessage(err.response?.data?.error || "Authentication failed"))
-        */
     }
 
     return (
