@@ -5,6 +5,7 @@ import '../App.css'
 import SignUp from '../components/SignUp.jsx'
 import SignIn from '../components/SignIn.jsx'
 import DeleteUser from '../components/DeleteUser.jsx'
+import TheatreBrowser from '../components/BrowseEvents.jsx'
 import { useUser } from '../context/useUser.js'
 
 function App() {
@@ -44,7 +45,10 @@ function App() {
         <>
           <DeleteUser token={token} setToken={saveToken} />
           <button onClick={logout}>Logout</button>
+          <button onClick={() => setView('finnkino')}>Browse Shows</button>
+          {view === 'finnkino' && <TheatreBrowser />}
         </>
+        
       )}
     </div>
     */

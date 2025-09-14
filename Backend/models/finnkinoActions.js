@@ -89,7 +89,8 @@ const fetchScheduleByTheatreIdFromAPI = async (theatreId) =>
     const parser = new XMLParser();
     const xmlObj = parser.parse(text);
 
-    let showsArray = xmlObj.Schedule.Shows.Show;
+    // handle empty schedules
+    let showsArray = xmlObj.Schedule?.Shows?.Show || [];
 
     if (!Array.isArray(showsArray))
     {
@@ -135,7 +136,7 @@ const fetchEventByIdFromAPI = async (eventId) =>
     //   synopsis: "Action-packed comedy with thrilling moments...",
     //   url: "http://www.finnkino.fi/event/2268662/"
     // }
-    
+
     const res = await fetch(finnkino_base_url + "/Events");
     const text = await res.text();
 
