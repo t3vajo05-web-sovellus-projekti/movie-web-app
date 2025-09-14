@@ -1,5 +1,5 @@
 import { hash, compare } from 'bcrypt'
-import { getAllUsers, addUser, getUserByEmail, getUserByUsername, actionSignInByEmail, actionSignInByUsername } from "../models/userActions.js";
+import { getAllUsers, addUser, getUserByEmail, getUserByUsername, getUserById, actionSignInByEmail, actionSignInByUsername, actionDeleteUserById } from "../models/userActions.js";
 import { ApiError } from "../helper/apiError.js";
 import pkg from 'jsonwebtoken'
 
@@ -140,4 +140,44 @@ const signIn = async (req, res, next) =>
     }
 }
 
-export { returnAllUsers, signUp, signIn }
+const deleteUser = async (req, res, next) => {
+    // deletes user from users table, using id in generated token
+    try {
+        const userId = req.user.id
+        const { password } = req.body
+
+        if(!userId) {
+            return next(new ApiError('User ID is missing from token', 400))
+        }
+        if(!password) {
+            return next(new ApiError('Password is required', 400))
+        }
+
+        const dbUser = await getUserById(userId)
+
+        if(!dbUser) {
+            return next(new ApiError('User not found', 404))
+        }
+
+        const isMatch = await compare(password, dbUser.hashed_password)
+        
+        if(!isMatch) {
+            return next(new ApiError('Invalid password'), 401)
+        }
+
+        const deletedUser = await actionDeleteUserById(userId)
+
+        if(!deletedUser) {
+            return next(new ApiError('User not found', 404))
+        }
+
+        return res.status(200).json({
+            message: `User ${deletedUser.username} deleted successfully`, deletedUser
+        })
+    } catch (err) {
+        console.error('deleteUser error:', err)
+        return res.status(500).json({ error: err.message })
+    }
+}
+
+export { returnAllUsers, signUp, signIn, deleteUser }
