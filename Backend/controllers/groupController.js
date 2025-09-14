@@ -2,17 +2,6 @@ import { getAllGroups, modelCreateGroup, addOwnerAsMember, getGroupById, getGrou
 import { ApiError } from "../helper/apiError.js"
 
 
-/****************************************************************
- * DELETE THIS LATER!
-TABLE: groups
-Columns:
-- id            [PK] integer
-- name          character varying 255
-- created       timestamp without time zone
-- owner         integer --> linked to TABLE users with column: id
-- description   text
- ****************************************************************/
-
 
 // Return all groups from groups table / return all rows from groups table
 const returnAllGroups = async (req, res, next) =>
@@ -78,9 +67,90 @@ const createGroup = async (req, res, next) =>
     }
 }
 
+// Return group by ID
+const returnGroupById = async (req, res, next) =>
+{
+    try
+    {
+        const group = await getGroupById(req.params.id) // required parameters come from the URL --> /groups/1 --> in which case the required parameter id is "1"
+        
+        if (!group)
+        {
+            return res.status(404).json({message: 'Group not found'}) // if no group is found with that id, send 404 (not found)
+        }
+
+        return res.status(200).json(group) // return group if it is found
+    }
+    catch (err)
+    {
+        console.error('returnGroupById error', err)
+        return res.status(500).json({error:err.message}) // 500 server error
+    }
+}
+/* some issues with this code and approach, will figure it out later
+// Return group by name
+const returnGroupByName = async (req,res,next) =>
+{
+    try 
+    {
+        const group = await getGroupByName(req.params.name)
+
+        if (!group)
+        {
+            return res.status(404).json({message: 'Group not found'})
+        }
+        return res.status(200).json(group) // return group if it is found
+    }
+    catch (err)
+    {
+        console.error('returnGroupByName error', err)
+        return res.status(500).json({error:err.message}) // 500 server error
+    }
+}*/
+
+
+// Delete group by ID
+const removeGroupById = async (req, res, next) =>
+{
+    try{
+        const groupId = req.params.id
+        const userId = req.user.id
+
+        const group = await getGroupById(groupId)
+
+        if (!group) // if no group found with this id, return 404
+        {
+            return res.status(404).json({message: 'Group not found'})
+        }
+        // Check to see if the logged-in user is the group owner
+        if (group.owner !== userId)
+        {
+            return res.status(403).json({message: 'Only group owner can delete this group'})
+        }
+        // if the logged-in user is the owner, continue with the deletion:
+        const deletedGroup = await deleteGroupById(groupId) // call model to delete the group
+
+        return res.status(200).json({message: 'Group deleted succesfully', deleted: deletedGroup})
+    }
+    catch (err)
+    {
+        console.error('removeGroupById error:', err)
+        return res.status(500).json({error: err.message})
+    }
+}
+
+
+
+
+
+
+
 
 
 export {
     returnAllGroups,
-    createGroup
+    createGroup,
+    returnGroupById,
+    //returnGroupByName,
+    removeGroupById
 }
