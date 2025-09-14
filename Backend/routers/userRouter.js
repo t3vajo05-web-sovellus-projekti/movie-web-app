@@ -7,6 +7,6 @@ const router = Router()
 router.get('/', returnAllUsers)
 router.post('/signup', signUp)
 router.post('/signin', signIn)
-router.delete('/delete', auth, deleteUser)
+router.post('/delete', auth, deleteUser)
 
 export default router
