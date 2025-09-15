@@ -32,7 +32,11 @@ const tmdbGet = async (path, params) => {
 };
 
 const searchMoviesByName = async (query, page = 1, opts = {}) => {
-  return tmdbGet('/search/movie', { query, page, ...opts });
+  return tmdbGet(`/search/movie`, { query, page, ...opts });
 };
 
-export { tmdbGet, searchMoviesByName };
+const searchMoviesById = async (id, opts = {}) => {
+  return tmdbGet(`/movie/${id}`, { ...opts });
+};
+
+export { tmdbGet, searchMoviesByName, searchMoviesById };
