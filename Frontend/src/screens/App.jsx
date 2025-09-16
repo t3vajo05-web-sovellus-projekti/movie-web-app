@@ -16,6 +16,9 @@ import BrowseShows from '../pages/BrowseShows.jsx'
 import NotFound from '../pages/NotFound.jsx'
 import Explore from '../pages/Explore.jsx'
 import Groups from '../pages/Groups.jsx'
+import Login from '../pages/Login.jsx'
+import Signup from '../pages/Signup.jsx'
+import UserProvider from '../context/userProvider.jsx'
 
 /*
 function App() {
@@ -50,6 +53,7 @@ function App() {
 
   return (
     <>
+    <UserProvider>
       <Navbar />
       <Header />
       <div id="container">
@@ -58,10 +62,13 @@ function App() {
           <Route path="/browseshows" exact element={<BrowseShows />} />
           <Route path="/explore" exact element={<Explore />} />
           <Route path="/groups" exact element={<Groups />} />
+          <Route path="/signup" exact element={<Signup />} />
+          <Route path="/login" exact element={<Login />} />
           <Route path="/*" exact element={<NotFound />} />
         </Routes>
       </div>
       <Footer />
+      </UserProvider>
     </>
   )
 }

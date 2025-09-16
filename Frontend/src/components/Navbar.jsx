@@ -1,12 +1,16 @@
 import './Navbar.css'
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { useUser } from '../context/useUser.js'
 
 export default function Navbar() {
+
+    const { user, logout } = useUser()
+
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
         <div className="container-fluid">
-            <a className="navbar-brand" href="#">Movie app</a>
+            <Link className="navbar-brand" to="/">Movie app</Link>
             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span className="navbar-toggler-icon"></span>
             </button>
@@ -31,6 +35,7 @@ export default function Navbar() {
                     <button className="btn btn-outline-success" type="submit">Search</button>
                 </form>
 
+                {user && user.token ? (
                 <ul className="navbar-nav mb-2 mb-lg-0 ms-auto">
                     <li className="nav-item dropdown">
                         <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -42,10 +47,23 @@ export default function Navbar() {
                             <div className="dropdown-divider"></div>
                             <li><a className="dropdown-item" href="#">Watchlist</a></li>
                             <div className="dropdown-divider"></div>
-                            <li><a className="dropdown-item" href="#">Log Out</a></li>
+                            <li><button className="dropdown-item" type="button" onClick={logout}>Log Out</button></li>
                         </ul>
                     </li>
                 </ul>
+                ) : (
+                    <div className="d-flex ms-auto">
+                        <Link to="/signup" className="btn btn-primary me-2">
+                            Sign Up
+                        </Link>
+                        <Link to="/login" className="btn btn-outline-primary">
+                            Sign In
+                        </Link>
+                    </div>
+
+                )}
+
+
             </div>
         </div>
     </nav>
