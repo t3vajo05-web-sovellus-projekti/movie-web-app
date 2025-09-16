@@ -130,7 +130,9 @@ const signIn = async (req, res, next) =>
 
         console.log(`User logged in: ${dbUser.username}`)
         return res.status(200).json({
-            token
+            token,
+            username: dbUser.username,
+            email: dbUser.email
         })
     }
     catch(err)
@@ -162,7 +164,7 @@ const deleteUser = async (req, res, next) => {
         const isMatch = await compare(password, dbUser.hashed_password)
         
         if(!isMatch) {
-            return next(new ApiError('Invalid password'), 401)
+            return next(new ApiError('Invalid password', 401))
         }
 
         const deletedUser = await actionDeleteUserById(userId)

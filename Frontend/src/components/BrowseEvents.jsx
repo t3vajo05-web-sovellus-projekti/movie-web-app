@@ -10,7 +10,7 @@ export default function TheatreBrowser()
     {
         const fetchTheatres = async () =>
         {
-            const res = await fetch("http://localhost:3001/finnkinoapi/theatres");
+            const res = await fetch("https://www.finnkino.fi/xml/TheatreAreas/");
             const data = await res.json();
             setTheatres(data);
         };
@@ -23,7 +23,7 @@ export default function TheatreBrowser()
 
         const fetchShows = async () =>
         {
-            const res = await fetch(`http://localhost:3001/finnkinoapi/showsByTheatre/${selectedTheatre}`);
+            const res = await fetch(`https://www.finnkino.fi/xml/Schedule/?area=${selectedTheatre}`);
             const data = await res.json();
             setShows(data);
         };
