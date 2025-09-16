@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { fetchTheatres, fetchShows, formatDateTime } from "../components/Finnkino_api.js";
 
-export default function TheatreBrowser()
+export default function BrowseShows()
 {
     const [theatres, setTheatres] = useState([]);
     const [selectedTheatre, setSelectedTheatre] = useState("");
@@ -8,52 +9,25 @@ export default function TheatreBrowser()
 
     useEffect(() =>
     {
-        const fetchTheatres = async () =>
-        {
-            const res = await fetch("https://www.finnkino.fi/xml/TheatreAreas/");
-            const data = await res.json();
-            setTheatres(data);
-        };
-        fetchTheatres();
+        fetchTheatres().then(setTheatres);
     }, []);
 
     useEffect(() =>
     {
         if (!selectedTheatre) return;
-
-        const fetchShows = async () =>
-        {
-            const res = await fetch(`https://www.finnkino.fi/xml/Schedule/?area=${selectedTheatre}`);
-            const data = await res.json();
-            setShows(data);
-        };
-        fetchShows();
+        fetchShows(selectedTheatre).then(setShows);
     }, [selectedTheatre]);
-
-    const formatDateTime = (isoString) =>
-    {
-        const date = new Date(isoString);
-        const dd = String(date.getDate()).padStart(2, "0");
-        const MM = String(date.getMonth() + 1).padStart(2, "0");
-        const yyyy = date.getFullYear();
-        const HH = String(date.getHours()).padStart(2, "0");
-        const mm = String(date.getMinutes()).padStart(2, "0");
-        const ss = String(date.getSeconds()).padStart(2, "0");
-        return `${dd}.${MM}.${yyyy} ${HH}:${mm}:${ss}`;
-    };
 
     return (
         <div>
             <h2>Browse Shows</h2>
             <select value={selectedTheatre} onChange={(e) => setSelectedTheatre(e.target.value)}>
                 <option value="">Select a theatre</option>
-                {theatres.map((t) => (
-                    <option key={t.id} value={t.id}>{t.name}</option>
-                ))}
+                {theatres.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
             </select>
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: "16px", marginTop: "20px" }}>
-                {shows.map((s) => (
+                {shows.map(s => (
                     <div key={s.id} style={{ border: "1px solid #ccc", borderRadius: "8px", padding: "12px" }}>
                         <img src={s.image} alt={s.title} style={{ width: "100%", borderRadius: "4px" }} />
                         <h3>{s.title}</h3>

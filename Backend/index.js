@@ -4,7 +4,6 @@ import { pool } from './helper/db.js'
 import userRouter from './routers/userRouter.js'
 import movieRouter from './routers/movieRouter.js'
 import groupRouter from './routers/groupRouter.js'
-import finnkinoRouter from './routers/finnkinoRouter.js'
 
 const port = 3001
 const app = express()
@@ -20,7 +19,6 @@ app.get('/', (req, res) => {
 app.use('/users',userRouter)
 app.use('/movies', movieRouter)
 app.use('/groups', groupRouter)
-app.use('/finnkinoapi',finnkinoRouter)
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`)
