@@ -1,9 +1,23 @@
 import { useState } from 'react'
 import '../App.css'
+import { Routes, Route } from 'react-router-dom'
 import DeleteUser from '../components/DeleteUser.jsx'
 import TheatreBrowser from '../components/BrowseEvents.jsx'
 import { useUser } from '../context/useUser.js'
 
+/* Components imports */
+import Navbar from '../components/Navbar.jsx'
+import Header from '../components/Header.jsx'
+import Footer from '../components/Footer.jsx'
+
+/* Pages imports */
+import Home from '../pages/Home.jsx'
+import BrowseShows from '../pages/BrowseShows.jsx'
+import NotFound from '../pages/NotFound.jsx'
+import Explore from '../pages/Explore.jsx'
+import Groups from '../pages/Groups.jsx'
+
+/*
 function App() {
 
   const [view, setView] = useState('signup')
@@ -26,6 +40,29 @@ function App() {
         <h2>Please sign in</h2>
       )}
     </div>
+  )
+}
+
+export default App
+*/
+
+function App() {
+
+  return (
+    <>
+      <Navbar />
+      <Header />
+      <div id="container">
+        <Routes>
+          <Route path="/" exact element={<Home />} />
+          <Route path="/browseshows" exact element={<BrowseShows />} />
+          <Route path="/explore" exact element={<Explore />} />
+          <Route path="/groups" exact element={<Groups />} />
+          <Route path="/*" exact element={<NotFound />} />
+        </Routes>
+      </div>
+      <Footer />
+    </>
   )
 }
 
