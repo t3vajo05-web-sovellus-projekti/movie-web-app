@@ -25,7 +25,8 @@ const createGroup = async (req, res, next) =>
 {
     try
     {   // get group data from request body
-        const {group} = req.body
+        const group = req.body
+        console.log(req.body)
 
         if (!group || !group.name)  // the group must have at least a name. Description will be optional.
         {   
