@@ -1,13 +1,37 @@
 import './Navbar.css'
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { useUser } from '../context/useUser.js'
+import axios from 'axios'
 
 export default function Navbar() {
 
     const { user, logout } = useUser()
+    const [query, setQuery] = useState('')
+    const navigate = useNavigate()
 
-  return (
+    const handleSearch = async (e) =>
+    {
+        e.preventDefault()
+        if (!query.trim()) return
+
+        try
+        {
+            const response = await axios.get(`http://localhost:3001/movies/search`, {
+                params: { query }
+            })
+
+            // navigate to the search results page and pass the results
+            navigate('/moviesearch', { state: { results: response.data } })
+        }
+        catch (error)
+        {
+            console.error("Search failed:", error)
+            alert("Search failed. Check console for details.")
+        }
+    }
+
+    return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
         <div className="container-fluid">
             <Link className="navbar-brand" to="/">Movie app</Link>
@@ -30,8 +54,15 @@ export default function Navbar() {
                     </li>
                 </ul>
 
-                <form className="d-flex mx-auto" style={{ maxWidth: "400px" }} role="search">
-                    <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
+                <form className="d-flex mx-auto" style={{ maxWidth: "400px" }} role="search" onSubmit={handleSearch}>
+                    <input
+                        className="form-control me-2"
+                        type="search"
+                        placeholder="Search"
+                        aria-label="Search"
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                    />
                     <button className="btn btn-outline-success" type="submit">Search</button>
                 </form>
 
@@ -67,5 +98,5 @@ export default function Navbar() {
             </div>
         </div>
     </nav>
-  )
+    )
 }
