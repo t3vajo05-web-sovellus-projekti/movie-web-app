@@ -1,5 +1,4 @@
 import { ApiError } from '../helper/apiError.js';
-//import { addFavorite, removeFavorite, listFavorites } from '../models/movieActions.js';
 import { searchMoviesByName, searchMoviesById } from '../helper/tmdb.js';
 
 // Kuvien filepathien url: https://image.tmdb.org/t/p/w500/ (filepath)
@@ -31,7 +30,7 @@ export const getMovieById = async (req, res, next) => {
   const id = parseInt(req.params.id, 10)
   if (!Number.isFinite(id)) return next(new ApiError('Valid ID is required', 400))
   
-  const language = (req.query.language || 'en-us').trim()
+  const language = (req.query.language || 'en-US').trim()
   
   try {
     const data = await searchMoviesById(id, { language })
@@ -42,53 +41,3 @@ export const getMovieById = async (req, res, next) => {
     res.status(500).json({ error: err.message })
   }
 }
-
-/* Add favorite: POST /movies/favorites/:movieId (auth)
-export const addFavoriteController = async (req, res, next) => {
-  const userId = req.user?.id;
-  const movieId = String(req.params.movieId || req.body.movieId || '').trim();
-
-  if (!userId) return next(new ApiError('Unauthorized', 401));
-  if (!movieId) return next(new ApiError('movieId is required', 400));
-
-  try {
-    const result = await addFavorite(userId, movieId);
-    if (result?.alreadyExists) return res.status(200).json({ message: 'Already in favorites' });
-    return res.status(201).json({ favorite: result });
-  } catch (err) {
-    console.error('addFavorite error:', err);
-    return res.status(500).json({ error: err.message });
-  }
-};
-
-// Remove favorite: DELETE /movies/favorites/:movieId (auth)
-export const removeFavoriteController = async (req, res, next) => {
-  const userId = req.user?.id;
-  const movieId = String(req.params.movieId || '').trim();
-
-  if (!userId) return next(new ApiError('Unauthorized', 401));
-  if (!movieId) return next(new ApiError('movieId is required', 400));
-
-  try {
-    const removed = await removeFavorite(userId, movieId);
-    if (!removed) return next(new ApiError('Favorite not found', 404));
-    return res.status(200).json({ removed });
-  } catch (err) {
-    console.error('removeFavorite error:', err);
-    return res.status(500).json({ error: err.message });
-  }
-};
-
-// List favorites: GET /movies/favorites (auth)
-export const listFavoritesController = async (req, res, next) => {
-  const userId = req.user?.id;
-  if (!userId) return next(new ApiError('Unauthorized', 401));
-
-  try {
-    const movieIds = await listFavorites(userId);
-    return res.status(200).json({ movieIds });
-  } catch (err) {
-    console.error('listFavorites error:', err);
-    return res.status(500).json({ error: err.message });
-  }
-}; */
