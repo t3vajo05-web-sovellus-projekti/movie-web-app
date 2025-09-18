@@ -1,7 +1,6 @@
 import { pool } from '../helper/db.js'
 
 /* 
-DELETE THIS LATER!
 TABLE: groups
 Columns:
 - id            [PK] integer
@@ -12,15 +11,16 @@ Columns:
  */
 
 
-// Get all groups
-const getAllGroups = async () =>
-{
-    const result = await pool.query('SELECT * FROM groups') // await --> wait for db query before moving on
-    return result.rows
-}
+/*in controllers:
+- create new group
+- return all groups
+- return group by id
+- return groups where user is the owner
+- return groups where the user is a member
+- delete group by id
+*/
 
 // Create your own group 
-// TIIMIN JÄSENET: Onko tämä ok nimi tälle funktiolle vai olisiko jotenkin parempi tapa nimetä?
 const modelCreateGroup = (name, description, owner) => 
 {
     return pool.query(
@@ -36,6 +36,14 @@ const addOwnerAsMember = (userId, groupId) =>
     )
 }
 
+// Get all groups
+const getAllGroups = async () =>
+{
+    const result = await pool.query('SELECT * FROM groups') // await --> wait for db query before moving on
+    return result.rows
+}
+
+
 // Get group by id
 const getGroupById = async (id) =>
 {
@@ -43,12 +51,37 @@ const getGroupById = async (id) =>
     return result.rows[0] || null
 }
 
+// Get group(s) by owner
+const getGroupByOwner = async (ownerId) =>
+{
+    const result = await pool.query('SELECT * FROM groups WHERE owner = $1', [owner]) // Get all the groups from db where "owner" matches with ownerId
+    return result.rows // return all groups as an array
+}
+
+
+// Get group(s) by member
+const getGroupByMember = async (memberId) =>
+{
+    const result = await pool.query
+    (
+        `SELECT groups.*
+        FROM groups
+        JOIN group_members ON groups.id = group_members.memberof
+        WHERE group_members.user_id = $1`, [memberId]
+    )
+    return result.rows
+}
+
+
+/*
 // Get group by name
 const getGroupByName = async (name) =>
 {
     const result = await pool.query('SELECT * FROM groups WHERE name = $1', [name])
     return result.rows[0] || null
-}
+}*/
+
+
 
 // Delete group by id
 const deleteGroupById = async (id) =>
@@ -66,6 +99,8 @@ export {
     modelCreateGroup,
     addOwnerAsMember,
     getGroupById,
-    getGroupByName,
+    getGroupByOwner,
+    getGroupByMember,
+    //getGroupByName,
     deleteGroupById
 }

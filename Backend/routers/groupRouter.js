@@ -1,12 +1,21 @@
 import { Router } from 'express'
-import { returnAllGroups, createGroup, returnGroupById, removeGroupById } from '../controllers/groupController.js'
 import { auth } from '../helper/auth.js'
+import { 
+    createGroup,
+    returnAllGroups,
+    returnGroupById,
+    returnGroupByOwner,
+    returnGroupByMember,
+    //returnGroupByName,
+    removeGroupById } from '../controllers/groupController.js'
 
 const router = Router()
 
-router.get('/', returnAllGroups)
 router.post('/create', auth, createGroup)
+router.get('/', returnAllGroups)
 router.get('/:id', returnGroupById)
+//router.get('/:owner', returnGroupByOwner) ISSUE WITH THIS, WILL FIX LATER
+//router.get('/:member', returnGroupByMember) ISSUE WITH THIS, WILL FIX LATER
 //router.get('/:name', returnGroupByName) ISSUE WITH THIS, WILL FIX LATER
 router.delete('/:id', auth, removeGroupById)
 
