@@ -16,9 +16,11 @@ const getMyWatchlist = async (req, res, next) => {
 const addWatchlistItem = async (req, res, next) => {
     try
     {
-        const userId = req.user.id
-        const movieId = String(req.params.movieId || req.body.movieId)
-        const item = await addToWatchlist(userId, movieId)
+        const userId = req.user.id;
+        const movieId = String(req.params.movieId || req.body.movieId);
+        const status = String(req.params.status || req.body.status);
+        console.log(`Add to watchlist: user ${userId}, movie ${movieId} status: ${status}`);
+        const item = await addToWatchlist(userId, movieId, status)
         return res.status(201).json(item)
     }
     catch(err)
@@ -30,8 +32,10 @@ const addWatchlistItem = async (req, res, next) => {
 const deleteWatchlistItem = async (req, res, next) => {
     try
     {
+        const userId = req.user.id;
         const movieId = String(req.params.movieId || req.body.movieId)
-        const item = await deleteFromWatchlist(movieId)
+        console.log(`Delete from watchlist: user ${userId}, movie ${movieId}`);
+        const item = await deleteFromWatchlist(userId, movieId)
         return res.status(201).json(item)
     }
     catch(err)
@@ -43,8 +47,10 @@ const deleteWatchlistItem = async (req, res, next) => {
 const toggleFavoriteItem = async (req, res, next) => {
     try
     {
-        const id = Number(req.params.id)
-        const item = await toggleFavoriteById(id)
+        const userId = req.user.id
+        const movieId = Number(req.params.id)
+        const item = await toggleFavoriteById(userId, movieId)
+        console.log(`Toggle favorites: user ${userId} movie: ${movieId}`);   
         return res.status(200).json(item)
     }
     catch(err)
