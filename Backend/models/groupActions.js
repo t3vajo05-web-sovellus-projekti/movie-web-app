@@ -72,6 +72,36 @@ const getGroupByMember = async (memberId) =>
     return result.rows
 }
 
+const getGroupMemberCount = async (groupId) =>
+{
+    const result = await pool.query(
+        `SELECT COUNT(*) AS count
+            FROM group_members
+            WHERE memberof = $1`,
+        [groupId]
+    );
+    return parseInt(result.rows[0].count, 10);
+}
+
+const getGroupOwnerNickname = async (groupId) =>
+{
+    // Gets group by id
+    const group = await getGroupById(groupId);
+    if (!group) return null;
+
+    // Uses groups owner id to get the owners info
+    const result = await pool.query(
+        `SELECT username
+            FROM users
+            WHERE id = $1`,
+        [group.owner]
+    );
+
+    return result.rows[0]?.username || null;
+}
+        
+    
+
 
 /*
 // Get group by name
@@ -102,5 +132,7 @@ export {
     getGroupByOwner,
     getGroupByMember,
     //getGroupByName,
-    deleteGroupById
+    deleteGroupById,
+    getGroupMemberCount,
+    getGroupOwnerNickname
 }

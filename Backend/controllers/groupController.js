@@ -8,7 +8,9 @@ import {
     //getGroupByName, 
     deleteGroupById, 
     getGroupByMember, 
-    getGroupByOwner } from "../models/groupActions.js"
+    getGroupByOwner,
+    getGroupMemberCount,
+    getGroupOwnerNickname } from "../models/groupActions.js"
 
 
 /*
@@ -209,6 +211,56 @@ const returnGroupByName = async (req,res,next) =>
     }
 }*/
 
+// Return the number of members in a group
+const returnGroupMemberCount = async (req, res, next) =>
+{
+    try
+    {
+        const groupId = parseInt(req.params.id, 10);
+
+        if (isNaN(groupId)) {
+            return res.status(400).json({ message: "Invalid group ID" });
+        }
+
+        const count = await getGroupMemberCount(groupId);
+
+        return res.status(200).json({ groupId, memberCount: count });
+    }
+    catch (err)
+    {
+        console.error('returnGroupMemberCount error:', err);
+        return res.status(500).json({ error: err.message });
+    }
+}
+
+// Return the owner username of a group
+const returnGroupOwner = async (req, res, next) =>
+{
+    try
+    {
+        const groupId = parseInt(req.params.id, 10);
+
+        if (isNaN(groupId)) {
+            return res.status(400).json({ message: "Invalid group ID" });
+        }
+
+        const username = await getGroupOwnerNickname(groupId);
+
+        if (!username) {
+            return res.status(404).json({ message: "Group or owner not found" });
+        }
+
+        return res.status(200).json({ groupId, owner: username });
+    }
+    catch (err)
+    {
+        console.error('returnGroupOwner error:', err);
+        return res.status(500).json({ error: err.message });
+    }
+}
+    
+    
+
 
 
 export {
@@ -218,5 +270,7 @@ export {
     returnGroupByOwner,
     returnGroupByMember,
     //returnGroupByName,
-    removeGroupById
+    removeGroupById,
+    returnGroupMemberCount,
+    returnGroupOwner
 }
