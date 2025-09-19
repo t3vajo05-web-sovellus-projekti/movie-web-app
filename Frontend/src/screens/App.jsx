@@ -20,6 +20,7 @@ import Login from '../pages/Login.jsx'
 import Signup from '../pages/Signup.jsx'
 import Moviesearch from '../pages/Moviesearch.jsx'
 import UserProvider from '../context/userProvider.jsx'
+import Movie from '../pages/Movie.jsx'
 
 /*
 function App() {
@@ -66,6 +67,7 @@ function App() {
           <Route path="/signup" exact element={<Signup />} />
           <Route path="/login" exact element={<Login />} />
           <Route path="/moviesearch" exact element={<Moviesearch />} />
+          <Route path="/movie/:id" exact element={<Movie />} />
 
           <Route path="/*" exact element={<NotFound />} />
         </Routes>
