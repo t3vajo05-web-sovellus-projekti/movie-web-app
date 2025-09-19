@@ -1,16 +1,49 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react";
 
 export default function Groups() 
 {
-    const [groups, setGroups] = useState([])
+    const [groups, setGroups] = useState([]);
 
     useEffect(() => 
     {
-        fetch('http://localhost:3001/groups')
-            .then(res => res.json())
-            .then(data => setGroups(data))
-            .catch(err => console.error(err))
-    }, [])
+        async function fetchGroups() 
+        {
+            try 
+            {
+                // Get all groups
+                const res = await fetch('http://localhost:3001/groups');
+                const data = await res.json();
+
+                // For each group, fetch owner and member count
+                const enrichedGroups = await Promise.all(
+                    data.map(async (group) => 
+                    {
+                        const [ownerRes, countRes] = await Promise.all([
+                            fetch(`http://localhost:3001/groups/owner/${group.id}`),
+                            fetch(`http://localhost:3001/groups/membercount/${group.id}`)
+                        ]);
+
+                        const ownerData = await ownerRes.json();
+                        const countData = await countRes.json();
+
+                        return {
+                            ...group,
+                            owner: ownerData.owner || 'Unknown',
+                            memberCount: countData.memberCount || 0
+                        };
+                    })
+                );
+
+                setGroups(enrichedGroups);
+            } 
+            catch (err) 
+            {
+                console.error(err);
+            }
+        }
+
+        fetchGroups();
+    }, []);
 
     return (
         <div className="container mt-4">
@@ -20,15 +53,13 @@ export default function Groups()
                     <div className="card" key={group.id}>
                         <div className="card-body">
                             <h5 className="card-title">{group.name}</h5>
-                            <p className="card-text">
-                                {group.description || 'No description'}
-                            </p>
-                            <p className="card-text">Owner: x</p>
-                            <p className="card-text">Members: 999</p>
+                            <p className="card-text">{group.description || 'No description'}</p>
+                            <p className="card-text">Owner: {group.owner}</p>
+                            <p className="card-text">Members: {group.memberCount}</p>
                         </div>
                     </div>
                 ))}
             </div>
         </div>
-    )
+    );
 }
