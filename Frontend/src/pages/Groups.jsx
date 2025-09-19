@@ -56,6 +56,7 @@ export default function Groups()
                             <p className="card-text">{group.description || 'No description'}</p>
                             <p className="card-text">Owner: {group.owner}</p>
                             <p className="card-text">Members: {group.memberCount}</p>
+                            <button type="button" className="btn btn-primary mt-2">Request to join group</button>
                         </div>
                     </div>
                 ))}
