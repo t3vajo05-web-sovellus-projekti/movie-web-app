@@ -78,7 +78,7 @@ export default function Navbar() {
                             <div className="dropdown-divider"></div>
                             <li><a className="dropdown-item" href="#">Watchlist</a></li>
                             <div className="dropdown-divider"></div>
-                            <li><button className="dropdown-item" type="button" onClick={logout}>Log Out</button></li>
+                            <li><button className="dropdown-item" type="button" onClick={() => { logout(); navigate('/'); }}>Log Out</button></li>
                         </ul>
                     </li>
                 </ul>
