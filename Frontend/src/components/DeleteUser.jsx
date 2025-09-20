@@ -28,7 +28,7 @@ export default function DeleteUser({ token, setToken }) {
     return (
         <div>
             {!confirming ? (
-                <button type="button" class="btn btn-danger" onClick={handleFirstClick}>Delete Account</button>
+                <button type="button" className="btn btn-danger" onClick={handleFirstClick}>Delete Account</button>
             ) : (
                 <div>
                     <div className="mb-3">
