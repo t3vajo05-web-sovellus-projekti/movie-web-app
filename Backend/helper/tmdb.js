@@ -39,4 +39,24 @@ const searchMoviesById = async (id, opts = {}) => {
   return tmdbGet(`/movie/${id}`, { ...opts });
 };
 
-export { tmdbGet, searchMoviesByName, searchMoviesById };
+const getMovieRecommendations = async (id, opts = {}) => 
+{
+  return tmdbGet(`/movie/${id}/recommendations`, { ...opts });
+};
+
+const getSimilarMovies = async (id, opts = {}) => 
+{
+  return tmdbGet(`/movie/${id}/similar`, { ...opts });
+};
+
+const getNowPlayingMovies = async (page = 1, opts = {}) => 
+{
+  return tmdbGet(`/movie/now_playing`, { page, ...opts });
+};
+
+const getUpcomingMovies = async (page = 1, opts = {}) => 
+{
+  return tmdbGet(`/movie/upcoming`, { page, ...opts });
+};
+
+export { tmdbGet, searchMoviesByName, searchMoviesById, getMovieRecommendations, getSimilarMovies, getNowPlayingMovies, getUpcomingMovies};
