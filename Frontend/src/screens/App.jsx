@@ -22,6 +22,8 @@ import Moviesearch from '../pages/Moviesearch.jsx'
 import UserProvider from '../context/userProvider.jsx'
 import MyProfile from '../pages/MyProfile.jsx'
 import MyAccount from '../pages/MyAccount.jsx'
+import Movie from '../pages/Movie.jsx'
+
 
 /*
 function App() {
@@ -70,7 +72,7 @@ function App() {
           <Route path="/moviesearch" exact element={<Moviesearch />} />
           <Route path="/myprofile" exact element={<MyProfile />} />
           <Route path="/myaccount" exact element={<MyAccount />} />
-
+          <Route path="/movie/:id" exact element={<Movie />} />
           <Route path="/*" exact element={<NotFound />} />
         </Routes>
       </div>
