@@ -93,10 +93,6 @@ const returnUserReviewCount = async (req, res, next) => {
         const userId = req.params.id
         const count = await getUserReviewCount(userId)
 
-        if (count === 0) {
-            return next(new ApiError('User has not written any reviews', 404))
-        }
-
         return res.status(200).json({count})
     } catch (err) {
         console.error('returnUserReviewCount error:', err)
