@@ -32,6 +32,13 @@ const getLatestReviewsByUserId = async (user_id, limit = 10) =>{
     return result.rows
 }
 
+const getUserReviewCount = async (user_id) => {
+    const result = await pool.query(
+        'SELECT COUNT(*) AS review_count FROM user_reviews WHERE user_id = $1', [user_id]
+    )
+    return parseInt(result.rows[0].review_count, 10)
+}
+
 const createReview = (user_id, movie_id, review_text) => {
     return pool.query(
         'INSERT INTO user_reviews (user_id, movie_id, review_text) VALUES ($1, $2, $3) RETURNING *', 
@@ -51,6 +58,7 @@ export {
     getReviewByUserAndMovieId,
     getLatestReviews,
     getLatestReviewsByUserId,
+    getUserReviewCount,
     createReview,
     deleteReviewById
 }
