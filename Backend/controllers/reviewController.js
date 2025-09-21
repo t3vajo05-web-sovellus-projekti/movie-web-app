@@ -5,6 +5,7 @@ import {
     getReviewByUserAndMovieId, 
     getLatestReviews,
     getLatestReviewsByUserId,
+    getUserReviewCount,
     createReview, 
     deleteReviewById 
 } from "../models/reviewActions.js"
@@ -86,6 +87,19 @@ const returnLatestReviewsByUser = async (req, res, next) => {
     }
 }
 
+const returnUserReviewCount = async (req, res, next) => {
+    try {
+        // returns count of reviews for given user_id
+        const userId = req.params.id
+        const count = await getUserReviewCount(userId)
+
+        return res.status(200).json({count})
+    } catch (err) {
+        console.error('returnUserReviewCount error:', err)
+        return res.status(500).json({error:err.message})
+    }
+}
+
 const reviewMovie = async (req, res, next) => {
     try {
         const { review } = req.body
@@ -136,6 +150,7 @@ export {
     returnReviewsByUserId,
     returnLatestReviews,
     returnLatestReviewsByUser,
+    returnUserReviewCount,
     reviewMovie,
     deleteReview
 }
