@@ -11,7 +11,8 @@ import { pool } from '../helper/db.js'
 - get membercount
 - get owner's username 
 - delete group by id 
-- Group invites */
+- group invites
+- leaving group */
 
 //TODO: Amount of groups I'm a owner of, amount of groups I'm a member of.
 
@@ -206,9 +207,17 @@ const declineGroupInvite = async (inviteId) =>
 }
 
 
+// LEAVING GROUP
 
-
-
+//Leave group (remove user from group_members)
+const leaveGroup = async (userId, groupId) => {
+    const result = await pool.query
+    (
+        `DELETE FROM group_members
+        WHERE user_id = $1 AND memberof = $2 RETURNING *`, [userId, groupId]
+    )
+    return result.rows[0] || null
+}
 
 
 
@@ -229,5 +238,7 @@ export {
     isUserMemberOfGroup,
     hasPendingInvite,
     acceptGroupInvite,
-    declineGroupInvite
+    declineGroupInvite,
+    //leaving group:
+    leaveGroup
 }

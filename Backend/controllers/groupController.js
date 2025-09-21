@@ -17,7 +17,10 @@ import {
     isUserMemberOfGroup,
     hasPendingInvite,
     acceptGroupInvite,
-    declineGroupInvite} from "../models/groupActions.js"
+    declineGroupInvite,
+    // leaving group:
+    leaveGroup 
+    } from "../models/groupActions.js"
 
 
 /*
@@ -31,6 +34,7 @@ File contains following controllers (in the following order):
 - return group owner username
 - delete group by id
 - group invites
+- leaving group
 */
 
 
@@ -421,10 +425,57 @@ const declineInvite = async (req,res,next) =>
     }
 }
 
+// LEAVING GROUP
 
+const leaveGroupController = async (req,res,next) => 
+    {
+        try 
+        {
+            const userId = req.user.id
+            const { groupId } = req.body
+            
+            if (!groupId)
+            {
+                return res.status(400).json({message:"Group ID required"})
+            }
 
+            //make sure that group exists
+            const group = await getGroupById(groupId)
+            if (!group) return res.status(404).json({message:"Group not found"})
+            
+            // owner cannot leave their own group
+            if (group.owner === userId)
+            {
+                return res.status(400).json({message: "Group owner cannot leave their own group"})
+            }
 
+            // check if user is a member
+            const isMember = await isUserMemberOfGroup (userId, groupId)
+            if (!isMember)
+            {
+                return res.status(400).json({message:"You are not a member of this group"})
+            }
 
+            // check if the row was actually deleted
+            // if "left" is null, leaving failed
+            // if "left" contains a row, deletion succeeded
+            const left = await leaveGroup (userId, groupId)
+            if (!left)
+            {
+                return res.status(500).json({message:"Failed to leave group"})
+            }
+
+            // if everything goes ok, leave group:
+            return res.status(200).json
+            ({
+                message: `You have left the group "${group.name}"`,
+                groupId: group.id
+            })
+        } catch (err) {
+            console.error("leaveGroupController error:",err)
+            return res.status(500).json({error:err.message})
+        }
+    }
 
 
 
@@ -442,5 +493,7 @@ export {
     sendJoinRequest,
     returnPendingInvite,
     acceptInvite,
-    declineInvite
+    declineInvite,
+    //leaving group:
+    leaveGroupController
 }
