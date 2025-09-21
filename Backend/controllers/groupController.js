@@ -1,16 +1,23 @@
 import { ApiError } from "../helper/apiError.js"
 
 import { 
-    modelCreateGroup, 
-    getAllGroups, 
-    addOwnerAsMember, 
-    getGroupById, 
-    getGroupByName, 
-    deleteGroupById, 
-    getGroupByMember, 
+    getAllGroups,
+    modelCreateGroup,
+    addOwnerAsMember,
+    getGroupById,
     getGroupByOwner,
+    getGroupByMember,
+    getGroupByName,
     getGroupMemberCount,
-    getGroupOwnerNickname } from "../models/groupActions.js"
+    getGroupOwnerNickname,
+    deleteGroupById,
+    //group invites:
+    createGroupInvite,
+    getPendingInvite,
+    isUserMemberOfGroup,
+    hasPendingInvite,
+    acceptGroupInvite,
+    declineGroupInvite} from "../models/groupActions.js"
 
 
 /*
@@ -23,6 +30,7 @@ File contains following controllers (in the following order):
 - return group member count
 - return group owner username
 - delete group by id
+- group invites
 */
 
 
@@ -259,6 +267,165 @@ const removeGroupById = async (req, res, next) =>
     }
 }   
 
+// GROUP INVITES:
+
+// Send a join request (create a new group invite)
+const sendJoinRequest = async (req, res, next) => 
+{
+    try
+    {
+        const userId = req.user.id // logged in user
+        const {groupId} = req.body // the group user wants to join
+
+        // join request requires a group id
+        if (!groupId) 
+        {
+            return next(new ApiError("Group ID is required to send a join request"))
+        }
+        // check if the group exists. you can only join an existing group
+        const group = await getGroupById(groupId)
+        if (!group)
+        {
+            return res.status(404).json({message: "Group not found"})
+        }
+
+        // prevent owner from sending a join request to their own group
+        if (group.owner === userId)
+        {
+            return res.status(400).json({message: "Owner is already a member of the group"})
+        }
+
+        //check if user is already a member of this group
+        const isMember = await isUserMemberOfGroup(userId, groupId)
+        if (isMember) 
+        {
+            return res.status(400).json({message: "you are already a member of this group"})
+        }
+
+        // check if user already has a pending invite for this group
+        const hasInvite = await hasPendingInvite (userId, groupId)
+        if (hasInvite)
+        {
+            return res.status(400).json({message:"You already have a pending invite for this group"})
+        }
+
+        // if everything is ok, create the invite
+        const newInvite = await createGroupInvite (groupId, userId)
+        return res.status(201).json({message:"Join request sent", invite: newInvite})
+    }
+    catch (err)
+    {
+        console.error("sendJoinRequest error:", err)
+        return res.status(500).json({error:err.message})
+    }
+}
+
+//Get pending invites for a group (only owner can see)
+const returnPendingInvite = async (req,res,next) =>
+{
+    try
+    {
+        const ownerId = req.user.id
+        const groupId = req.params.id
+
+        //check if group exists
+        const group = await getGroupById(groupId)
+        if (!group) 
+        {
+          return res.status(404).json({message:"Group not found"})
+        }
+
+        //check if logged in user is the group owner
+        if (group.owner !== ownerId)
+        {
+            return res.status(403).json({message:"Only group owner can view pending invites"})
+        }
+
+        //get pending invites
+        const invites = await getPendingInvite (groupId)
+        if (invites.length === 0)
+        {
+            return res.status(404).json({message: "No pending invites for this group"})
+        }
+        return res.status(200).json(invites)
+    } catch (err) {
+        console.error("returnPendingInvites error:", err)
+        return res.status(500).json({error:err.message})
+    }
+}
+
+
+// Accept invite
+const acceptInvite = async (req,res,next) =>
+{
+    try
+    {
+        const ownerId = req.user.id
+        const {inviteId, groupId, userId } = req.body
+
+        //make sure that group exists
+        const group = await getGroupById(groupId)
+        if (!group) return res.status(404).json({message:"Group not found"})
+        
+        //only owner can accept
+        if (group.owner !== ownerId)
+        {
+            return res.status(403).json({message:"Only group owner can accept invites"})
+        }
+
+        const addedMember = await acceptGroupInvite(inviteId, groupId, userId)
+        
+        return res.status(200).json
+        ({
+            message: `Invite accepted. User has been added to group "${group.name}"`,
+            groupId: group.id,
+            groupName: group.name,
+            member: addedMember
+        })
+    } catch (err) {
+        console.error("acceptInvite error:",err)
+        return res.status(500).json({error:err.message})
+    }
+}
+
+//Decline invite
+const declineInvite = async (req,res,next) =>
+{
+    try
+    {
+        const ownerId = req.user.id
+        const { inviteId, groupId } = req.body
+
+        //make sure that group exists
+        const group = await getGroupById(groupId)
+        if (!group) return res.status(404).json({message:"Group not found"})
+        
+        //only owner can decline
+        if (group.owner !== ownerId)
+        {
+            return res.status(403).json({message:"Only group owner can decline invites"})
+        }
+
+        const declined = await declineGroupInvite(inviteId)
+
+        return res.status(200).json
+        ({
+            message: `Invite declined for group "${group.name}"`,
+            groupId: group.id,
+            groupName: group.name,
+            declinedInvite: declined
+        })
+    } catch (err) {
+        console.error("declinedInvite error:",err)
+        return res.status(500).json({error:err.message})
+    }
+}
+
+
+
+
+
+
 
 
 export {
@@ -270,5 +437,10 @@ export {
     returnGroupByName,
     returnGroupMemberCount,
     returnGroupOwner,
-    removeGroupById
+    removeGroupById,
+    //group invites:
+    sendJoinRequest,
+    returnPendingInvite,
+    acceptInvite,
+    declineInvite
 }

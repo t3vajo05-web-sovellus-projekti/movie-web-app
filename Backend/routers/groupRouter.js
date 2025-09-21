@@ -9,11 +9,19 @@ import {
     returnGroupByName,
     returnGroupMemberCount,
     returnGroupOwner,
-    removeGroupById } from '../controllers/groupController.js'
+    removeGroupById, 
+    //group invites:
+    sendJoinRequest,
+    acceptInvite,
+    declineInvite,
+    returnPendingInvite} from '../controllers/groupController.js'
 
 const router = Router()
 
 router.post('/create', auth, createGroup)
+router.post('/invite/join',auth, sendJoinRequest)
+router.post('/invite/accept',auth,acceptInvite)
+router.post('/invite/decline', auth, declineInvite)
 
 router.get('/', returnAllGroups)
 
@@ -22,6 +30,7 @@ router.get('/owner/:id', returnGroupOwner)
 router.get('/owned', auth, returnGroupByOwner)
 router.get('/member',auth, returnGroupByMember) 
 router.get('/groupname/:name', returnGroupByName) 
+router.get('/invite/pending/:id', auth, returnPendingInvite)
 
 router.get('/:id', returnGroupById) // keep this on the bottom of all the router.gets.
 
