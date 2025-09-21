@@ -5,7 +5,7 @@ import {
     getAllGroups, 
     addOwnerAsMember, 
     getGroupById, 
-    //getGroupByName, 
+    getGroupByName, 
     deleteGroupById, 
     getGroupByMember, 
     getGroupByOwner,
@@ -20,6 +20,8 @@ File contains following controllers (in the following order):
 - return group by id
 - return groups where user is the owner
 - return groups where the user is a member
+- return group member count
+- return group owner username
 - delete group by id
 */
 
@@ -29,7 +31,7 @@ const createGroup = async (req, res, next) =>
 {
     try
     {   // get group data from request body
-        const group = req.body
+        const {group} = req.body
         console.log(req.body)
 
         if (!group || !group.name)  // the group must have at least a name. Description will be optional.
@@ -49,7 +51,7 @@ const createGroup = async (req, res, next) =>
 
         // call model function to create group --> add a new group into the database
         const result = await modelCreateGroup (group.name, group.description || "", ownerId )
-        const newGroup = result.rows[0] // data from group table?
+        const newGroup = result.rows[0]
 
         console.log('Creating a new group')
 
@@ -112,19 +114,19 @@ const returnGroupById = async (req, res, next) =>
 }
 
 
-// Return groups where user is the owner
+// Return group(s) where user is the owner
 const returnGroupByOwner = async (req, res,next) =>
 {
     try
     {
         const ownerId = req.user.id // get id from the logged in user(owner)
-        const groups = await getGroupByOwner(ownerId) // Get all the groups from db where "owner" matches with ownerId
+        const group = await getGroupByOwner(ownerId) // Get all the groups from db where "owner" matches with ownerId
 
-        if (groups.length === 0) // if the return is no rows, that means that there is no groups where user is the owner
+        if (group.length === 0) // if the return is no rows, that means that there is no groups where user is the owner
         {
             return res.status(404).json({message: 'No groups owned by this user'})
         }
-        return res.status(200).json(result.rows) // if rows were found, user is the owner of some group(s), send status 200 (OK)
+        return res.status(200).json(group) // if rows were found, user is the owner of some group(s), send status 200 (OK)
     }
     catch (err)
     {
@@ -143,10 +145,11 @@ const returnGroupByMember = async (req,res,next) =>
         const memberId = req.user.id //get id from the logged in user(member)
         const groups = await getGroupByMember(memberId)
 
-        if (result.rows.length === 0) // if no groups were found, return 404 (not found) 
+        if (groups.length === 0) // if no groups were found, return 404 (not found) 
         {
             return res.status(404).json({message:'No groups found for this member'})
         }
+        return res.status(200).json(groups)
     }
     catch (err)
     {
@@ -156,8 +159,76 @@ const returnGroupByMember = async (req,res,next) =>
 }
 
 
+// Return group by name
+const returnGroupByName = async (req,res,next) =>
+{
+    try 
+    { // AI suggested that I add here: const name = req.params.name 
+        const group = await getGroupByName(req.params.name)
+
+        if (!group)
+        {
+            return res.status(404).json({message: 'Group not found'})
+        }
+        return res.status(200).json(group) // return group if it is found
+    }
+    catch (err)
+    {
+        console.error('returnGroupByName error', err)
+        return res.status(500).json({error:err.message}) // 500 server error
+    }
+}
 
 
+// Return the number of members in a group
+const returnGroupMemberCount = async (req, res, next) =>
+{
+    try
+    {
+        const groupId = parseInt(req.params.id, 10);
+
+        if (isNaN(groupId)) {
+            return res.status(400).json({ message: "Invalid group ID" });
+        }
+
+        const count = await getGroupMemberCount(groupId);
+
+        return res.status(200).json({ groupId, memberCount: count });
+    }
+    catch (err)
+    {
+        console.error('returnGroupMemberCount error:', err);
+        return res.status(500).json({ error: err.message });
+    }
+}
+
+// Return the username of the group owner
+const returnGroupOwner = async (req, res, next) =>
+{
+    try
+    {
+        const groupId = parseInt(req.params.id, 10);
+
+        if (isNaN(groupId)) {
+            return res.status(400).json({ message: "Invalid group ID" });
+        }
+
+        const username = await getGroupOwnerNickname(groupId);
+
+        if (!username) {
+            return res.status(404).json({ message: "Group or owner not found" });
+        }
+
+        return res.status(200).json({ groupId, owner: username });
+    }
+    catch (err)
+    {
+        console.error('returnGroupOwner error:', err);
+        return res.status(500).json({ error: err.message });
+    }
+}
+
+ 
 // Delete group by ID
 const removeGroupById = async (req, res, next) =>
 {
@@ -186,80 +257,7 @@ const removeGroupById = async (req, res, next) =>
         console.error('removeGroupById error:', err)
         return res.status(500).json({error: err.message})
     }
-}
-
-
-
-/* some issues with this code and approach, will figure it out later
-// Return group by name
-const returnGroupByName = async (req,res,next) =>
-{
-    try 
-    {
-        const group = await getGroupByName(req.params.name)
-
-        if (!group)
-        {
-            return res.status(404).json({message: 'Group not found'})
-        }
-        return res.status(200).json(group) // return group if it is found
-    }
-    catch (err)
-    {
-        console.error('returnGroupByName error', err)
-        return res.status(500).json({error:err.message}) // 500 server error
-    }
-}*/
-
-// Return the number of members in a group
-const returnGroupMemberCount = async (req, res, next) =>
-{
-    try
-    {
-        const groupId = parseInt(req.params.id, 10);
-
-        if (isNaN(groupId)) {
-            return res.status(400).json({ message: "Invalid group ID" });
-        }
-
-        const count = await getGroupMemberCount(groupId);
-
-        return res.status(200).json({ groupId, memberCount: count });
-    }
-    catch (err)
-    {
-        console.error('returnGroupMemberCount error:', err);
-        return res.status(500).json({ error: err.message });
-    }
-}
-
-// Return the owner username of a group
-const returnGroupOwner = async (req, res, next) =>
-{
-    try
-    {
-        const groupId = parseInt(req.params.id, 10);
-
-        if (isNaN(groupId)) {
-            return res.status(400).json({ message: "Invalid group ID" });
-        }
-
-        const username = await getGroupOwnerNickname(groupId);
-
-        if (!username) {
-            return res.status(404).json({ message: "Group or owner not found" });
-        }
-
-        return res.status(200).json({ groupId, owner: username });
-    }
-    catch (err)
-    {
-        console.error('returnGroupOwner error:', err);
-        return res.status(500).json({ error: err.message });
-    }
-}
-    
-    
+}   
 
 
 
@@ -269,8 +267,8 @@ export {
     returnGroupById,
     returnGroupByOwner,
     returnGroupByMember,
-    //returnGroupByName,
-    removeGroupById,
+    returnGroupByName,
     returnGroupMemberCount,
-    returnGroupOwner
+    returnGroupOwner,
+    removeGroupById
 }

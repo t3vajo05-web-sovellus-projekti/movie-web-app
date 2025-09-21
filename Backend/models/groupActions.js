@@ -1,24 +1,5 @@
 import { pool } from '../helper/db.js'
 
-/* 
-TABLE: groups
-Columns:
-- id            [PK] integer
-- name          character varying 255
-- created       timestamp without time zone
-- owner         integer --> linked to TABLE users with column: id
-- description   text
- */
-
-
-/*in controllers:
-- create new group
-- return all groups
-- return group by id
-- return groups where user is the owner
-- return groups where the user is a member
-- delete group by id
-*/
 
 // Create your own group 
 const modelCreateGroup = (name, description, owner) => 
@@ -54,8 +35,8 @@ const getGroupById = async (id) =>
 // Get group(s) by owner
 const getGroupByOwner = async (ownerId) =>
 {
-    const result = await pool.query('SELECT * FROM groups WHERE owner = $1', [owner]) // Get all the groups from db where "owner" matches with ownerId
-    return result.rows // return all groups as an array
+    const result = await pool.query('SELECT * FROM groups WHERE owner = $1', [ownerId]) // Get all the groups from db where "owner" matches with ownerId
+    return result.rows
 }
 
 
@@ -72,6 +53,15 @@ const getGroupByMember = async (memberId) =>
     return result.rows
 }
 
+
+// Get group by name
+const getGroupByName = async (name) =>
+{
+    const result = await pool.query('SELECT * FROM groups WHERE name = $1', [name])
+    return result.rows[0] || null
+}
+
+// Get group member count
 const getGroupMemberCount = async (groupId) =>
 {
     const result = await pool.query(
@@ -83,6 +73,7 @@ const getGroupMemberCount = async (groupId) =>
     return parseInt(result.rows[0].count, 10);
 }
 
+// get group owner's username
 const getGroupOwnerNickname = async (groupId) =>
 {
     // Gets group by id
@@ -100,18 +91,6 @@ const getGroupOwnerNickname = async (groupId) =>
     return result.rows[0]?.username || null;
 }
         
-    
-
-
-/*
-// Get group by name
-const getGroupByName = async (name) =>
-{
-    const result = await pool.query('SELECT * FROM groups WHERE name = $1', [name])
-    return result.rows[0] || null
-}*/
-
-
 
 // Delete group by id
 const deleteGroupById = async (id) =>
@@ -131,8 +110,8 @@ export {
     getGroupById,
     getGroupByOwner,
     getGroupByMember,
-    //getGroupByName,
-    deleteGroupById,
+    getGroupByName,
     getGroupMemberCount,
-    getGroupOwnerNickname
+    getGroupOwnerNickname,
+    deleteGroupById
 }

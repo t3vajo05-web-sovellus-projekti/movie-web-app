@@ -6,21 +6,25 @@ import {
     returnGroupById,
     returnGroupByOwner,
     returnGroupByMember,
-    //returnGroupByName,
-    removeGroupById, 
+    returnGroupByName,
     returnGroupMemberCount,
-    returnGroupOwner} from '../controllers/groupController.js'
+    returnGroupOwner,
+    removeGroupById } from '../controllers/groupController.js'
 
 const router = Router()
 
 router.post('/create', auth, createGroup)
+
 router.get('/', returnAllGroups)
-router.get('/:id', returnGroupById)
+
 router.get('/membercount/:id', returnGroupMemberCount)
 router.get('/owner/:id', returnGroupOwner)
-//router.get('/:owner', returnGroupByOwner) ISSUE WITH THIS, WILL FIX LATER
-//router.get('/:member', returnGroupByMember) ISSUE WITH THIS, WILL FIX LATER
-//router.get('/:name', returnGroupByName) ISSUE WITH THIS, WILL FIX LATER
+router.get('/owned', auth, returnGroupByOwner)
+router.get('/member',auth, returnGroupByMember) 
+router.get('/groupname/:name', returnGroupByName) 
+
+router.get('/:id', returnGroupById) // keep this on the bottom of all the router.gets.
+
 router.delete('/:id', auth, removeGroupById)
 
 export default router
