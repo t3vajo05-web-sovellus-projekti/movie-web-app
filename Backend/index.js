@@ -6,6 +6,7 @@ import movieRouter from './routers/movieRouter.js'
 import groupRouter from './routers/groupRouter.js'
 import ratingRouter from './routers/ratingRouter.js'
 import reviewRouter from './routers/reviewRouter.js'
+import watchlistRouter from './routers/watchlistRouter.js'
 
 const port = 3001
 const app = express()
@@ -23,6 +24,7 @@ app.use('/movies', movieRouter)
 app.use('/groups', groupRouter)
 app.use('/ratings', ratingRouter)
 app.use('/reviews', reviewRouter)
+app.use('/watchlist', watchlistRouter)
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`)

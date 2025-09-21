@@ -73,12 +73,17 @@ export default function Navbar() {
                             User
                         </a>
                         <ul className="dropdown-menu dropdown-menu-end">
-                            <li><a className="dropdown-item" href="#">Profile</a></li>
+                            <li>
+                                <Link className="dropdown-item" to="/myprofile">Profile</Link>
+                            </li>
+                            <li>
+                                <Link className="dropdown-item" to="/myaccount">Account</Link>
+                            </li>
                             <li><a className="dropdown-item" href="#">My Groups</a></li>
                             <div className="dropdown-divider"></div>
                             <li><a className="dropdown-item" href="#">Watchlist</a></li>
                             <div className="dropdown-divider"></div>
-                            <li><button className="dropdown-item" type="button" onClick={logout}>Log Out</button></li>
+                            <li><button className="dropdown-item" type="button" onClick={() => { logout(); navigate('/'); }}>Log Out</button></li>
                         </ul>
                     </li>
                 </ul>

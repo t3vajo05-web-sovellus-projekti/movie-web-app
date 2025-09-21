@@ -20,6 +20,23 @@ const returnAllUsers = async (req, res, next) =>
     }
 }
 
+const returnMyUserInfo = async (req, res, next) =>
+{
+    // Returns a single user by id
+    // Returns all rows from users table
+    try
+    {
+        const userId = req.user.id
+        const rows = await getUserById(userId)
+        return res.status(200).json(rows)
+    }
+    catch (err)
+    {
+        console.error('returnAllUsers error:', err)
+        return res.status(500).json({ error: err.message })
+    }
+}
+
 const signUp = async (req, res, next) =>
 {
     // Adds a new user to users table
@@ -182,4 +199,4 @@ const deleteUser = async (req, res, next) => {
     }
 }
 
-export { returnAllUsers, signUp, signIn, deleteUser }
+export { returnAllUsers, signUp, signIn, deleteUser, returnMyUserInfo }
