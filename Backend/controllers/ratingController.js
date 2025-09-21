@@ -1,4 +1,13 @@
-import { getAllRatings, getRatingsByMovieId, getRatingsByUserId, getRatingByUserAndMovieId, createRating, changeRating, deleteRatingById } from "../models/ratingActions.js"
+import { 
+    getAllRatings, 
+    getRatingsByMovieId, 
+    getRatingsByUserId, 
+    getRatingByUserAndMovieId, 
+    createRating, 
+    changeRating, 
+    deleteRatingById,
+    getMovieRatingStats
+} from "../models/ratingActions.js"
 import { ApiError } from "../helper/apiError.js"
 
 const returnAllRatings = async (req, res, next) => {
@@ -43,8 +52,22 @@ const returnRatingsByUserId = async (req, res, next) => {
     }
 }
 
-// Should backend or frontend be used to figure out what movie is being rated?
-// And if the movie is in tmdb or not.
+const returnRatingByUserAndMovieId = async (req, res, next) => {
+    try {
+        const { userId, movieId } = req.params
+        const rating = await getRatingByUserAndMovieId(userId, movieId)
+
+        if (!rating) {
+            return next(new ApiError('Rating not found for given user and movie', 404))
+        }
+
+        return res.status(200).json(rating)
+    } catch (err) {
+        console.error('returnRatingByUserAndMovieId error:', err)
+        return res.status(500).json({error:err.message})
+    }
+}
+
 const rateMovie = async (req, res, next) => {
     try {
         const { rating } = req.body
@@ -98,10 +121,27 @@ const deleteRating = async (req, res, next) => {
     }
 }
 
+const returnMovieRatingStats = async (req, res, next) => {
+    try {
+        // returns average and count of ratings for the movie (two decimal accuracy for average)
+        // returns 0 if there are no ratings for the movie
+        const movieId = req.params.id
+
+        const stats = await getMovieRatingStats(movieId)
+
+        return res.status(200).json(stats)
+    } catch (err) {
+        console.error('returnMovieRatingStats error:', err)
+        return res.status(500).json({error:err.message})
+    }
+}
+
 export {
     returnAllRatings,
     returnRatingsByMovieId,
     returnRatingsByUserId,
+    returnRatingByUserAndMovieId,
     rateMovie,
-    deleteRating
+    deleteRating,
+    returnMovieRatingStats
 }

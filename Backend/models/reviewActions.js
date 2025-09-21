@@ -20,6 +20,18 @@ const getReviewByUserAndMovieId = async (user_id, movie_id) => {
     return result.rows[0] || null
 }
 
+const getLatestReviews = async (limit = 10) => {
+    const result = await pool.query('SELECT * FROM user_reviews ORDER BY created DESC LIMIT $1', [limit])
+    return result.rows
+}
+
+const getLatestReviewsByUserId = async (user_id, limit = 10) =>{
+    const result = await pool.query(
+        'SELECT * FROM user_reviews WHERE user_id = $1 ORDER BY created DESC LIMIT $2', [user_id, limit]
+    )
+    return result.rows
+}
+
 const createReview = (user_id, movie_id, review_text) => {
     return pool.query(
         'INSERT INTO user_reviews (user_id, movie_id, review_text) VALUES ($1, $2, $3) RETURNING *', 
@@ -37,6 +49,8 @@ export {
     getReviewsByMovieId,
     getReviewsByUserId,
     getReviewByUserAndMovieId,
+    getLatestReviews,
+    getLatestReviewsByUserId,
     createReview,
     deleteReviewById
 }

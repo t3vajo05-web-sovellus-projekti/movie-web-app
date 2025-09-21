@@ -3,6 +3,8 @@ import {
     getReviewsByMovieId, 
     getReviewsByUserId, 
     getReviewByUserAndMovieId, 
+    getLatestReviews,
+    getLatestReviewsByUserId,
     createReview, 
     deleteReviewById 
 } from "../models/reviewActions.js"
@@ -46,6 +48,40 @@ const returnReviewsByUserId = async (req, res, next) => {
         return res.status(200).json(reviews)
     } catch (err) {
         console.error('returnReviewsByUserId error:', err)
+        return res.status(500).json({error:err.message})
+    }
+}
+
+const returnLatestReviews = async (req, res, next) => {
+    try {
+        // returns latest reviews with a limit of 10 results by default
+        const limit = parseInt(req.query.limit) || 10
+        const reviews = await getLatestReviews(limit)
+
+        if (!reviews || reviews.length === 0) {
+            return next(new ApiError('No reviews found', 404))
+        }
+
+        return res.status(200).json(reviews)
+    } catch (err) {
+        console.error('returnLatestReviews error:', err)
+        return res.status(500).json({error:err.message})
+    }
+}
+
+const returnLatestReviewsByUser = async (req, res, next) => {
+    try {
+        const userId = req.params.id
+        const limit = parseInt(req.query.limit) || 10
+        const reviews = await getLatestReviewsByUserId(userId, limit)
+
+        if (!reviews || reviews.length === 0) {
+            return next(new ApiError('No reviews found for user', 404))
+        }
+
+        return res.status(200).json(reviews)
+    } catch (err) {
+        console.error('returnLatestReveiwsByUser error:', err)
         return res.status(500).json({error:err.message})
     }
 }
@@ -98,6 +134,8 @@ export {
     returnAllReviews,
     returnReviewsByMovieId,
     returnReviewsByUserId,
+    returnLatestReviews,
+    returnLatestReviewsByUser,
     reviewMovie,
     deleteReview
 }
