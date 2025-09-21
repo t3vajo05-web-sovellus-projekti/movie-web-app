@@ -1,6 +1,6 @@
 import { pool } from '../helper/db.js'
 
-/* File contains following models (in order):
+/* File contains following models (should be in order):
 - create your own group
 - add owner as member
 - get all groups
