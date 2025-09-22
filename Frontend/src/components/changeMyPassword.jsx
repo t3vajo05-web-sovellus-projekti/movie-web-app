@@ -38,7 +38,7 @@ export default function ChangePassword()
                 headers: { Authorization: `Bearer ${user.token}` }
             });
 
-            alert(res.data.message || "Password changed successfully");
+            alert(res.data.message);
             setConfirming(false);
             setOldPassword("");
             setNewPassword("");

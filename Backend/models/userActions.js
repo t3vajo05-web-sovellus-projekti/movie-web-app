@@ -27,6 +27,11 @@ const getUserByUsername = async (username) =>
     return result.rows[0] || null
 }
 
+const getUsernameById = async (id) => {
+    const result = await pool.query('SELECT username FROM users WHERE id = $1', [id])
+    return result.rows[0] || null
+}
+
 const getUserById = async (id) => {
     const result = await pool.query('SELECT * FROM users WHERE id = $1', [id])
     return result.rows[0] || null
@@ -57,6 +62,7 @@ export {
     addUser, 
     getUserByEmail, 
     getUserByUsername, 
+    getUsernameById,
     getUserById,
     actionSignInByEmail, 
     actionSignInByUsername, 

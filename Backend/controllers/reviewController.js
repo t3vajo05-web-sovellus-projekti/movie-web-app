@@ -7,7 +7,8 @@ import {
     getLatestReviewsByUserId,
     getUserReviewCount,
     createReview, 
-    deleteReviewById 
+    deleteReviewById,
+    getLatestReviewsByMovieId
 } from "../models/reviewActions.js"
 import { ApiError } from "../helper/apiError.js"
 
@@ -41,10 +42,6 @@ const returnReviewsByUserId = async (req, res, next) => {
     try {
         const userId = req.params.id
         const reviews = await getReviewsByUserId(userId)
-
-        if (!reviews || reviews.length === 0) {
-            return next(new ApiError('Reviews not found for user', 404))
-        }
 
         return res.status(200).json(reviews)
     } catch (err) {
@@ -87,6 +84,19 @@ const returnLatestReviewsByUser = async (req, res, next) => {
     }
 }
 
+const returnLatestReviewsByMovieId = async (req, res, next) => {
+    try {
+        const movieId = req.params.id
+        const limit = parseInt(req.query.limit) || 5
+        const reviews = await getLatestReviewsByMovieId(movieId, limit)
+
+        return res.status(200).json(reviews)
+    } catch (err) {
+        console.error('returnLatestReviewsByMovie error:', err)
+        return res.status(500).json({error:err.message})
+    }
+}
+
 const returnUserReviewCount = async (req, res, next) => {
     try {
         // returns count of reviews for given user_id
@@ -102,7 +112,7 @@ const returnUserReviewCount = async (req, res, next) => {
 
 const reviewMovie = async (req, res, next) => {
     try {
-        const { review } = req.body
+        const review = req.body
         const userId = req.user.id
 
         if (!review.movie_id) {
@@ -152,5 +162,6 @@ export {
     returnLatestReviewsByUser,
     returnUserReviewCount,
     reviewMovie,
-    deleteReview
+    deleteReview,
+    returnLatestReviewsByMovieId
 }

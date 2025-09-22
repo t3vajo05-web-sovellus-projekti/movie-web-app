@@ -1,5 +1,5 @@
 import { hash, compare } from 'bcrypt'
-import { getAllUsers, addUser, getUserByEmail, getUserByUsername, getUserById, actionSignInByEmail, actionSignInByUsername, actionDeleteUserById, changeMyPassword } from "../models/userActions.js";
+import { getAllUsers, addUser, getUserByEmail, getUserByUsername, getUserById, getUsernameById, actionSignInByEmail, actionSignInByUsername, actionDeleteUserById, changeMyPassword } from "../models/userActions.js";
 import { ApiError } from "../helper/apiError.js";
 import pkg from 'jsonwebtoken'
 
@@ -22,8 +22,6 @@ const returnAllUsers = async (req, res, next) =>
 
 const returnMyUserInfo = async (req, res, next) =>
 {
-    // Returns a single user by id
-    // Returns all rows from users table
     try
     {
         const userId = req.user.id
@@ -33,6 +31,28 @@ const returnMyUserInfo = async (req, res, next) =>
     catch (err)
     {
         console.error('returnAllUsers error:', err)
+        return res.status(500).json({ error: err.message })
+    }
+}
+
+const returnUsername = async (req, res, next) =>
+{
+    // Returns user info based on id param
+    try
+    {
+        const userId = req.params.id
+        const rows = await getUsernameById(userId)
+
+        if (!rows)
+        {
+            return next(new ApiError('User not found', 404))
+        }
+
+        return res.status(200).json(rows)
+    }
+    catch (err)
+    {
+        console.error('returnUser error:', err)
         return res.status(500).json({ error: err.message })
     }
 }
@@ -149,7 +169,8 @@ const signIn = async (req, res, next) =>
         return res.status(200).json({
             token,
             username: dbUser.username,
-            email: dbUser.email
+            email: dbUser.email,
+            id: dbUser.id
         })
     }
     catch(err)
@@ -229,11 +250,11 @@ const changePassword = async (req, res, next) => {
             return next(new ApiError('Failed to update password', 500))
         }
 
-        return res.status(200).json({ message: 'Password updated successfully' })
+        return res.status(200).json({ message: 'Your password has been changed' })
     } catch (err) {
         console.error('changePassword error:', err)
         return res.status(500).json({ error: err.message })
     }
 }
 
-export { returnAllUsers, signUp, signIn, deleteUser, returnMyUserInfo, changePassword }
+export { returnAllUsers, signUp, signIn, deleteUser, returnMyUserInfo, changePassword, returnUsername }

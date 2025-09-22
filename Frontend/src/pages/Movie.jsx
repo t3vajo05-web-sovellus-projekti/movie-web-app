@@ -6,6 +6,8 @@ import { UserContext } from "../context/UserContext.js";
 import StarRating from '../components/StarRating.jsx';
 import WatchlistDropdown from '../components/buttonWatchlist.jsx'
 import FavoriteButton from "../components/buttonFavorites.jsx";
+import ReviewCreate from "../components/reviewsCreate.jsx";
+import ReviewsShow from "../components/reviewsShow.jsx";
 
 
 export default function Movie() 
@@ -27,6 +29,8 @@ export default function Movie()
             const data = await res.json();
             setMovie(data);
 
+            if (!user) return;
+
             const resWatchlist = await fetch(`http://localhost:3001/watchlist`,
                 {
                     headers: { Authorization: `Bearer ${user.token}` }
@@ -44,7 +48,7 @@ export default function Movie()
 
         fetchData();
 
-    }, [id]);    
+    }, [id, user]);    
 
     if (!movie) return <p>No movie found</p>;
 
@@ -66,23 +70,24 @@ export default function Movie()
                     <p><strong>Runtime:</strong> {movie.runtime} min</p>
                     <p><strong>Genres:</strong> {movie.genres.map(g => g.name).join(", ")}</p>
 
-                    <StarRating/>
+                    {user && <StarRating/>}
                     <p className="mt-3">{movie.overview}</p>
                     
                     <div className="d-flex gap-2 mt-3">
-                    <WatchlistDropdown
+                    {user && <WatchlistDropdown
                         movieId={id}
                         watchlist={watchlist}
                         setWatchlist={setWatchlist}
-                    />
-                    <FavoriteButton
+                    />}
+                    {user && <FavoriteButton
                         movieId={id}
                         favoritelist={favoritelist}
                         setFavoritelist={setFavoritelist}
-                    />
+                    />}
                     </div>
                 </div>
-                Reviews
+                {user && <ReviewCreate movieId={id} />}
+                <ReviewsShow movieId={id} />
             </div>
         </div>
     );
