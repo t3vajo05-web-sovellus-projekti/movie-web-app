@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { UserContext } from "../context/UserContext.js";
 import DeleteUser from "../components/DeleteUser.jsx";
+import ChangePassword from "../components/changeMyPassword.jsx";
 
 export default function MyAccount() 
 {
@@ -49,6 +50,7 @@ export default function MyAccount()
             Amount of groups im the owner in
             Amount of groups im a member in
             Amount of reviews i have done
+            <ChangePassword />
             <DeleteUser />
         </div>
 
