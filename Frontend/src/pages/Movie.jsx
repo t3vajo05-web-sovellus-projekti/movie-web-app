@@ -7,6 +7,7 @@ import StarRating from '../components/StarRating.jsx';
 import WatchlistDropdown from '../components/buttonWatchlist.jsx'
 import FavoriteButton from "../components/buttonFavorites.jsx";
 import ReviewCreate from "../components/reviewsCreate.jsx";
+import ReviewsShow from "../components/reviewsShow.jsx";
 
 
 export default function Movie() 
@@ -86,6 +87,7 @@ export default function Movie()
                     </div>
                 </div>
                 {user && <ReviewCreate movieId={id} />}
+                <ReviewsShow movieId={id} />
             </div>
         </div>
     );
