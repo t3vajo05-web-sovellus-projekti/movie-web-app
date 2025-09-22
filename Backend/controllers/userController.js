@@ -1,5 +1,5 @@
 import { hash, compare } from 'bcrypt'
-import { getAllUsers, addUser, getUserByEmail, getUserByUsername, getUserById, actionSignInByEmail, actionSignInByUsername, actionDeleteUserById } from "../models/userActions.js";
+import { getAllUsers, addUser, getUserByEmail, getUserByUsername, getUserById, actionSignInByEmail, actionSignInByUsername, actionDeleteUserById, changeMyPassword } from "../models/userActions.js";
 import { ApiError } from "../helper/apiError.js";
 import pkg from 'jsonwebtoken'
 
@@ -199,4 +199,41 @@ const deleteUser = async (req, res, next) => {
     }
 }
 
-export { returnAllUsers, signUp, signIn, deleteUser, returnMyUserInfo }
+const changePassword = async (req, res, next) => {
+    try {
+        const userId = req.user.id
+        const { oldPassword, newPassword } = req.body
+        if(!oldPassword || !newPassword) {
+            return next(new ApiError('Old and new passwords are required', 400))
+        }
+        
+        // Password must be at least 8 chars, include a number and a capital letter
+        const pwRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/
+        if (!pwRegex.test(newPassword)) {
+            return next(new ApiError('New password requirements were not met', 400))
+        }
+
+        const dbUser = await getUserById(userId)
+        if(!dbUser) {
+            return next(new ApiError('User not found', 404))
+        }
+
+        const isMatch = await compare(oldPassword, dbUser.hashed_password)
+        if(!isMatch) {
+            return next(new ApiError('Invalid old password', 401))
+        }
+
+        const newHashedPassword = await hash(newPassword, 10)
+        const updatedUser = await changeMyPassword(userId, newHashedPassword)
+        if(!updatedUser) {
+            return next(new ApiError('Failed to update password', 500))
+        }
+
+        return res.status(200).json({ message: 'Password updated successfully' })
+    } catch (err) {
+        console.error('changePassword error:', err)
+        return res.status(500).json({ error: err.message })
+    }
+}
+
+export { returnAllUsers, signUp, signIn, deleteUser, returnMyUserInfo, changePassword }
