@@ -102,7 +102,7 @@ const returnUserReviewCount = async (req, res, next) => {
 
 const reviewMovie = async (req, res, next) => {
     try {
-        const { review } = req.body
+        const review = req.body
         const userId = req.user.id
 
         if (!review.movie_id) {
