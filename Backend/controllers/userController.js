@@ -149,7 +149,8 @@ const signIn = async (req, res, next) =>
         return res.status(200).json({
             token,
             username: dbUser.username,
-            email: dbUser.email
+            email: dbUser.email,
+            id: dbUser.id
         })
     }
     catch(err)
