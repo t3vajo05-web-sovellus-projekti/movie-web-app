@@ -1,5 +1,5 @@
 import { hash, compare } from 'bcrypt'
-import { getAllUsers, addUser, getUserByEmail, getUserByUsername, getUsernameById, actionSignInByEmail, actionSignInByUsername, actionDeleteUserById, changeMyPassword } from "../models/userActions.js";
+import { getAllUsers, addUser, getUserByEmail, getUserByUsername, getUserById, getUsernameById, actionSignInByEmail, actionSignInByUsername, actionDeleteUserById, changeMyPassword } from "../models/userActions.js";
 import { ApiError } from "../helper/apiError.js";
 import pkg from 'jsonwebtoken'
 
@@ -250,7 +250,7 @@ const changePassword = async (req, res, next) => {
             return next(new ApiError('Failed to update password', 500))
         }
 
-        return res.status(200).json({ message: 'Password updated successfully' })
+        return res.status(200).json({ message: 'Your password has been changed' })
     } catch (err) {
         console.error('changePassword error:', err)
         return res.status(500).json({ error: err.message })
