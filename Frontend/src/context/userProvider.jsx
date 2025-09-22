@@ -4,7 +4,7 @@ import axios from 'axios'
 
 export default function UserProvider({children}) {
     const userFromStorage = localStorage.getItem('user')
-    const [user, setUser] = useState(userFromStorage ? JSON.parse(userFromStorage) : {username: '', email: '', password: ''})
+    const [user, setUser] = useState(userFromStorage ? JSON.parse(userFromStorage) : null)
 
     const signUp = async(userData) => {
         const headers = {headers: {'Content-Type': 'application/json'}}
@@ -16,9 +16,9 @@ export default function UserProvider({children}) {
         const headers = {headers: {'Content-Type': 'application/json'}}
         const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/signin`, 
             {user: {identifier: userData.identifier, password: userData.password}}, headers)
-        localStorage.setItem('user', JSON.stringify(response.data))
 
         const loggedInUser = {
+            id: response.data.id,
             token: response.data.token,
             username: response.data.username,
             email: response.data.email
@@ -30,7 +30,7 @@ export default function UserProvider({children}) {
     }
     const logout = () => {
         localStorage.removeItem('user')
-        setUser({ username: '', email: '', password: '' })
+        setUser(null)
     }
     const deleteUserAccount = async (password) => {
         if(!user?.token) throw new Error("No token available")
