@@ -158,7 +158,11 @@ export default function ReviewCreate({ movieId })
                 value={reviewText}
                 onChange={(e) => setReviewText(e.target.value)}
                 rows={4}
+                maxLength={3000}
             />
+            <small className="text-muted d-block text-end">
+                {reviewText.length}/3000
+            </small>
             <div className="d-flex gap-2">
                 <button
                     className="btn btn-primary"
