@@ -159,6 +159,16 @@ const signIn = async (req, res, next) =>
             result = await actionSignInByUsername(user.identifier)
         }
 
+        if (user.identifier.length > 255) {
+            return next(new ApiError('Email or username must be less than 255 characters', 400));
+        }
+        if (user.password.length < 8) {
+            return next(new ApiError('Password must be at least 8 characters', 400));
+        }
+        if (user.password.length > 255) {
+            return next(new ApiError('Password must be less than 255 characters', 400));
+        }
+
         if(result.rows.length === 0)
         {
             console.log('User not found')
