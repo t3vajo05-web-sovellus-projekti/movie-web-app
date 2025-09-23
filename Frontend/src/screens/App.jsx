@@ -23,6 +23,7 @@ import UserProvider from '../context/userProvider.jsx'
 import MyProfile from '../pages/MyProfile.jsx'
 import MyAccount from '../pages/MyAccount.jsx'
 import Movie from '../pages/Movie.jsx'
+import MyWatchlist from '../pages/MyWatchlist.jsx'
 
 
 /*
@@ -74,6 +75,7 @@ function App() {
           <Route path="/myaccount" exact element={<MyAccount />} />
           <Route path="/movie/:id" exact element={<Movie />} />
           <Route path="/*" exact element={<NotFound />} />
+          <Route path="/watchlist" exact element={<MyWatchlist />} />
         </Routes>
       </div>
       <Footer />
