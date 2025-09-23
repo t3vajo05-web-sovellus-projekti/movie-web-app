@@ -21,6 +21,9 @@ export default function Login()
     {
         e.preventDefault()
 
+        // Trim identifier
+        formData.identifier = formData.identifier.trim()
+
         try
         {
             const response = await signIn({
