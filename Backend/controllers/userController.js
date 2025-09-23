@@ -226,6 +226,13 @@ const deleteUser = async (req, res, next) => {
             return next(new ApiError('Password is required', 400))
         }
 
+        if (password.length < 8) {
+            return next(new ApiError('Password must be at least 8 characters', 400));
+        }
+        if (password.length > 255) {
+            return next(new ApiError('Password must be less than 255 characters', 400));
+        }
+
         const dbUser = await getUserById(userId)
 
         if(!dbUser) {

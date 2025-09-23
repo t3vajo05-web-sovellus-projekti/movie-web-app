@@ -37,6 +37,9 @@ export default function DeleteUser({ token, setToken }) {
                             className="form-control"
                             placeholder="Confirm password"
                             value={password}
+                            minLength={8}
+                            maxLength={255}
+                            required
                             onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
