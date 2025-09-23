@@ -260,6 +260,13 @@ const changePassword = async (req, res, next) => {
         if(!oldPassword || !newPassword) {
             return next(new ApiError('Old and new passwords are required', 400))
         }
+
+        if (newPassword.length < 8) {
+            return next(new ApiError('New password must be at least 8 characters', 400));
+        }
+        if (newPassword.length > 255) {
+            return next(new ApiError('New password must be less than 255 characters', 400));
+        }
         
         // Password must be at least 8 chars, include a number and a capital letter
         const pwRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/

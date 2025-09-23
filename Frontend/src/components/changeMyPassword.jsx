@@ -72,6 +72,8 @@ export default function ChangePassword()
                             placeholder="Current password"
                             value={oldPassword}
                             onChange={(e) => setOldPassword(e.target.value)}
+                            maxLength={255}
+                            required
                         />
                     </div>
                     <div className="mb-3">
@@ -81,6 +83,9 @@ export default function ChangePassword()
                             placeholder="New password"
                             value={newPassword}
                             onChange={(e) => setNewPassword(e.target.value)}
+                            minLength={8}
+                            maxLength={255}
+                            required
                         />
                         <div className="form-text">
                             Must be at least 8 characters, contain one uppercase letter and one number.
@@ -93,6 +98,7 @@ export default function ChangePassword()
                             placeholder="Repeat new password"
                             value={repeatPassword}
                             onChange={(e) => setRepeatPassword(e.target.value)}
+                            required
                         />
                     </div>
         
