@@ -9,10 +9,12 @@ export const fetchTheatres = async () =>
     const xmlDoc = parser.parseFromString(text, "application/xml");
 
     const theatreNodes = xmlDoc.getElementsByTagName("TheatreArea");
-    const theatres = Array.from(theatreNodes).map(node => ({
+    let theatres = Array.from(theatreNodes).map(node => ({
         id: node.getElementsByTagName("ID")[0].textContent,
         name: node.getElementsByTagName("Name")[0].textContent
     }));
+
+    theatres = theatres.filter(t => t.name !== "Valitse alue/teatteri"); // Remove placeholder
 
     return theatres;
 };
