@@ -47,7 +47,7 @@ export default function Signup()
         catch (error)
         {
             console.error("Sign up failed:", error);
-            alert("Sign up failed. Check console for details.");
+            alert("Sign up failed. " + (error.response?.data?.error || error.message));
         }
     }
 
@@ -67,9 +67,14 @@ export default function Signup()
                                         id="username" 
                                         name="username" 
                                         value={formData.username} 
-                                        onChange={handleChange} 
+                                        onChange={handleChange}
+                                        minLength={4}
+                                        maxLength={255}
                                         required 
                                     />
+                                    <div className="form-text">
+                                        Must be at least 4 characters.
+                                    </div>
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="email" className="form-label">Email</label>
@@ -79,7 +84,8 @@ export default function Signup()
                                         id="email" 
                                         name="email" 
                                         value={formData.email} 
-                                        onChange={handleChange} 
+                                        onChange={handleChange}
+                                        maxLength={255}
                                         required 
                                     />
                                     {formData.email && !emailRegex.test(formData.email) && (
@@ -93,8 +99,10 @@ export default function Signup()
                                         className={`form-control ${formData.password ? (pwRegex.test(formData.password) ? "is-valid" : "is-invalid") : ""}`}
                                         id="password" 
                                         name="password" 
-                                        value={formData.password} 
-                                        onChange={handleChange} 
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        minLength={8}
+                                        maxLength={255}
                                         required 
                                     />
                                     <div className="form-text">

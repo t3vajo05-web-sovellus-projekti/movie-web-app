@@ -76,6 +76,29 @@ const signUp = async (req, res, next) =>
             return next(new ApiError('Password requirements were not met', 400))
         }
 
+        if (user.username.length < 4) {
+            return next(new ApiError('Username must be at least 4 characters', 400));
+        }
+        if (user.username.length > 255) {
+            return next(new ApiError('Username must be less than 255 characters', 400));
+        }
+        if (user.email.length > 255) {
+            return next(new ApiError('Email must be less than 255 characters', 400));
+        }
+        if (user.password.length < 8) {
+            return next(new ApiError('Password must be at least 8 characters', 400));
+        }
+        if (user.password.length > 255) {
+            return next(new ApiError('Password must be less than 255 characters', 400));
+        }
+        
+        // Email regex check
+        const emailRegex = /^.+@.+\..+$/
+        if (!emailRegex.test(user.email))
+        {
+            return next(new ApiError('Invalid email format', 400))
+        }
+
         // Check existing
         if (await getUserByEmail(user.email))
         {
