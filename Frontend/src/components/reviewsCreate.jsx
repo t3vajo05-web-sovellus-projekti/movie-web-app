@@ -122,25 +122,21 @@ export default function ReviewCreate({ movieId })
                 {existingReview ? (
                     <>
                         <div className="border rounded p-2 d-flex flex-column">
-                            <span>{existingReview}</span>
+                            <span style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+                                {existingReview}
+                            </span>
                             <small className="text-muted mt-auto">
                                 Reviewed on: {new Date(reviewCreatedAt).toLocaleDateString("fi-FI")}
                             </small>
                         </div>
                         <div className="mt-2 d-flex gap-2">
-                            <button
-                                className="btn btn-sm btn-secondary"
-                                onClick={() => {
-                                    setIsEditing(true);
-                                    setReviewText(existingReview);
-                                }}
-                            >
+                            <button className="btn btn-sm btn-secondary" onClick={() => {
+                                setIsEditing(true);
+                                setReviewText(existingReview);
+                            }}>
                                 Edit my review
                             </button>
-                            <button
-                                className="btn btn-sm btn-danger"
-                                onClick={handleDelete}
-                            >
+                            <button className="btn btn-sm btn-danger" onClick={handleDelete}>
                                 Delete
                             </button>
                         </div>
@@ -150,6 +146,7 @@ export default function ReviewCreate({ movieId })
                 )}
             </div>
         );
+        
     }
 
     return (
@@ -161,7 +158,11 @@ export default function ReviewCreate({ movieId })
                 value={reviewText}
                 onChange={(e) => setReviewText(e.target.value)}
                 rows={4}
+                maxLength={3000}
             />
+            <small className="text-muted d-block text-end">
+                {reviewText.length}/3000
+            </small>
             <div className="d-flex gap-2">
                 <button
                     className="btn btn-primary"

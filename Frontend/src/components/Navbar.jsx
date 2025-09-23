@@ -61,9 +61,11 @@ export default function Navbar() {
                         placeholder="Search"
                         aria-label="Search"
                         value={query}
+                        maxLength={255}
+                        required
                         onChange={(e) => setQuery(e.target.value)}
                     />
-                    <button className="btn btn-outline-success" type="submit">Search</button>
+                    <button className="btn btn-outline-success" type="submit">Search </button>
                 </form>
 
                 {user && user.token ? (

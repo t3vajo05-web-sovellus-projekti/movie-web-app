@@ -119,6 +119,11 @@ const reviewMovie = async (req, res, next) => {
             return next(new ApiError('Movie_id is required', 400))
         }
 
+        // Backend length validation
+        if (review_text && review_text.length > 3000) {
+            return next(new ApiError('Review text cannot exceed 3000 characters', 400));
+        }
+
         const existingReview = await getReviewByUserAndMovieId(userId, review.movie_id)
 
         let result

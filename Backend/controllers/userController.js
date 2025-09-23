@@ -76,6 +76,29 @@ const signUp = async (req, res, next) =>
             return next(new ApiError('Password requirements were not met', 400))
         }
 
+        if (user.username.length < 4) {
+            return next(new ApiError('Username must be at least 4 characters', 400));
+        }
+        if (user.username.length > 255) {
+            return next(new ApiError('Username must be less than 255 characters', 400));
+        }
+        if (user.email.length > 255) {
+            return next(new ApiError('Email must be less than 255 characters', 400));
+        }
+        if (user.password.length < 8) {
+            return next(new ApiError('Password must be at least 8 characters', 400));
+        }
+        if (user.password.length > 255) {
+            return next(new ApiError('Password must be less than 255 characters', 400));
+        }
+        
+        // Email regex check
+        const emailRegex = /^.+@.+\..+$/
+        if (!emailRegex.test(user.email))
+        {
+            return next(new ApiError('Invalid email format', 400))
+        }
+
         // Check existing
         if (await getUserByEmail(user.email))
         {
@@ -136,6 +159,16 @@ const signIn = async (req, res, next) =>
             result = await actionSignInByUsername(user.identifier)
         }
 
+        if (user.identifier.length > 255) {
+            return next(new ApiError('Email or username must be less than 255 characters', 400));
+        }
+        if (user.password.length < 8) {
+            return next(new ApiError('Password must be at least 8 characters', 400));
+        }
+        if (user.password.length > 255) {
+            return next(new ApiError('Password must be less than 255 characters', 400));
+        }
+
         if(result.rows.length === 0)
         {
             console.log('User not found')
@@ -193,6 +226,13 @@ const deleteUser = async (req, res, next) => {
             return next(new ApiError('Password is required', 400))
         }
 
+        if (password.length < 8) {
+            return next(new ApiError('Password must be at least 8 characters', 400));
+        }
+        if (password.length > 255) {
+            return next(new ApiError('Password must be less than 255 characters', 400));
+        }
+
         const dbUser = await getUserById(userId)
 
         if(!dbUser) {
@@ -226,6 +266,13 @@ const changePassword = async (req, res, next) => {
         const { oldPassword, newPassword } = req.body
         if(!oldPassword || !newPassword) {
             return next(new ApiError('Old and new passwords are required', 400))
+        }
+
+        if (newPassword.length < 8) {
+            return next(new ApiError('New password must be at least 8 characters', 400));
+        }
+        if (newPassword.length > 255) {
+            return next(new ApiError('New password must be less than 255 characters', 400));
         }
         
         // Password must be at least 8 chars, include a number and a capital letter

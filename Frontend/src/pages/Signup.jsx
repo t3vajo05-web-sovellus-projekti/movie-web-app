@@ -23,33 +23,45 @@ export default function Signup()
     }
 
     const handleSubmit = async (e) =>
-    {
-        e.preventDefault();
-
-        if(formData.password !== formData.confirmPassword)
         {
-            alert("Passwords do not match");
-            return;
-        }
+            e.preventDefault();
+        
+            // Trim username and email
+            const trimmedUsername = formData.username.trim();
+            const trimmedEmail = formData.email.trim();
+        
+            // Validate username: no spaces allowed
+            if(trimmedUsername.includes(' '))
+            {
+                alert("Username cannot contain spaces.");
+                return;
+            }
 
-        try
-        {
-            const response = await signUp({
-                username: formData.username,
-                email: formData.email,
-                password: formData.password
-            });
-
-            console.log("Sign up successful:", response.data);
-            alert("Sign up successful! You can now sign in.");
-            navigate("/login");
+            if(trimmedUsername.includes(' '))
+            {
+                alert("Email cannot contain spaces.");
+                return;
+            }
+        
+            try
+            {
+                const response = await signUp({
+                    username: trimmedUsername,
+                    email: trimmedEmail,
+                    password: formData.password
+                });
+        
+                console.log("Sign up successful:", response.data);
+                alert("Sign up successful! You can now sign in.");
+                navigate("/login");
+            }
+            catch (error)
+            {
+                console.error("Sign up failed:", error);
+                alert("Sign up failed. " + (error.response?.data?.error || error.message));
+            }
         }
-        catch (error)
-        {
-            console.error("Sign up failed:", error);
-            alert("Sign up failed. Check console for details.");
-        }
-    }
+        
 
     return (
         <div className="container mt-5">
@@ -67,9 +79,14 @@ export default function Signup()
                                         id="username" 
                                         name="username" 
                                         value={formData.username} 
-                                        onChange={handleChange} 
+                                        onChange={handleChange}
+                                        minLength={4}
+                                        maxLength={255}
                                         required 
                                     />
+                                    <div className="form-text">
+                                        Must be at least 4 characters.
+                                    </div>
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="email" className="form-label">Email</label>
@@ -79,7 +96,8 @@ export default function Signup()
                                         id="email" 
                                         name="email" 
                                         value={formData.email} 
-                                        onChange={handleChange} 
+                                        onChange={handleChange}
+                                        maxLength={255}
                                         required 
                                     />
                                     {formData.email && !emailRegex.test(formData.email) && (
@@ -93,8 +111,10 @@ export default function Signup()
                                         className={`form-control ${formData.password ? (pwRegex.test(formData.password) ? "is-valid" : "is-invalid") : ""}`}
                                         id="password" 
                                         name="password" 
-                                        value={formData.password} 
-                                        onChange={handleChange} 
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        minLength={8}
+                                        maxLength={255}
                                         required 
                                     />
                                     <div className="form-text">

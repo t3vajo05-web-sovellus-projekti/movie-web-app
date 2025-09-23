@@ -81,7 +81,9 @@ export default function ReviewsShow({ movieId })
                     <small className="text-muted d-block mb-2">
                         By {usernames[review.user_id]}:
                     </small>
-                    <p className="mb-3">{review.review_text}</p>
+                    <p className="mb-3" style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+                        {review.review_text}
+                    </p>
                     <small className="text-muted">
                         Reviewed on: {new Date(review.created).toLocaleDateString("fi-FI")}
                     </small>
