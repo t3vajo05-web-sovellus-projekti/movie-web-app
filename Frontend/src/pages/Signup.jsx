@@ -23,33 +23,45 @@ export default function Signup()
     }
 
     const handleSubmit = async (e) =>
-    {
-        e.preventDefault();
-
-        if(formData.password !== formData.confirmPassword)
         {
-            alert("Passwords do not match");
-            return;
-        }
+            e.preventDefault();
+        
+            // Trim username and email
+            const trimmedUsername = formData.username.trim();
+            const trimmedEmail = formData.email.trim();
+        
+            // Validate username: no spaces allowed
+            if(trimmedUsername.includes(' '))
+            {
+                alert("Username cannot contain spaces.");
+                return;
+            }
 
-        try
-        {
-            const response = await signUp({
-                username: formData.username,
-                email: formData.email,
-                password: formData.password
-            });
-
-            console.log("Sign up successful:", response.data);
-            alert("Sign up successful! You can now sign in.");
-            navigate("/login");
+            if(trimmedUsername.includes(' '))
+            {
+                alert("Email cannot contain spaces.");
+                return;
+            }
+        
+            try
+            {
+                const response = await signUp({
+                    username: trimmedUsername,
+                    email: trimmedEmail,
+                    password: formData.password
+                });
+        
+                console.log("Sign up successful:", response.data);
+                alert("Sign up successful! You can now sign in.");
+                navigate("/login");
+            }
+            catch (error)
+            {
+                console.error("Sign up failed:", error);
+                alert("Sign up failed. " + (error.response?.data?.error || error.message));
+            }
         }
-        catch (error)
-        {
-            console.error("Sign up failed:", error);
-            alert("Sign up failed. " + (error.response?.data?.error || error.message));
-        }
-    }
+        
 
     return (
         <div className="container mt-5">
