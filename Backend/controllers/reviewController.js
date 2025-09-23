@@ -120,7 +120,7 @@ const reviewMovie = async (req, res, next) => {
         }
 
         // Backend length validation
-        if (review_text && review_text.length > 3000) {
+        if (review && review.length > 3000) {
             return next(new ApiError('Review text cannot exceed 3000 characters', 400));
         }
 
