@@ -16,22 +16,35 @@ export default function Explore() {
     useEffect(() => {
         const fetchInitialData = async () => {
             try {
-                // Fetch now-playing and upcoming
-                const [nowRes, upcomingRes, wlRes] = await Promise.all([
-                    axios.get('http://localhost:3001/movies/nowplaying'),
-                    axios.get('http://localhost:3001/movies/upcoming'),
-                    axios.get('http://localhost:3001/watchlist', {
-                        headers: { Authorization: `Bearer ${user.token}` }
-                    })
-                ]);
+                // Fetch now-playing and upcoming, watchlist only if logged in
+                let nowRes, upcomingRes, wlRes;
+
+                if (user && user.token) 
+                {
+                    [nowRes, upcomingRes, wlRes] = await Promise.all([
+                        axios.get('http://localhost:3001/movies/nowplaying'),
+                        axios.get('http://localhost:3001/movies/upcoming'),
+                        axios.get('http://localhost:3001/watchlist', {
+                            headers: { Authorization: `Bearer ${user.token}` }
+                        })
+                    ]);
+                } 
+                else 
+                {
+                    [nowRes, upcomingRes] = await Promise.all([
+                        axios.get('http://localhost:3001/movies/nowplaying'),
+                        axios.get('http://localhost:3001/movies/upcoming')
+                    ]);
+                    wlRes = { data: { results: [] } };
+                }
 
                 setNowPlaying(nowRes.data.results || []);
                 setUpcoming(upcomingRes.data.results || []);
 
-                const wl = wlRes.data || [];
+                const wl = Array.isArray(wlRes?.data) ? wlRes.data : [];
                 setWatchlist(wl);
-
-                // Pick featured movie IDs
+                
+                // Select a random movie from watchlist for recommendations and similar
                 const recCandidates = wl.filter(item => item.status !== "Not interested");
                 const simCandidates = wl.filter(item => item.favorite === true);
 
@@ -47,9 +60,9 @@ export default function Explore() {
         };
 
         fetchInitialData();
-    }, []);
+    }, [user]);
 
-    // Fetch recommendations when featuredRecId is ready
+    // Set recommendations
     useEffect(() => {
         if (!featuredRecId) return;
         const fetchRecommendations = async () => {
@@ -63,7 +76,7 @@ export default function Explore() {
         fetchRecommendations();
     }, [featuredRecId]);
 
-    // Fetch similar when featuredSimId is ready
+    // Set similar movies
     useEffect(() => {
         if (!featuredSimId) return;
         const fetchSimilar = async () => {
@@ -78,7 +91,7 @@ export default function Explore() {
     }, [featuredSimId]);
 
     return (
-        <div className="container mt-5">
+        <div className="container mt-5 pb-5">
             <h3 className="mb-4">Now in theatres</h3>
             <MovieCarousel movies={nowPlaying} carouselId="nowPlayingCarousel" />
     
@@ -86,17 +99,25 @@ export default function Explore() {
             <MovieCarousel movies={upcoming} carouselId="upcomingCarousel" />
     
             <h3 className="mb-4 mt-5">Recommended for you</h3>
-            {recommendations.length > 0 ? (
-                <MovieCarousel movies={recommendations} carouselId="recommendationsCarousel" />
+            {user ? (
+                recommendations.length > 0 ? (
+                    <MovieCarousel movies={recommendations} carouselId="recommendationsCarousel" />
+                ) : (
+                    <p>Add a movie to your watchlist to see recommendations.</p>
+                )
             ) : (
-                <p>Add a movie to your watchlist to see recommendations.</p>
+                <p>Log in to get recommendations based on your watchlist.</p>
             )}
-    
+
             <h3 className="mb-4 mt-5">Similar to your favorites</h3>
-            {similar.length > 0 ? (
-                <MovieCarousel movies={similar} carouselId="similarCarousel" />
+            {user ? (
+                similar.length > 0 ? (
+                    <MovieCarousel movies={similar} carouselId="similarCarousel" />
+                ) : (
+                    <p>Add a movie to your favorites to see similar movies.</p>
+                )
             ) : (
-                <p>Add a movie to your favorites to see similar movies.</p>
+                <p>Log in to find movies you might like.</p>
             )}
         </div>
     );
