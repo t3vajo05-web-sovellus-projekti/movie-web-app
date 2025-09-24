@@ -1,4 +1,5 @@
 import { pool } from '../helper/db.js'
+import { ApiError } from "../helper/apiError.js"
 
 /* File contains following models (should be in order):
 - create your own group
@@ -184,25 +185,39 @@ const hasPendingInvite = async (userId, groupId) =>
 }
 
 
-
-
-
-
-/*
-//accept invite 
-const acceptGroupInvite = async (inviteId, groupId, userId) =>
+//accept invite (insert member to group_members and delete invite)
+const acceptGroupInvite = async (inviteId) =>
 {
-    // delete invite
-    await pool.query('DELETE FROM group_invites WHERE id = $1', [inviteId])
+    const client = await pool.connect() // get client connection from the pool
+    try 
+    {
+        await client.query('BEGIN') // start a transaction
 
-    // add user to group_members
-    const result = await pool.query
-    (
-        `INSERT INTO group_members (user_id, memberof, joined)
-        VALUES ($1, $2, NOW()) RETURNING *`, [userId, groupId]
-    )
-    return result.rows[0] || null
-}*/
+        // get invite from group_invites
+        const inviteResult = await client.query('SELECT * FROM group_invites WHERE id = $1', [inviteId])
+        const invite = inviteResult.rows[0]
+        if (!invite) throw new ApiError('Invite not found', 404) // throw error if invite not found
+
+        //insert user into group_members
+        const memberResult = await client.query(
+            `INSERT INTO group_members (user_id, memberof, joined)
+            VALUES ($1, $2, NOW()) RETURNING *`, [invite.user_id, invite.groupid]
+        )
+
+        // delete invite from group_invites now that it has been accepted (member inserted)
+        await client.query('DELETE FROM group_invites WHERE id = $1', [inviteId])
+
+        await client.query('COMMIT') // commit the transaction
+
+        return {member: memberResult.rows[0], invite} // return all info about added member
+    } catch (err) {
+        await client.query ('ROLLBACK') // if any steps fails, undo all changes
+        throw err
+    } finally {
+        client.release() // release the client back to pool
+    }
+}
+
 
 
 

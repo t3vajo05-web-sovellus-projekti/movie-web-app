@@ -368,39 +368,36 @@ const returnPendingInvite = async (req,res,next) =>
     }
 }
 
-
-
+// Accept the pending invite
 const acceptInvite = async (req,res,next) =>
 {
-    try
+    try 
     {
         const ownerId = req.user.id
-        const {inviteId, groupId, userId } = req.body
+        const { inviteId } = req.body
 
-        //make sure that group exists
-        const group = await getGroupById(groupId)
-        if (!group) return res.status(404).json({message:"Group not found"})
-        
-        //only owner can accept
-        if (group.owner !== ownerId)
-        {
-            return res.status(403).json({message:"Only group owner can accept invites"})
-        }
+        // get invite (and the group it belongs to)
+        const {member, invite } = await acceptGroupInvite(inviteId)
 
-        const addedMember = await acceptGroupInvite(inviteId, groupId, userId)
-        
-        return res.status(200).json
-        ({
-            message: `Invite accepted. User has been added to group "${group.name}"`,
+        // check if the logged in user is the group owner
+        const group = await getGroupById(invite.groupid)
+        if (!group) return next(new ApiError('Group not found', 404))
+        if (group.owner !== ownerId) return next(new ApiError('Only group owner can accept invites', 403))
+
+        // if everything goes ok:
+        return res.status(200).json({
+            message: `Invite accepted. User has been added to group`,
             groupId: group.id,
             groupName: group.name,
-            member: addedMember
+            group_member: member
         })
     } catch (err) {
-        console.error("acceptInvite error:",err)
-        return res.status(500).json({error:err.message})
+        console.error ("acceptInvite error:", err)
+        return next(err)
     }
 }
+
+
 
 //Decline invite
 const declineInvite = async (req,res,next) =>
