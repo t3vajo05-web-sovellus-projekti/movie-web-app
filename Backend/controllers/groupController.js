@@ -13,7 +13,8 @@ import {
     deleteGroupById,
     //group invites:
     createGroupInvite,
-    getPendingInvite,
+    getPendingInviteByGroupId,
+    getPendingInviteByInviteId,
     isUserMemberOfGroup,
     hasPendingInvite,
     acceptGroupInvite,
@@ -284,43 +285,51 @@ const sendJoinRequest = async (req, res, next) =>
         // join request requires a group id
         if (!groupId) 
         {
-            return next(new ApiError("Group ID is required to send a join request"))
+            return next(new ApiError('Group ID is required to send a join request', 400))
         }
         // check if the group exists. you can only join an existing group
         const group = await getGroupById(groupId)
         if (!group)
         {
-            return res.status(404).json({message: "Group not found"})
+            return next(new ApiError('Group not found', 404))
         }
 
         // prevent owner from sending a join request to their own group
         if (group.owner === userId)
         {
-            return res.status(400).json({message: "Owner is already a member of the group"})
+            return next(new ApiError('Owner is already a member of the group', 400))
         }
 
         //check if user is already a member of this group
         const isMember = await isUserMemberOfGroup(userId, groupId)
         if (isMember) 
         {
-            return res.status(400).json({message: "you are already a member of this group"})
+            return next(new ApiError('You are already a member of this group', 400))
         }
 
         // check if user already has a pending invite for this group
         const hasInvite = await hasPendingInvite (userId, groupId)
         if (hasInvite)
         {
-            return res.status(400).json({message:"You already have a pending invite for this group"})
+            return next(new ApiError('You already have a pending join request for this group', 400))
         }
 
         // if everything is ok, create the invite
         const newInvite = await createGroupInvite (groupId, userId)
-        return res.status(201).json({message:"Join request sent", invite: newInvite})
+        console.log(`Creating a group invite (sending a join request)`)
+
+        return res.status(201).json({
+            message:"Join request sent", 
+            id: newInvite.id,
+            groupid: newInvite.groupid,
+            user_id: newInvite.user_id,
+            created: newInvite.created
+        })
     }
     catch (err)
     {
         console.error("sendJoinRequest error:", err)
-        return res.status(500).json({error:err.message})
+        return next(new ApiError(500, err.message))
     }
 }
 
@@ -336,20 +345,21 @@ const returnPendingInvite = async (req,res,next) =>
         const group = await getGroupById(groupId)
         if (!group) 
         {
-          return res.status(404).json({message:"Group not found"})
+          return next(new ApiError('Group not found', 404))
         }
 
         //check if logged in user is the group owner
         if (group.owner !== ownerId)
         {
-            return res.status(403).json({message:"Only group owner can view pending invites"})
+            return next(new ApiError('Only group owner can view pending invites', 403))
         }
 
         //get pending invites
-        const invites = await getPendingInvite (groupId)
+        console.log(`Getting pending invites for group ${groupId} by owner ${ownerId}`);
+        const invites = await getPendingInviteByGroupId (groupId)
         if (invites.length === 0)
         {
-            return res.status(404).json({message: "No pending invites for this group"})
+            return next(new ApiError('No pending invites for this group', 404))
         }
         return res.status(200).json(invites)
     } catch (err) {
@@ -359,7 +369,7 @@ const returnPendingInvite = async (req,res,next) =>
 }
 
 
-// Accept invite
+
 const acceptInvite = async (req,res,next) =>
 {
     try

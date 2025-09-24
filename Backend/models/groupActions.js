@@ -121,11 +121,11 @@ const deleteGroupById = async (id) =>
 
 /*
 - create new group invite
-- get pending invite
+- get pending invite by group id
+- get pending invite by invite id
 - accept invite
 - decline invite
  */
-
 
 
 //create new group invite
@@ -134,27 +134,32 @@ const createGroupInvite = async (groupId, userId) =>
     const result = await pool.query
     (
         `INSERT INTO group_invites (groupid, user_id, created) 
-         VALUES ($1,$2,NOW()) RETURNING * `, [groupId, userId]
+         VALUES ($1,$2,NOW()) 
+         RETURNING * `, [groupId, userId]
     )
     return result.rows[0] || null
 }
 
-//get pending group invite 
-const getPendingInvite = async (groupId) =>
+//get pending group invite by group id
+const getPendingInviteByGroupId = async (groupId) =>
 {
     const result = await pool.query
     (
-        `SELECT group_invites.id AS invite_id,
-                group_invites.groupid,
-                group_invites.user_id,
-                group_invites.created,
-                users.username
+        `SELECT *
         FROM group_invites
-        JOIN users ON group_invites.user_id = users.id
-        WHERE group_invites.groupid = $1`, [groupId]
+        WHERE groupid = $1`, [groupId]
     )
     return result.rows // return a list of pending invites
 }
+
+// get pending group invite by invite id
+const getPendingInviteByInviteId = async (inviteId) =>
+{
+    const result = await pool.query('SELECT * FROM group_invites WHERE id = $1', [inviteId])
+    return result.rows[0] || null
+}
+
+
 
 // check if user is already a member of a group
 const isUserMemberOfGroup = async (userId, groupId) =>
@@ -179,6 +184,11 @@ const hasPendingInvite = async (userId, groupId) =>
 }
 
 
+
+
+
+
+/*
 //accept invite 
 const acceptGroupInvite = async (inviteId, groupId, userId) =>
 {
@@ -192,7 +202,7 @@ const acceptGroupInvite = async (inviteId, groupId, userId) =>
         VALUES ($1, $2, NOW()) RETURNING *`, [userId, groupId]
     )
     return result.rows[0] || null
-}
+}*/
 
 
 
@@ -234,7 +244,8 @@ export {
     deleteGroupById,
     //group invites:
     createGroupInvite,
-    getPendingInvite,
+    getPendingInviteByGroupId,
+    getPendingInviteByInviteId,
     isUserMemberOfGroup,
     hasPendingInvite,
     acceptGroupInvite,
