@@ -70,7 +70,7 @@ const returnRatingByUserAndMovieId = async (req, res, next) => {
 
 const rateMovie = async (req, res, next) => {
     try {
-        const { rating } = req.body
+        const rating = req.body
         const userId = req.user.id
 
         if (!rating.movie_id) { 

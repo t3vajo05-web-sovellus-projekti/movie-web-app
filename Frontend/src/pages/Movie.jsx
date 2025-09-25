@@ -70,7 +70,7 @@ export default function Movie()
                     <p><strong>Runtime:</strong> {movie.runtime} min</p>
                     <p><strong>Genres:</strong> {movie.genres.map(g => g.name).join(", ")}</p>
 
-                    {user && <StarRating/>}
+                    {user && <StarRating movieId={id} />}
                     <p className="mt-3">{movie.overview}</p>
                     
                     <div className="d-flex gap-2 mt-3">
