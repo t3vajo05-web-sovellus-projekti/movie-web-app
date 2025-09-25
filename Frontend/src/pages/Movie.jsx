@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { UserContext } from "../context/UserContext.js";
 
 // Components imports
-import StarRating from '../components/StarRating.jsx';
+import { StarRating, TmdbStarRating } from '../components/StarRating.jsx';
 import WatchlistDropdown from '../components/buttonWatchlist.jsx'
 import FavoriteButton from "../components/buttonFavorites.jsx";
 import ReviewCreate from "../components/reviewsCreate.jsx";
@@ -66,7 +66,13 @@ export default function Movie()
                 </div>
                 <div className="col-md-8">
                     <h2>{movie.title} ({movie.release_date.split("-")[0]})</h2>
-                    <p><strong>Rating:</strong> {movie.vote_average} / 10</p>
+                    {/*<p><strong>TMDB Rating:</strong> {movie.vote_average} / 10</p>
+                        
+                    */}
+                    <div className="d-flex gap-2 mb-1">
+                        <p className="mt-3"><strong>TMDB Rating:</strong></p>
+                        <TmdbStarRating rating={movie.vote_average} />
+                    </div>
                     <p><strong>Runtime:</strong> {movie.runtime} min</p>
                     <p><strong>Genres:</strong> {movie.genres.map(g => g.name).join(", ")}</p>
 

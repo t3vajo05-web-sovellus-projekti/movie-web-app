@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useUser } from "../context/useUser.js";
 
-export default function StarRating({ movieId }) {
+// User rating
+export function StarRating({ movieId }) {
     const { user } = useUser();
     const [rating, setRating] = useState(0); // final selected rating
     const [hover, setHover] = useState(0);   // temporary hover rating
@@ -61,4 +62,29 @@ export default function StarRating({ movieId }) {
             <span className="ms-2">Rating: {rating}</span>
         </div>
     );
+}
+
+export function StarsDisplay({ rating, maxStars = 5, showNumber }) {
+    const fullStars = Math.round(rating);
+    
+    return (
+        <div className="d-flex align-items-center gap-1">
+            {[...Array(maxStars)].map((_, i) => (
+                <span
+                    key={i}
+                    className="fs-3"
+                    style={{ color: i < fullStars ? "#ffc107" : "#e4e5e9" }}
+                >
+                    &#9733;
+                </span>
+            ))}
+            {showNumber && <span className="ms-2">{showNumber}</span>}
+        </div>
+    );
+}
+
+
+export function TmdbStarRating({ rating }) {
+    const stars = Math.round(rating / 2);
+    return <StarsDisplay rating={stars} showNumber={`${rating.toFixed(1)} / 10`} />
 }
