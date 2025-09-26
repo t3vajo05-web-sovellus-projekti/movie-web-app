@@ -81,7 +81,6 @@ export default function HomeMostRecent()
                             <div className="card h-100 text-center">
                                 <div className="card-body">
                                     <Link to={`/movie/${review.movie_id}`}><h5 className="card-title my-3">{review.movieTitle}</h5></Link>
-                                    {/* <p className="mb-3">⭐ ⭐ ⭐ ⭐ ⭐</p> */}
                                     {review.rating !== null && (
                                         <div className='d-flex justify-content-center mb-3'>
                                             <StarsDisplay rating={review.rating} />
