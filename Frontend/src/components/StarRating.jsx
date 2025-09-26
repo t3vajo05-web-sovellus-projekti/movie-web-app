@@ -83,7 +83,6 @@ export function StarsDisplay({ rating, maxStars = 5, showNumber }) {
     );
 }
 
-
 export function TmdbStarRating({ rating }) {
     const stars = Math.round(rating / 2);
     return <StarsDisplay rating={stars} showNumber={`${rating.toFixed(1)} / 10`} />

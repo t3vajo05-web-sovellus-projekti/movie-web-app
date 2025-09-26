@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from "react-router-dom";
+import { StarsDisplay } from './StarRating.jsx';
 
 export default function HomeMostRecent() 
 {
@@ -31,11 +32,17 @@ export default function HomeMostRecent()
                             const movieRes = await axios.get(`http://localhost:3001/movies/${review.movie_id}`);
                             const movieTitle = movieRes.data.title || 'Unknown Movie';
 
-                            return { ...review, username, movieTitle };
+                            // Fetch rating for user and movie
+                            const ratingRes = await axios.get(
+                                `http://localhost:3001/ratings/user/${review.user_id}/movie/${review.movie_id}`
+                            );
+                            const rating = ratingRes.data?.rating || null;
+
+                            return { ...review, username, movieTitle, rating };
                         } 
                         catch 
                         {
-                            return { ...review, username: 'Unknown', movieTitle: 'Unknown Movie' };
+                            return { ...review, username: 'Unknown', movieTitle: 'Unknown Movie', rating: null };
                         }
                     })
                 );
@@ -74,7 +81,12 @@ export default function HomeMostRecent()
                             <div className="card h-100 text-center">
                                 <div className="card-body">
                                     <Link to={`/movie/${review.movie_id}`}><h5 className="card-title my-3">{review.movieTitle}</h5></Link>
-                                    <p className="mb-3">⭐ ⭐ ⭐ ⭐ ⭐</p>
+                                    {/* <p className="mb-3">⭐ ⭐ ⭐ ⭐ ⭐</p> */}
+                                    {review.rating !== null && (
+                                        <div className='d-flex justify-content-center mb-3'>
+                                            <StarsDisplay rating={review.rating} />
+                                        </div>
+                                    )}
                                     <h6 className="card-subtitle mb-2 text-muted">From {review.username}:</h6>
                                     <p className="card-text fst-italic">{review.review_text}</p>
                                 </div>
