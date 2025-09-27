@@ -64,7 +64,46 @@ export function StarRating({ movieId }) {
     );
 }
 
-export function StarsDisplay({ rating, maxStars = 5, showNumber }) {
+// Shows partial stars for average and TMDB rating
+export function PartialStarsDisplay({ rating, maxStars = 5, showNumber }) {
+    return (
+        <div className="d-flex align-items-center gap-1">
+            {[...Array(maxStars)].map((_, i) => {
+                const fillPercentage = Math.min(Math.max(rating - i, 0), 1) * 100;
+
+                return (
+                    <span
+                        key={i}
+                        className="fs-3"
+                        style={{
+                            position: "relative",
+                            display: "inline-block",
+                            color: "#e4e5e9"
+                        }}
+                    >
+                        &#9733;
+                        <span
+                            style={{
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                width: `${fillPercentage}%`,
+                                overflow: "hidden",
+                                color: "#ffc107"
+                            }}
+                        >
+                            &#9733;
+                        </span>
+                    </span>
+                )
+            })}
+            {showNumber && <span className="ms-2">{showNumber}</span>}
+        </div>
+    );
+}   
+
+// Show full stars for user ratings
+export function StarsDisplay({ rating, maxStars = 5 }) {
     const fullStars = Math.round(rating);
     
     return (
@@ -78,12 +117,11 @@ export function StarsDisplay({ rating, maxStars = 5, showNumber }) {
                     &#9733;
                 </span>
             ))}
-            {showNumber && <span className="ms-2">{showNumber}</span>}
         </div>
     );
 }
 
 export function TmdbStarRating({ rating }) {
-    const stars = Math.round(rating / 2);
-    return <StarsDisplay rating={stars} showNumber={`${rating.toFixed(1)} / 10`} />
+    const stars = rating / 2;
+    return <PartialStarsDisplay rating={stars} showNumber={`${rating.toFixed(1) / 2} / 5`} />
 }

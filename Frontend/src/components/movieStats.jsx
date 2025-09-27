@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { StarsDisplay } from "./StarRating";
+import { StarsDisplay, PartialStarsDisplay } from "./StarRating.jsx";
 
 export default function MovieStats({ movieId }) {
     const [stats, setStats] = useState(null);
@@ -32,7 +32,7 @@ export default function MovieStats({ movieId }) {
         <div className="mt-3 mb-3">
             <div className="d-flex align-items-center gap-2 mb-1">
                 <strong>Average Rating:</strong>
-                <StarsDisplay rating={stats.avgRating} />
+                <PartialStarsDisplay rating={stats.avgRating} />
                 ({stats.ratingCount} {Number(stats.ratingCount) === 1 ? 'rating' : 'ratings'})
             </div>
             <p>
