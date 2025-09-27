@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useUser } from "../context/useUser.js";
+import { StarsDisplay } from "./StarRating.jsx";
 
 export default function ReviewsShow({ movieId }) 
 {
@@ -30,6 +31,35 @@ export default function ReviewsShow({ movieId })
 
         fetchReviews();
     }, [movieId, user]);
+
+    useEffect(() => {
+        const fetchRatings = async () => {
+            if (reviews.length === 0) return;
+
+            try {
+                const reviewsWithRatings = await Promise.all(
+                    reviews.map(async (review) => {
+                        try {
+                            const res = await axios.get(
+                                `http://localhost:3001/ratings/user/${review.user_id}/movie/${review.movie_id}`
+                            );
+
+                            const rating = res.data?.rating ?? null;
+                            return { ...review, rating };
+                        } catch {
+                            return { ...review, rating: null};
+                        }
+                    })
+                );
+
+                setReviews(reviewsWithRatings);
+            } catch (err) {
+                console.error("Error fetching ratings:", err);
+            }
+        };
+
+        fetchRatings();
+    }, [reviews]);
 
     useEffect(() =>
     {
@@ -78,9 +108,14 @@ export default function ReviewsShow({ movieId })
             <h5>Latest user reviews</h5>
             {reviews.map(review => (
                 <div key={review.id} className="border rounded p-2 mb-2">
-                    <small className="text-muted d-block mb-2">
-                        By {usernames[review.user_id]}:
-                    </small>
+                    <div className="d-flex justify-content-between align-items-start">
+                        <small className="text-muted d-block mb-2">
+                            By {usernames[review.user_id]}:
+                        </small>
+                        {review.rating !== null && (
+                            <StarsDisplay rating={review.rating} />
+                        )}
+                    </div>
                     <p className="mb-3" style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
                         {review.review_text}
                     </p>

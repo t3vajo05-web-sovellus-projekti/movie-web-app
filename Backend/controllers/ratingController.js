@@ -57,10 +57,6 @@ const returnRatingByUserAndMovieId = async (req, res, next) => {
         const { userId, movieId } = req.params
         const rating = await getRatingByUserAndMovieId(userId, movieId)
 
-        if (!rating) {
-            return next(new ApiError('Rating not found for given user and movie', 404))
-        }
-
         return res.status(200).json(rating)
     } catch (err) {
         console.error('returnRatingByUserAndMovieId error:', err)
@@ -70,7 +66,7 @@ const returnRatingByUserAndMovieId = async (req, res, next) => {
 
 const rateMovie = async (req, res, next) => {
     try {
-        const { rating } = req.body
+        const rating = req.body
         const userId = req.user.id
 
         if (!rating.movie_id) { 
