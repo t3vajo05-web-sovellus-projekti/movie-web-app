@@ -20,7 +20,7 @@ import {
     acceptGroupInvite,
     declineGroupInvite,
     // leaving group:
-    leaveGroup 
+    leaveGroup
     } from "../models/groupActions.js"
 
 
@@ -122,7 +122,7 @@ const returnGroupById = async (req, res, next) =>
     catch (err)
     {
         console.error('returnGroupById error', err)
-        return res.status(500).json({error:err.message}) // 500 server error
+        return res.status(500).json({error:err.message})
     }
 }
 
@@ -447,6 +447,7 @@ const declineInvite = async (req,res,next) =>
 }
 
 // LEAVING GROUP
+// ...and removing member
 
 const leaveGroupController = async (req,res,next) => 
     {
@@ -502,6 +503,56 @@ const leaveGroupController = async (req,res,next) =>
     }
 
 
+// Remove user from group (as group owner)
+const removeUserFromGroup = async (req,res,next) =>
+{
+    try
+    {
+        const ownerId = req.user.id
+        const {userId, groupId} = req.body
+
+        if (!groupId) return next(new ApiError("Group ID required", 400))
+        if (!userId) return next(new ApiError("Member's user ID required", 400))
+
+        // make sure that group exists
+        const group = await getGroupById(groupId)
+        if (!group) return next(new ApiError("Group not found", 404))
+
+        // check if the logged in user is the group owner
+        if (group.owner !== ownerId) return next(new ApiError("Only group owner can remove users from group", 403))
+
+        // owner cannot remove themselves from the group
+        if (group.owner === userId) return next(new ApiError("Group owner cannot remove themselves from group", 400))
+        
+        // check if user is a member
+        const isMember = await isUserMemberOfGroup (userId, groupId)
+        if (!isMember) return next(new ApiError("User you want to remove is not a member of this group", 400))
+
+        // if previous checks are ok, continue with the removal:
+        // reusing the model from leaving group, because functionality is the same
+        console.log(`Owner ${ownerId} is removing user ${userId} from group ${groupId}`)
+        const removed = await leaveGroup (userId, groupId)
+        if (!removed) return next(new ApiError("Failed to remove user from group", 500))
+
+        return res.status(200).json({
+            message: `User has been removed from group`,
+            groupId: group.id,
+            groupName: group.name,
+            userId: userId
+        })
+
+    } catch (err) {
+        console.error("removeUserFromGroup error:", err)
+        return res.status(500).json({error:err.message})
+    }
+} 
+
+
+
+
+
+
+
 
 export {
     createGroup,
@@ -519,5 +570,6 @@ export {
     acceptInvite,
     declineInvite,
     //leaving group:
-    leaveGroupController
+    leaveGroupController,
+    removeUserFromGroup
 }

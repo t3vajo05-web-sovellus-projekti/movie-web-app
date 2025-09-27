@@ -16,7 +16,8 @@ import {
     declineInvite,
     returnPendingInvite,
     //leaving group:
-    leaveGroupController
+    leaveGroupController,
+    removeUserFromGroup
      } from '../controllers/groupController.js'
 
 const router = Router()
@@ -26,6 +27,7 @@ router.post('/invite/join',auth, sendJoinRequest)
 router.post('/invite/accept',auth,acceptInvite)
 router.post('/invite/decline', auth, declineInvite)
 router.post('/leave', auth, leaveGroupController)
+router.post('/remove-user', auth, removeUserFromGroup)
 
 router.get('/', returnAllGroups)
 

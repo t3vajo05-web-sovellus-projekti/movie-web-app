@@ -232,6 +232,7 @@ const declineGroupInvite = async (inviteId) =>
 
 
 // LEAVING GROUP
+// ...and removing user
 
 //Leave group (remove user from group_members)
 const leaveGroup = async (userId, groupId) => {
@@ -242,6 +243,7 @@ const leaveGroup = async (userId, groupId) => {
     )
     return result.rows[0] || null
 }
+
 
 
 
