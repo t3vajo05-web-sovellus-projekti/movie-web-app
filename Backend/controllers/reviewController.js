@@ -159,6 +159,22 @@ const deleteReview = async (req, res, next) => {
     }
 }
 
+const returnReviewByUserAndMovieId = async (req, res, next) => {
+    try {
+        const { userId, movieId } = req.params
+        const rating = await getReviewByUserAndMovieId(userId, movieId)
+
+        if (!rating) {
+            return next(new ApiError('Review not found for given user and movie', 404))
+        }
+
+        return res.status(200).json(rating)
+    } catch (err) {
+        console.error('returnReviewByUserAndMovieId error:', err)
+        return res.status(500).json({error:err.message})
+    }
+}
+
 export {
     returnAllReviews,
     returnReviewsByMovieId,
@@ -168,5 +184,6 @@ export {
     returnUserReviewCount,
     reviewMovie,
     deleteReview,
-    returnLatestReviewsByMovieId
+    returnLatestReviewsByMovieId,
+    returnReviewByUserAndMovieId
 }
