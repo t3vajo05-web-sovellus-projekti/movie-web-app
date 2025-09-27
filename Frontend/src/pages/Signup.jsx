@@ -1,9 +1,14 @@
 import React, { useState } from 'react'
 import { useUser } from '../context/useUser.js'
+import { useNavigate } from "react-router-dom";
 
 export default function Signup() 
 {
     const { signUp } = useUser()
+    const navigate = useNavigate();
+    
+    const pwRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+    const emailRegex = /.+@.+\..+/;
 
     const [formData, setFormData] = useState({
         username: '',
@@ -18,35 +23,45 @@ export default function Signup()
     }
 
     const handleSubmit = async (e) =>
-    {
-        e.preventDefault();
-
-        if(formData.password !== formData.confirmPassword)
         {
-            alert("Passwords do not match");
-            return;
-        }
+            e.preventDefault();
+        
+            // Trim username and email
+            const trimmedUsername = formData.username.trim();
+            const trimmedEmail = formData.email.trim();
+        
+            // Validate username: no spaces allowed
+            if(trimmedUsername.includes(' '))
+            {
+                alert("Username cannot contain spaces.");
+                return;
+            }
 
-        try
-        {
-            const response = await signUp({
-                username: formData.username,
-                email: formData.email,
-                password: formData.password
-            });
-
-            console.log("Sign up successful:", response.data);
-            alert("Sign up successful! You can now sign in.");
-
-            // Optionally, clear the form
-            setFormData({ username: '', email: '', password: '', confirmPassword: '' });
+            if(trimmedUsername.includes(' '))
+            {
+                alert("Email cannot contain spaces.");
+                return;
+            }
+        
+            try
+            {
+                const response = await signUp({
+                    username: trimmedUsername,
+                    email: trimmedEmail,
+                    password: formData.password
+                });
+        
+                console.log("Sign up successful:", response.data);
+                alert("Sign up successful! You can now sign in.");
+                navigate("/login");
+            }
+            catch (error)
+            {
+                console.error("Sign up failed:", error);
+                alert("Sign up failed. " + (error.response?.data?.error || error.message));
+            }
         }
-        catch (error)
-        {
-            console.error("Sign up failed:", error);
-            alert("Sign up failed. Check console for details.");
-        }
-    }
+        
 
     return (
         <div className="container mt-5">
@@ -64,52 +79,87 @@ export default function Signup()
                                         id="username" 
                                         name="username" 
                                         value={formData.username} 
-                                        onChange={handleChange} 
+                                        onChange={handleChange}
+                                        minLength={4}
+                                        maxLength={255}
                                         required 
                                     />
+                                    <div className="form-text">
+                                        Must be at least 4 characters.
+                                    </div>
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="email" className="form-label">Email</label>
                                     <input 
                                         type="email" 
-                                        className="form-control" 
+                                        className={`form-control ${formData.email ? (emailRegex.test(formData.email) ? "is-valid" : "is-invalid") : ""}`}
                                         id="email" 
                                         name="email" 
                                         value={formData.email} 
-                                        onChange={handleChange} 
+                                        onChange={handleChange}
+                                        maxLength={255}
                                         required 
                                     />
+                                    {formData.email && !emailRegex.test(formData.email) && (
+                                        <div className="invalid-feedback">Please enter a valid email address.</div>
+                                    )}
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="password" className="form-label">Password</label>
                                     <input 
                                         type="password" 
-                                        className="form-control" 
+                                        className={`form-control ${formData.password ? (pwRegex.test(formData.password) ? "is-valid" : "is-invalid") : ""}`}
                                         id="password" 
                                         name="password" 
-                                        value={formData.password} 
-                                        onChange={handleChange} 
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        minLength={8}
+                                        maxLength={255}
                                         required 
                                     />
+                                    <div className="form-text">
+                                        Must be at least 8 characters, contain one uppercase letter and one number.
+                                    </div>
+                                    {formData.password && !pwRegex.test(formData.password) && (
+                                        <div className="invalid-feedback">
+                                            Password does not meet requirements.
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
                                     <input 
                                         type="password" 
-                                        className="form-control" 
+                                        className={`form-control ${formData.confirmPassword ? (formData.confirmPassword === formData.password ? "is-valid" : "is-invalid") : ""}`}
                                         id="confirmPassword" 
                                         name="confirmPassword" 
                                         value={formData.confirmPassword} 
                                         onChange={handleChange} 
                                         required 
                                     />
+                                    {formData.confirmPassword && formData.confirmPassword !== formData.password && (
+                                        <div className="invalid-feedback">
+                                            Passwords do not match.
+                                        </div>
+                                    )}
                                 </div>
-                                <button type="submit" className="btn btn-primary w-100">Sign Up</button>
+                                <button 
+                                    type="submit" 
+                                    className="btn btn-primary w-100"
+                                    disabled={
+                                        !formData.username 
+                                        || !emailRegex.test(formData.email)
+                                        || !pwRegex.test(formData.password) 
+                                        || formData.confirmPassword !== formData.password
+                                    }>
+                                    Sign Up
+                                </button>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        
     )
 }

@@ -15,14 +15,23 @@ export default function BrowseShows()
     useEffect(() =>
     {
         if (!selectedTheatre) return;
+    
+        // Validate that the selected theatre exists in the list
+        const isValid = theatres.some(t => t.id === selectedTheatre);
+        if (!isValid)
+        {
+            // Not found, return
+            return;
+        }
+    
         fetchShows(selectedTheatre).then(setShows);
-    }, [selectedTheatre]);
-
+    }, [selectedTheatre, theatres]);
+        
     return (
         <div>
             <h2>Browse Shows</h2>
             <select value={selectedTheatre} onChange={(e) => setSelectedTheatre(e.target.value)}>
-                <option value="">Select a theatre</option>
+                <option value="" disabled>Select a theatre</option>
                 {theatres.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
             </select>
 

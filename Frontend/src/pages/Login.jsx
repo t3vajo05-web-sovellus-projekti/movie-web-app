@@ -21,6 +21,9 @@ export default function Login()
     {
         e.preventDefault()
 
+        // Trim identifier
+        formData.identifier = formData.identifier.trim()
+
         try
         {
             const response = await signIn({
@@ -57,6 +60,7 @@ export default function Login()
                                         name="identifier"
                                         value={formData.identifier}
                                         onChange={handleChange}
+                                        maxLength={255}
                                         required
                                     />
                                 </div>
@@ -69,6 +73,7 @@ export default function Login()
                                         name="password"
                                         value={formData.password}
                                         onChange={handleChange}
+                                        maxLength={255}
                                         required
                                     />
                                 </div>

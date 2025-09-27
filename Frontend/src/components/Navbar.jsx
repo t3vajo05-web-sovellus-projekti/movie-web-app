@@ -34,12 +34,19 @@ export default function Navbar() {
     return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
         <div className="container-fluid">
-            <Link className="navbar-brand" to="/">Movie app</Link>
+            <Link className="navbar-brand" to="/">
+                <img 
+                    src="/images/wired-gradient-499-clipboard-film-clap.svg" 
+                    alt="Image stolen from https://lordicon.com/icons/wired/gradient/499-clipboard-film-clap" 
+                    className="img-fluid rounded" 
+                    style={{ maxWidth: "35px", height: "auto" }}
+                />
+            </Link>
             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span className="navbar-toggler-icon"></span>
             </button>
             <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li className="nav-item">
                         <Link className='nav-link' to="/">Home</Link>
                     </li>
@@ -61,9 +68,11 @@ export default function Navbar() {
                         placeholder="Search"
                         aria-label="Search"
                         value={query}
+                        maxLength={255}
+                        required
                         onChange={(e) => setQuery(e.target.value)}
                     />
-                    <button className="btn btn-outline-success" type="submit">Search</button>
+                    <button className="btn btn-outline-success" type="submit">Search </button>
                 </form>
 
                 {user && user.token ? (
@@ -73,12 +82,19 @@ export default function Navbar() {
                             User
                         </a>
                         <ul className="dropdown-menu dropdown-menu-end">
-                            <li><a className="dropdown-item" href="#">Profile</a></li>
+                            <li>
+                                <Link className="dropdown-item" to="/myprofile">Profile</Link>
+                            </li>
+                            <li>
+                                <Link className="dropdown-item" to="/myaccount">Account</Link>
+                            </li>
                             <li><a className="dropdown-item" href="#">My Groups</a></li>
                             <div className="dropdown-divider"></div>
-                            <li><a className="dropdown-item" href="#">Watchlist</a></li>
+                            <li>
+                                <Link className="dropdown-item" to="/watchlist">Watchlist</Link>
+                            </li>
                             <div className="dropdown-divider"></div>
-                            <li><button className="dropdown-item" type="button" onClick={logout}>Log Out</button></li>
+                            <li><button className="dropdown-item" type="button" onClick={() => { logout(); navigate('/'); }}>Log Out</button></li>
                         </ul>
                     </li>
                 </ul>

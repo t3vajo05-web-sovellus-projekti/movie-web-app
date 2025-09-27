@@ -1,5 +1,5 @@
 import { hash, compare } from 'bcrypt'
-import { getAllUsers, addUser, getUserByEmail, getUserByUsername, getUserById, actionSignInByEmail, actionSignInByUsername, actionDeleteUserById } from "../models/userActions.js";
+import { getAllUsers, addUser, getUserByEmail, getUserByUsername, getUserById, getUsernameById, actionSignInByEmail, actionSignInByUsername, actionDeleteUserById, changeMyPassword } from "../models/userActions.js";
 import { ApiError } from "../helper/apiError.js";
 import pkg from 'jsonwebtoken'
 
@@ -16,6 +16,43 @@ const returnAllUsers = async (req, res, next) =>
     catch (err)
     {
         console.error('returnAllUsers error:', err)
+        return res.status(500).json({ error: err.message })
+    }
+}
+
+const returnMyUserInfo = async (req, res, next) =>
+{
+    try
+    {
+        const userId = req.user.id
+        const rows = await getUserById(userId)
+        return res.status(200).json(rows)
+    }
+    catch (err)
+    {
+        console.error('returnAllUsers error:', err)
+        return res.status(500).json({ error: err.message })
+    }
+}
+
+const returnUsername = async (req, res, next) =>
+{
+    // Returns user info based on id param
+    try
+    {
+        const userId = req.params.id
+        const rows = await getUsernameById(userId)
+
+        if (!rows)
+        {
+            return next(new ApiError('User not found', 404))
+        }
+
+        return res.status(200).json(rows)
+    }
+    catch (err)
+    {
+        console.error('returnUser error:', err)
         return res.status(500).json({ error: err.message })
     }
 }
@@ -37,6 +74,29 @@ const signUp = async (req, res, next) =>
         if (!pwRegex.test(user.password))
         {
             return next(new ApiError('Password requirements were not met', 400))
+        }
+
+        if (user.username.length < 4) {
+            return next(new ApiError('Username must be at least 4 characters', 400));
+        }
+        if (user.username.length > 255) {
+            return next(new ApiError('Username must be less than 255 characters', 400));
+        }
+        if (user.email.length > 255) {
+            return next(new ApiError('Email must be less than 255 characters', 400));
+        }
+        if (user.password.length < 8) {
+            return next(new ApiError('Password must be at least 8 characters', 400));
+        }
+        if (user.password.length > 255) {
+            return next(new ApiError('Password must be less than 255 characters', 400));
+        }
+        
+        // Email regex check
+        const emailRegex = /^.+@.+\..+$/
+        if (!emailRegex.test(user.email))
+        {
+            return next(new ApiError('Invalid email format', 400))
         }
 
         // Check existing
@@ -99,6 +159,16 @@ const signIn = async (req, res, next) =>
             result = await actionSignInByUsername(user.identifier)
         }
 
+        if (user.identifier.length > 255) {
+            return next(new ApiError('Email or username must be less than 255 characters', 400));
+        }
+        if (user.password.length < 8) {
+            return next(new ApiError('Password must be at least 8 characters', 400));
+        }
+        if (user.password.length > 255) {
+            return next(new ApiError('Password must be less than 255 characters', 400));
+        }
+
         if(result.rows.length === 0)
         {
             console.log('User not found')
@@ -132,7 +202,8 @@ const signIn = async (req, res, next) =>
         return res.status(200).json({
             token,
             username: dbUser.username,
-            email: dbUser.email
+            email: dbUser.email,
+            id: dbUser.id
         })
     }
     catch(err)
@@ -153,6 +224,13 @@ const deleteUser = async (req, res, next) => {
         }
         if(!password) {
             return next(new ApiError('Password is required', 400))
+        }
+
+        if (password.length < 8) {
+            return next(new ApiError('Password must be at least 8 characters', 400));
+        }
+        if (password.length > 255) {
+            return next(new ApiError('Password must be less than 255 characters', 400));
         }
 
         const dbUser = await getUserById(userId)
@@ -182,4 +260,48 @@ const deleteUser = async (req, res, next) => {
     }
 }
 
-export { returnAllUsers, signUp, signIn, deleteUser }
+const changePassword = async (req, res, next) => {
+    try {
+        const userId = req.user.id
+        const { oldPassword, newPassword } = req.body
+        if(!oldPassword || !newPassword) {
+            return next(new ApiError('Old and new passwords are required', 400))
+        }
+
+        if (newPassword.length < 8) {
+            return next(new ApiError('New password must be at least 8 characters', 400));
+        }
+        if (newPassword.length > 255) {
+            return next(new ApiError('New password must be less than 255 characters', 400));
+        }
+        
+        // Password must be at least 8 chars, include a number and a capital letter
+        const pwRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/
+        if (!pwRegex.test(newPassword)) {
+            return next(new ApiError('New password requirements were not met', 400))
+        }
+
+        const dbUser = await getUserById(userId)
+        if(!dbUser) {
+            return next(new ApiError('User not found', 404))
+        }
+
+        const isMatch = await compare(oldPassword, dbUser.hashed_password)
+        if(!isMatch) {
+            return next(new ApiError('Invalid old password', 401))
+        }
+
+        const newHashedPassword = await hash(newPassword, 10)
+        const updatedUser = await changeMyPassword(userId, newHashedPassword)
+        if(!updatedUser) {
+            return next(new ApiError('Failed to update password', 500))
+        }
+
+        return res.status(200).json({ message: 'Your password has been changed' })
+    } catch (err) {
+        console.error('changePassword error:', err)
+        return res.status(500).json({ error: err.message })
+    }
+}
+
+export { returnAllUsers, signUp, signIn, deleteUser, returnMyUserInfo, changePassword, returnUsername }

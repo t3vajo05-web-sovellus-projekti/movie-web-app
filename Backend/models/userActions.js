@@ -27,6 +27,11 @@ const getUserByUsername = async (username) =>
     return result.rows[0] || null
 }
 
+const getUsernameById = async (id) => {
+    const result = await pool.query('SELECT username FROM users WHERE id = $1', [id])
+    return result.rows[0] || null
+}
+
 const getUserById = async (id) => {
     const result = await pool.query('SELECT * FROM users WHERE id = $1', [id])
     return result.rows[0] || null
@@ -47,13 +52,20 @@ const actionDeleteUserById = async (id) => {
     return result.rows[0] || null
 }
 
+const changeMyPassword = async (id, newHashedPassword) => {
+    const result = await pool.query('UPDATE users SET hashed_password = $1 WHERE id = $2 RETURNING *', [newHashedPassword, id])
+    return result.rows[0] || null
+}
+
 export { 
     getAllUsers, 
     addUser, 
     getUserByEmail, 
     getUserByUsername, 
+    getUsernameById,
     getUserById,
     actionSignInByEmail, 
     actionSignInByUsername, 
-    actionDeleteUserById 
+    actionDeleteUserById,
+    changeMyPassword
 }

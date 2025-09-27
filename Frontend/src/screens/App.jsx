@@ -20,6 +20,11 @@ import Login from '../pages/Login.jsx'
 import Signup from '../pages/Signup.jsx'
 import Moviesearch from '../pages/Moviesearch.jsx'
 import UserProvider from '../context/userProvider.jsx'
+import MyProfile from '../pages/MyProfile.jsx'
+import MyAccount from '../pages/MyAccount.jsx'
+import Movie from '../pages/Movie.jsx'
+import MyWatchlist from '../pages/MyWatchlist.jsx'
+
 
 /*
 function App() {
@@ -56,7 +61,6 @@ function App() {
     <>
     <UserProvider>
       <Navbar />
-      <Header />
       <div id="container">
         <Routes>
           <Route path="/" exact element={<Home />} />
@@ -66,8 +70,11 @@ function App() {
           <Route path="/signup" exact element={<Signup />} />
           <Route path="/login" exact element={<Login />} />
           <Route path="/moviesearch" exact element={<Moviesearch />} />
-
+          <Route path="/myprofile" exact element={<MyProfile />} />
+          <Route path="/myaccount" exact element={<MyAccount />} />
+          <Route path="/movie/:id" exact element={<Movie />} />
           <Route path="/*" exact element={<NotFound />} />
+          <Route path="/watchlist" exact element={<MyWatchlist />} />
         </Routes>
       </div>
       <Footer />
