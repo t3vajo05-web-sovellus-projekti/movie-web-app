@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { StarsDisplay, PartialStarsDisplay } from "./StarRating.jsx";
 
-export default function MovieStats({ movieId }) {
+export default function MovieStats({ movieId, refreshTrigger }) {
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -24,7 +24,7 @@ export default function MovieStats({ movieId }) {
         }
 
         fetchStats();
-    }, [movieId]);
+    }, [movieId, refreshTrigger]);
 
     if (loading) return <p>Loading Stats...</p>;
     

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useUser } from "../context/useUser.js";
 
-export default function ReviewCreate({ movieId }) 
+export default function ReviewCreate({ movieId, onReviewAdded }) 
 {
     const [reviewText, setReviewText] = useState("");
     const [loading, setLoading] = useState(false);
@@ -87,6 +87,8 @@ export default function ReviewCreate({ movieId })
             setReviewText("");
             setIsEditing(false);
 
+            if (onReviewAdded) onReviewAdded();
+
         }
         catch (err)
         {
@@ -107,6 +109,8 @@ export default function ReviewCreate({ movieId })
             setExistingReview(null);
             setHasReviewed(false);
             setIsEditing(false);
+
+            if (onReviewAdded) onReviewAdded();
         }
         catch (err)
         {
