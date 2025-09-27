@@ -454,6 +454,7 @@ const leaveGroupController = async (req,res,next) =>
         {
             const userId = req.user.id
             const { groupId } = req.body
+            console.log(`User ${userId} requested to leave group ${groupId}`)
             
             if (!groupId)
             {
@@ -462,35 +463,37 @@ const leaveGroupController = async (req,res,next) =>
 
             //make sure that group exists
             const group = await getGroupById(groupId)
-            if (!group) return res.status(404).json({message:"Group not found"})
+            if (!group) return next(new ApiError("Group not found", 404))
             
             // owner cannot leave their own group
             if (group.owner === userId)
             {
-                return res.status(400).json({message: "Group owner cannot leave their own group"})
+                return next(new ApiError("Group owner cannot leave their own group", 400))
             }
 
             // check if user is a member
             const isMember = await isUserMemberOfGroup (userId, groupId)
             if (!isMember)
             {
-                return res.status(400).json({message:"You are not a member of this group"})
+                return next(new ApiError("You are not a member of this group", 400))
             }
 
             // check if the row was actually deleted
             // if "left" is null, leaving failed
-            // if "left" contains a row, deletion succeeded
+            // if "left" contains a row, deletion succeeded and user left the group
             const left = await leaveGroup (userId, groupId)
             if (!left)
             {
-                return res.status(500).json({message:"Failed to leave group"})
+                return next(new ApiError("Failed to leave group", 500))
             }
 
             // if everything goes ok, leave group:
             return res.status(200).json
             ({
-                message: `You have left the group "${group.name}"`,
-                groupId: group.id
+                message: `You have left the group.`,
+                groupId: group.id,
+                groupName: group.name,
+                userId: userId
             })
         } catch (err) {
             console.error("leaveGroupController error:",err)
