@@ -13,6 +13,19 @@ const getMyWatchlist = async (req, res, next) => {
     }
 }
 
+const getUserWatchlist = async (req, res, next) => {
+    try 
+    {
+        const userId = req.params.userId
+        const rows = await getWatchlist(userId)
+        return res.status(200).json(rows)
+    }
+    catch(err)
+    {
+        next(err)
+    }
+}
+
 const addWatchlistItem = async (req, res, next) => {
     try
     {
@@ -72,4 +85,4 @@ const setStatusItem = async (req, res, next) => {
     }
 }
 
-export { getMyWatchlist, addWatchlistItem, deleteWatchlistItem, toggleFavoriteItem, setStatusItem }
+export { getMyWatchlist, addWatchlistItem, deleteWatchlistItem, toggleFavoriteItem, setStatusItem, getUserWatchlist }
