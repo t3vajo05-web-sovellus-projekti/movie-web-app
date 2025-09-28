@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { StarsDisplay } from "./StarRating";
 
 export default function myRecentReviews({userId}) {
     const [reviews, setReviews] = useState([]);
@@ -28,36 +29,66 @@ export default function myRecentReviews({userId}) {
                     setReviews(reviewsWithDetails);
                 } catch (err) {
                     console.error(err);
-                } finally {
-                    setLoading(false);
-                }
+                } 
+
+                setLoading(false);
             };
 
             if (userId) fetchReviews();
     }, [userId]);
 
+    useEffect(() => {
+        const fetchRatings = async () => {
+            if (reviews.length === 0) return;
+
+            try {
+                const reviewsWithRatings = await Promise.all(
+                    reviews.map(async (review) => {
+                        try {
+                            const res = await axios.get(
+                                `http://localhost:3001/ratings/user/${userId}/movie/${review.movie_id}`
+                            );
+                            const rating = res.data?.rating ?? null;
+                            
+                            return { ...review, rating };
+                        } catch {
+                            return { ...review, rating: null };
+                        }
+                    })
+                );
+
+                setReviews(reviewsWithRatings);
+            } catch (err) {
+                console.error("Error fetching ratings:", err);
+            }
+        };
+
+        fetchRatings();
+    }, [reviews, userId]);
+
+    if (loading) return <p>Loading...</p>;
+
+    if (reviews.length === 0) return <p className="text-muted">You haven't made any reviews yet.</p>;
+
     return (
-        <section className="my-4">
+        <section className="mt-4">
             <h2 className="h4 mb-3">My recent Reviews</h2>
-            {loading ? (
-                <p>Loading...</p>
-            ) : reviews.length === 0 ? (
-                <p className="text-muted">You haven't made any written reviews yet.</p>
-            ) : (
-                <div className="list-group">
-                    {reviews.map((review) => (
-                        <div key={review.id} className="list-group-item">
+                {reviews.map((review) => (
+                    <div key={review.id} className="border rounded p-2 mb-2">
+                        <div className="d-flex justify-content-between align-items-start">
                             <Link to={`/movie/${review.movie_id}`}>
-                                <h5 className="mb-1">{review.movieTitle}</h5>
+                                <h5 className="mb-2">{review.movieTitle}</h5>
                             </Link>
-                            <p className="mb-1">{review.review_text}</p>
-                            <small className="text-muted">
-                                {new Date(review.created).toLocaleDateString("fi-FI")}
-                            </small>
+                            {review.rating !== null && <StarsDisplay rating={review.rating} />}
                         </div>
-                    ))}
-                </div>
-            )}
+                        <p className="mb-3" style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+                            {review.review_text}
+                        </p>
+                        <small className="text-muted">
+                            Reviewed on: {new Date(review.created).toLocaleDateString("fi-FI")}
+                        </small>
+                    </div>
+                ))}
         </section>
     );
 }
