@@ -6,12 +6,14 @@ import FavoriteButton from "../components/FavoriteButton.jsx";
 import StatusDropdown from "../components/StatusDropdown.jsx";
 import { Link } from "react-router-dom";
 import "../components/watchlist.css";
+import PublicWatchlistLink from "../components/myWatchListLink.jsx";
 
 export default function MyWatchlist() {
   const { user } = useContext(UserContext);
   const [wlData, setWlData] = useState([]);
   const [rows, setRows] = useState([]);
   const [tab, setTab] = useState("all");
+
 
   useEffect(() => {
     console.log('watchlist from API', wlData);
@@ -178,6 +180,7 @@ export default function MyWatchlist() {
     <div className="container mt-4" style={{ paddingBottom: 80 }}>
       <h1 className="mb-1">Watchlist</h1>
       <p className="text-muted mt-0">Welcome to your watchlist</p>
+      <PublicWatchlistLink userId={user?.id} />
       <ul className="nav nav-tabs mb-3">
         <li className="nav-item"><button className={`nav-link ${tab === "all" ? "active" : ""}`} onClick={() => setTab("all")}>All movies</button></li>
         <li className="nav-item"><button className={`nav-link ${tab === "favorites" ? "active" : ""}`} onClick={() => setTab("favorites")}>Favorites</button></li>
