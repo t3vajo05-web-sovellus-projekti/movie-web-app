@@ -18,6 +18,7 @@ export default function Movie()
     const { user } = useContext(UserContext);
     const [watchlist, setWatchlist] = useState([]);
     const [favoritelist, setFavoritelist] = useState([]);
+    const [refresh, setRefresh] = useState([]);
 
     const isInFavorites = favoritelist.some(item => item.movie_id === id);
 
@@ -67,7 +68,6 @@ export default function Movie()
                 </div>
                 <div className="col-md-8">
                     <h2>{movie.title} ({movie.release_date.split("-")[0]})</h2>
-                    {/* Onko mahdollista tehdä progress bar tähdille? */}
                     <div className="d-flex gap-2 mb-1">
                         <p className="mt-3"><strong>TMDB Rating:</strong></p>
                         <TmdbStarRating rating={movie.vote_average} />
@@ -75,7 +75,7 @@ export default function Movie()
                     <p><strong>Runtime:</strong> {movie.runtime} min</p>
                     <p><strong>Genres:</strong> {movie.genres.map(g => g.name).join(", ")}</p>
 
-                    {user && <StarRating movieId={id} />}
+                    {user && <StarRating movieId={id} onRatingAdded={() => setRefresh(k => k + 1)} />}
                     <p className="mt-3">{movie.overview}</p>
                     
                     <div className="d-flex gap-2 mt-3">
@@ -91,8 +91,8 @@ export default function Movie()
                     />}
                     </div>
                 </div>
-                <MovieStats movieId={id} />
-                {user && <ReviewCreate movieId={id} />}
+                <MovieStats movieId={id} refreshTrigger={refresh} />
+                {user && <ReviewCreate movieId={id} onReviewAdded={() => setRefresh(k => k + 1)} />}
                 <ReviewsShow movieId={id} />
             </div>
         </div>

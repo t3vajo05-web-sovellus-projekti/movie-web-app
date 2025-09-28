@@ -3,7 +3,7 @@ import axios from "axios";
 import { useUser } from "../context/useUser.js";
 
 // User rating
-export function StarRating({ movieId }) {
+export function StarRating({ movieId, onRatingAdded }) {
     const { user } = useUser();
     const [rating, setRating] = useState(0); // final selected rating
     const [hover, setHover] = useState(0);   // temporary hover rating
@@ -40,6 +40,9 @@ export function StarRating({ movieId }) {
                 { movie_id: Number(movieId), rating: star },
                 { headers: { Authorization: `Bearer ${user.token}` } }
             );
+
+            if (onRatingAdded) onRatingAdded();
+
         } catch (err) {
             console.error("Error saving rating:", err)
         }
