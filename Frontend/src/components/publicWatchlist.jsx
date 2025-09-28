@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import StarRatingDisplay from "../components/StarRatingDisplay.jsx";
+import { Link } from "react-router-dom";
 
 export default function UserWatchlist({ userId }) {
     const [wlData, setWlData] = useState([]);
@@ -59,9 +60,9 @@ export default function UserWatchlist({ userId }) {
     }, [wlData, userId]);
 
     const favorites = rows.filter(r => r.favorite);
-    const plan      = rows.filter(r => !r.favorite && r.status === "Plan to watch");
-    const watched   = rows.filter(r => !r.favorite && r.status === "Watched");
-    const not       = rows.filter(r => !r.favorite && r.status === "Not interested");
+    const plan      = rows.filter(r => r.status === "Plan to watch");
+    const watched   = rows.filter(r => r.status === "Watched");
+    const not       = rows.filter(r => r.status === "Not interested");
 
     const renderTable = (list) => {
         if (!list.length) return <p className="text-muted">No movies in this category.</p>;
@@ -94,11 +95,15 @@ export default function UserWatchlist({ userId }) {
                                 <tr key={r.id}>
                                     <td></td>
                                     <td className="text-center">{i + 1}</td>
-                                    <td className="fw-semibold">{r.title}</td>
+                                    <td className="fw-semibold"><Link to={`/movie/${r.movieId}`} className="movie-link">{r.title}</Link></td>
                                     <td>{r.year}</td>
                                     <td><StarRatingDisplay value10={r.rating} /></td>
                                     <td className="text-truncate" style={{ maxWidth: 520 }}>{r.review}</td>
-                                    <td>{r.status}</td>
+                                    <td>
+                                    {list !== favorites && (
+                                        <>{r.status}</>
+                                    )}
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
