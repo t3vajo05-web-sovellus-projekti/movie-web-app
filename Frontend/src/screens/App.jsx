@@ -24,36 +24,8 @@ import MyProfile from '../pages/MyProfile.jsx'
 import MyAccount from '../pages/MyAccount.jsx'
 import Movie from '../pages/Movie.jsx'
 import MyWatchlist from '../pages/MyWatchlist.jsx'
+import PublicWatchlist from '../pages/publicWatchlist.jsx'
 
-
-/*
-function App() {
-
-  const [view, setView] = useState('signup')
-
-
-  const { user, logout } = useUser()
-
-  return (
-
-    <div>
-      {user && user.token ? (
-        <>
-          <h2>Welcome, {user.username}!</h2>
-          <DeleteUser />
-          <button onClick={logout}>Logout</button>
-          <button onClick={() => setView('finnkino')}>Browse Shows</button>
-          {view === 'finnkino' && <TheatreBrowser />}
-        </>
-      ) : (
-        <h2>Please sign in</h2>
-      )}
-    </div>
-  )
-}
-
-export default App
-*/
 
 function App() {
 
@@ -73,8 +45,9 @@ function App() {
           <Route path="/myprofile" exact element={<MyProfile />} />
           <Route path="/myaccount" exact element={<MyAccount />} />
           <Route path="/movie/:id" exact element={<Movie />} />
-          <Route path="/*" exact element={<NotFound />} />
           <Route path="/watchlist" exact element={<MyWatchlist />} />
+          <Route path="/watchlist/user/:id" exact element={<PublicWatchlist />} />
+          <Route path="/*" exact element={<NotFound />} />
         </Routes>
       </div>
       <Footer />

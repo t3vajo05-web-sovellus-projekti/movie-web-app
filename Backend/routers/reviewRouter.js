@@ -7,7 +7,9 @@ import {
     returnLatestReviews,
     returnLatestReviewsByUser,
     returnUserReviewCount,
+    returnMovieReviewCount,
     reviewMovie, 
+    returnReviewByUserAndMovieId,
     deleteReview,
     returnLatestReviewsByMovieId
 } from "../controllers/reviewController.js"
@@ -21,6 +23,8 @@ router.get('/user/:id', returnReviewsByUserId)
 router.get('/latest', returnLatestReviews)                  // change limit with query parameter ?limit=...
 router.get('/user/:id/latest', returnLatestReviewsByUser)   // example: /latest?limit=5
 router.get('/user/:id/count', returnUserReviewCount)
+router.get('/movie/:id/count', returnMovieReviewCount)
+router.get('/user/:userId/movie/:movieId', returnReviewByUserAndMovieId)
 router.post('/review', auth, reviewMovie)
 router.delete('/:id', auth, deleteReview)
 

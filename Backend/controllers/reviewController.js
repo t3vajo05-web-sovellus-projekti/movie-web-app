@@ -6,6 +6,7 @@ import {
     getLatestReviews,
     getLatestReviewsByUserId,
     getUserReviewCount,
+    getMovieReviewCount,
     createReview, 
     deleteReviewById,
     getLatestReviewsByMovieId
@@ -110,6 +111,18 @@ const returnUserReviewCount = async (req, res, next) => {
     }
 }
 
+const returnMovieReviewCount = async (req, res, next) => {
+    try {
+        const movieId = req.params.id
+        const count = await getMovieReviewCount(movieId)
+
+        return res.status(200).json({count})
+    } catch (err) {
+        console.error('returnMovieReviewCount error:', err)
+        return res.status(500).json({error:err.message})
+    }
+}
+
 const reviewMovie = async (req, res, next) => {
     try {
         const review = req.body
@@ -159,6 +172,22 @@ const deleteReview = async (req, res, next) => {
     }
 }
 
+const returnReviewByUserAndMovieId = async (req, res, next) => {
+    try {
+        const { userId, movieId } = req.params
+        const rating = await getReviewByUserAndMovieId(userId, movieId)
+
+        if (!rating) {
+            return next(new ApiError('Review not found for given user and movie', 404))
+        }
+
+        return res.status(200).json(rating)
+    } catch (err) {
+        console.error('returnReviewByUserAndMovieId error:', err)
+        return res.status(500).json({error:err.message})
+    }
+}
+
 export {
     returnAllReviews,
     returnReviewsByMovieId,
@@ -166,7 +195,9 @@ export {
     returnLatestReviews,
     returnLatestReviewsByUser,
     returnUserReviewCount,
+    returnMovieReviewCount,
     reviewMovie,
     deleteReview,
-    returnLatestReviewsByMovieId
+    returnLatestReviewsByMovieId,
+    returnReviewByUserAndMovieId
 }

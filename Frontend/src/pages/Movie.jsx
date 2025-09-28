@@ -3,11 +3,12 @@ import { useParams } from "react-router-dom";
 import { UserContext } from "../context/UserContext.js";
 
 // Components imports
-import StarRating from '../components/StarRating.jsx';
+import { StarRating, TmdbStarRating } from '../components/StarRating.jsx';
 import WatchlistDropdown from '../components/buttonWatchlist.jsx'
 import FavoriteButton from "../components/buttonFavorites.jsx";
 import ReviewCreate from "../components/reviewsCreate.jsx";
 import ReviewsShow from "../components/reviewsShow.jsx";
+import MovieStats from "../components/movieStats.jsx";
 
 
 export default function Movie() 
@@ -17,6 +18,7 @@ export default function Movie()
     const { user } = useContext(UserContext);
     const [watchlist, setWatchlist] = useState([]);
     const [favoritelist, setFavoritelist] = useState([]);
+    const [refresh, setRefresh] = useState([]);
 
     const isInFavorites = favoritelist.some(item => item.movie_id === id);
 
@@ -66,11 +68,14 @@ export default function Movie()
                 </div>
                 <div className="col-md-8">
                     <h2>{movie.title} ({movie.release_date.split("-")[0]})</h2>
-                    <p><strong>Rating:</strong> {movie.vote_average} / 10</p>
+                    <div className="d-flex gap-2 mb-1">
+                        <p className="mt-3"><strong>TMDB Rating:</strong></p>
+                        <TmdbStarRating rating={movie.vote_average} />
+                    </div>
                     <p><strong>Runtime:</strong> {movie.runtime} min</p>
                     <p><strong>Genres:</strong> {movie.genres.map(g => g.name).join(", ")}</p>
 
-                    {user && <StarRating/>}
+                    {user && <StarRating movieId={id} onRatingAdded={() => setRefresh(k => k + 1)} />}
                     <p className="mt-3">{movie.overview}</p>
                     
                     <div className="d-flex gap-2 mt-3">
@@ -86,7 +91,8 @@ export default function Movie()
                     />}
                     </div>
                 </div>
-                {user && <ReviewCreate movieId={id} />}
+                <MovieStats movieId={id} refreshTrigger={refresh} />
+                {user && <ReviewCreate movieId={id} onReviewAdded={() => setRefresh(k => k + 1)} />}
                 <ReviewsShow movieId={id} />
             </div>
         </div>
