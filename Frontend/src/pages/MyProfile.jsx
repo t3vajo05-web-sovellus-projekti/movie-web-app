@@ -1,6 +1,7 @@
 import React, { useEffect, useContext, useState } from 'react'
 import { UserContext } from '../context/UserContext'
 import MyRecentReviews from '../components/myRecentReviews'
+import UserWatchlist from "../components/publicWatchlist.jsx";
 
 export default function MyProfile() {
     const [userData, setUserData] = useState(null);
@@ -30,8 +31,8 @@ export default function MyProfile() {
       <MyRecentReviews userId={userData.id} />
       
       My Groups
-
-      My watchlist
+      <h2 className="h4 mb-3">My Watchlist</h2>       
+      <UserWatchlist userId={userData.id} />
     </div>
   );
 }
