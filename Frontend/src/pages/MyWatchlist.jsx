@@ -4,6 +4,8 @@ import { UserContext } from "../context/UserContext";
 import StarRatingDisplay from "../components/StarRatingDisplay.jsx";
 import FavoriteButton from "../components/FavoriteButton.jsx";
 import StatusDropdown from "../components/StatusDropdown.jsx";
+import { Link } from "react-router-dom";
+import "../components/watchlist.css";
 
 export default function MyWatchlist() {
   const { user } = useContext(UserContext);
@@ -74,9 +76,9 @@ export default function MyWatchlist() {
 
   
   const favorites = rows.filter(row => row.favorite === true);
-  const plan      = rows.filter(row => !row.favorite && row.status === "Plan to watch");
-  const watched   = rows.filter(row => !row.favorite && row.status === "Watched");
-  const not       = rows.filter(row => !row.favorite && row.status === "Not interested");
+  const plan      = rows.filter(row => row.status === "Plan to watch");
+  const watched   = rows.filter(row => row.status === "Watched");
+  const not       = rows.filter(row => row.status === "Not interested");
   const all       = rows;
   const lists = { all, favorites, plan, watched, not };
 
@@ -149,17 +151,19 @@ export default function MyWatchlist() {
                 <tr key={r.id}>
                   <td className="text-center" style={{ width: 34 }}><FavoriteButton active={r.favorite} onClick={() => toggleFavorite(r)} /></td>
                   <td className="text-center" style={{ width: 44 }}>{i + 1}</td>
-                  <td className="fw-semibold">{r.title}</td>
+                  <td className="fw-semibold"><Link to={`/movie/${r.movieId}`} className="movie-link">{r.title}</Link></td>
                   <td>{r.year}</td>
                   <td><StarRatingDisplay value10={r.rating} /></td>
                   <td className="text-truncate" style={{ maxWidth: 520 }}>{r.review}</td>
                   <td>
+                  {list !== favorites && (
                     <StatusDropdown
                       movieId={r.movieId}
                       currentStatus={r.status}
                       watchlist={wlData}
                       setWatchlist={setWlData}
                     />
+                  )}
                   </td>
                 </tr>
               ))}

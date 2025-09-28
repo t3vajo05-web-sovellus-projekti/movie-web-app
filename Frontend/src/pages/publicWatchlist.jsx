@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import UserWatchlist from "../components/publicWatchlist.jsx";
+import "../components/watchlist.css";
+
 
 export default function PublicWatchlist() 
 {
