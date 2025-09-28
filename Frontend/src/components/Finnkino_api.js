@@ -20,9 +20,9 @@ export const fetchTheatres = async () =>
 };
 
 // Fetch shows by theatre ID
-export const fetchShows = async (theatreId) =>
+export const fetchShows = async (theatreId, date) =>
 {
-    const res = await fetch(`${FINNKINO_BASE_URL}/Schedule?area=${theatreId}`);
+    const res = await fetch(`${FINNKINO_BASE_URL}/Schedule?area=${theatreId}&dt=${date}`);
     const text = await res.text();
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(text, "application/xml");
@@ -39,8 +39,8 @@ export const fetchShows = async (theatreId) =>
         theatreId: node.getElementsByTagName("TheatreID")[0]?.textContent,
         theatre: node.getElementsByTagName("Theatre")[0]?.textContent,
         auditorium: node.getElementsByTagName("TheatreAuditorium")[0]?.textContent,
-        start: node.getElementsByTagName("dttmShowStart")[0]?.textContent,
-        end: node.getElementsByTagName("dttmShowEnd")[0]?.textContent,
+        start: node.getElementsByTagName("dttmShowStartUTC")[0]?.textContent,
+        end: node.getElementsByTagName("dttmShowEndUTC")[0]?.textContent,
         runTime: node.getElementsByTagName("LengthInMinutes")[0]?.textContent,
         genres: node.getElementsByTagName("Genres")[0]?.textContent,
         language: node.getElementsByTagName("SpokenLanguage")[0]?.textContent,
@@ -48,7 +48,8 @@ export const fetchShows = async (theatreId) =>
         image: node.getElementsByTagName("EventSmallImagePortrait")[0]?.textContent
     }));
 
-    return shows;
+    return shows
+
 };
 
 // Format date/time nicely
