@@ -36,8 +36,10 @@ router.get('/', returnAllGroups)
 
 router.get('/membercount/:id', returnGroupMemberCount)
 router.get('/owner/:id', returnGroupOwner)
-router.get('/owned', auth, returnGroupByOwner)
-router.get('/member',auth, returnGroupByMember) 
+router.get('/owned', auth, returnGroupByOwner) // Gets all groups owned by the authenticated user
+router.get('/owned/:id', auth, returnGroupByOwner) // Gets all groups owned by the user with the specified ID
+router.get('/member',auth, returnGroupByMember)  // Gets all groups where the authenticated user is a member
+router.get('/member/:id', returnGroupByMember)  // Gets all groups where the user with the specified ID is a member
 router.get('/groupname/:name', returnGroupByName) 
 router.get('/invite/pending/:id', auth, returnPendingInvite)
 
