@@ -7,6 +7,8 @@ export default function MyAccount()
 {
     const [userData, setUserData] = useState(null);
     const [reviewCount, setReviewCount] = useState(null);
+    const [groupMemberStats, setGroupMemberStats] = useState(null);
+    const [groupOwnerStats, setGroupOwnerStats] = useState(null);
     const { user } = useContext(UserContext);
 
     useEffect(() => 
@@ -26,6 +28,18 @@ export default function MyAccount()
             .then(res => res.json())
             .then(data => setReviewCount(data.count))
             .catch(err => console.error("Error fetching review count:", err));
+
+        fetch(`http://localhost:3001/groups/member/${user.id}/count`)
+            .then(res =>res.json())
+            .then(data => setGroupMemberStats(data.count))
+            .catch(err => console.error("Error fetching group member count:", err));
+
+        fetch(`http://localhost:3001/groups/owner/${user.id}/count`)
+            .then(res =>res.json())
+            .then(data => setGroupOwnerStats(data.count))
+            .catch(err => console.error("Error fetching group owner count:", err))
+
+        
     }, [user]);
 
     if (!userData) return <p>Loading...</p>;
@@ -54,12 +68,12 @@ export default function MyAccount()
                     <tr>
                         {/* Pitäisikö muuttaa lyhyemmäksi jotenkin? */}
                         <th scope="row">Amount of groups I'm the owner in</th>
-                        <td>{/* Hae info tähän */}</td>
+                        <td>{groupOwnerStats !== null ? groupOwnerStats : "Loading..."}</td>
                     </tr>
                     <tr>
                         {/* Pitäisikö muuttaa lyhyemmäksi jotenkin? */}
                         <th scope="row">Amount of groups I'm a member in</th>
-                        <td>{/* Hae info tähän */}</td>
+                        <td>{groupMemberStats !== null ? groupMemberStats : "Loading..."}</td>
                     </tr>
                     <tr>
                         {/* Maybe add a link to a page with all of users' reviews? */}

@@ -1,4 +1,4 @@
-import { getAllGroups, modelCreateGroup, addOwnerAsMember, getGroupById, getGroupByName, deleteGroupById } from "../models/groupActions.js"
+import { getAllGroups, modelCreateGroup, addOwnerAsMember, getGroupById, getGroupByName, deleteGroupById, getMemberOfGroupsCount, getOwnerOfGroupsCount } from "../models/groupActions.js"
 import { ApiError } from "../helper/apiError.js"
 
 
@@ -140,9 +140,31 @@ const removeGroupById = async (req, res, next) =>
     }
 }
 
+const returnMemberOfGroupsCount = async (req, res, next) => {
+    try {
+        const userId = req.params.id
 
+        const count = await getMemberOfGroupsCount(userId)
 
+        return res.status(200).json({count})
+    } catch (err) {
+        console.error('returnGroupMemberStats error:', err)
+        return res.status(500).json({error:err.message})
+    }
+}
 
+const returnOwnerOfGroupsCount = async (req, res, next) => {
+    try {
+        const userId = req.params.id
+
+        const count = await getOwnerOfGroupsCount(userId)
+
+        return res.status(200).json({count})
+    } catch (err) {
+        console.error('returnGroupOwnerStats error:', err)
+        return res.status(500).json({error:err.message})
+    }
+}
 
 
 
@@ -153,5 +175,7 @@ export {
     createGroup,
     returnGroupById,
     //returnGroupByName,
-    removeGroupById
+    removeGroupById,
+    returnMemberOfGroupsCount,
+    returnOwnerOfGroupsCount
 }

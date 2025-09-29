@@ -57,6 +57,20 @@ const deleteGroupById = async (id) =>
     return result.rows[0] || null
 }
 
+const getMemberOfGroupsCount = async (user_id) => {
+    const result = await pool.query(
+        'SELECT COUNT (*) AS member_count FROM group_members WHERE user_id = $1', [user_id]
+    )
+    return parseInt(result.rows[0].member_count, 10)
+}
+
+const getOwnerOfGroupsCount = async (user_id) => {
+    const result = await pool.query(
+        'SELECT COUNT (*) AS owned_count FROM groups WHERE owner = $1', [user_id]
+    )
+    return parseInt(result.rows[0].owned_count, 10)
+}
+
 
 
 
@@ -67,5 +81,7 @@ export {
     addOwnerAsMember,
     getGroupById,
     getGroupByName,
-    deleteGroupById
+    deleteGroupById,
+    getMemberOfGroupsCount,
+    getOwnerOfGroupsCount
 }
