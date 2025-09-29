@@ -131,48 +131,55 @@ const returnGroupById = async (req, res, next) =>
 
 
 // Return group(s) where user is the owner
-const returnGroupByOwner = async (req, res,next) =>
+const returnGroupByOwner = async (req, res, next) =>
 {
     try
     {
-        const ownerId = req.user.id // get id from the logged in user(owner)
-        const group = await getGroupByOwner(ownerId) // Get all the groups from db where "owner" matches with ownerId
+        // Use :id if provided, else fallback to logged in user
+        const ownerId = req.params.id || req.user.id;
 
-        if (group.length === 0) // if the return is no rows, that means that there is no groups where user is the owner
+        const groups = await getGroupByOwner(ownerId);
+
+        if (!groups || groups.length === 0)
         {
-            return res.status(404).json({message: 'No groups owned by this user'})
+            return res.status(404).json({ message: 'No groups owned by this user' });
         }
-        return res.status(200).json(group) // if rows were found, user is the owner of some group(s), send status 200 (OK)
+
+        return res.status(200).json(groups);
     }
     catch (err)
     {
-        console.error('returnGroupsByOwner error:', err)
-        return res.status(500).json({error:err.message})
+        console.error('returnGroupsByOwner error:', err);
+        return res.status(500).json({ error: err.message });
     }
-}
-
+};
+    
 
 
 // Return groups where the user is a member
-const returnGroupByMember = async (req,res,next) =>
-{
-    try
+const returnGroupByMember = async (req, res, next) =>
     {
-        const memberId = req.user.id //get id from the logged in user(member)
-        const groups = await getGroupByMember(memberId)
-
-        if (groups.length === 0) // if no groups were found, return 404 (not found) 
+        try
         {
-            return res.status(404).json({message:'No groups found for this member'})
+            // Use :id if provided in params, otherwise fallback to logged in user
+            const memberId = req.params.id || req.user.id;
+    
+            const groups = await getGroupByMember(memberId);
+    
+            if (!groups || groups.length === 0)
+            {
+                return res.status(404).json({ message: 'No groups found for this member' });
+            }
+    
+            return res.status(200).json(groups);
         }
-        return res.status(200).json(groups)
-    }
-    catch (err)
-    {
-        console.error('returnGroupByMember error:',err)
-        return res.status(500).json({error:err.message})
-    }
-}
+        catch (err)
+        {
+            console.error('returnGroupByMember error:', err);
+            return res.status(500).json({ error: err.message });
+        }
+    };
+    
 
 
 // Return group by name
