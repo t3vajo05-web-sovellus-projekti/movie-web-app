@@ -33,7 +33,7 @@ if (!group) return <p>No group found</p>;
 
 return (
     <div className="container mt-4">
-        <h1>{group.groupname}</h1>
+        <h1>{group.name}</h1>
         <p>Owner: {ownerName}</p>
         <p>Description: {group.description}</p>
     </div>
