@@ -1,23 +1,43 @@
-import { getAllGroups, modelCreateGroup, addOwnerAsMember, getGroupById, getGroupByName, deleteGroupById } from "../models/groupActions.js"
 import { ApiError } from "../helper/apiError.js"
 
+import { 
+    getAllGroups,
+    modelCreateGroup,
+    addOwnerAsMember,
+    getGroupById,
+    getGroupByOwner,
+    getGroupByMember,
+    getGroupByName,
+    getGroupMemberCount,
+    getGroupOwnerNickname,
+    deleteGroupById,
+    //group invites:
+    createGroupInvite,
+    getPendingInviteByGroupId,
+    getPendingInviteByInviteId,
+    isUserMemberOfGroup,
+    hasPendingInvite,
+    acceptGroupInvite,
+    declineGroupInvite,
+    // leaving group:
+    leaveGroup
+    } from "../models/groupActions.js"
 
 
-// Return all groups from groups table / return all rows from groups table
-const returnAllGroups = async (req, res, next) =>
-{
-    try
-    {
-        const rows = await getAllGroups() // call model function, fetch groups from database
-        return res.status(200).json(rows) // respond with an array of groups
-    }
-    catch (err)
-    {
-        console.error('returnAllGroups error', err)
-        return res.status(500).json({error:err.message}) // return HTTP 500 error if database fetch fails
-    }
-}
-
+/*
+File contains following controllers (in the following order):
+- create new group
+- return all groups
+- return group by id
+- return groups where user is the owner
+- return groups where the user is a member
+- return group member count
+- return group owner username
+- delete group by id
+- group invites
+- leaving group
+- removing user from group (as owner)
+*/
 
 
 // Create a new group --> Add group to groups table
@@ -25,7 +45,7 @@ const createGroup = async (req, res, next) =>
 {
     try
     {   // get group data from request body
-        const group = req.body
+        const {group} = req.body
         console.log(req.body)
 
         if (!group || !group.name)  // the group must have at least a name. Description will be optional.
@@ -33,7 +53,7 @@ const createGroup = async (req, res, next) =>
             return next (new ApiError('Group name is required', 400))   // if no name, send error with status 400 (bad request)
         }
 
-        // Get user id from the currently logged-in user
+        // Get user id from the currently logged-in user that will become the owner
         const ownerId = req.user.id
 
         // Check if the group name already exists. We can't have two groups with the same name.
@@ -45,7 +65,7 @@ const createGroup = async (req, res, next) =>
 
         // call model function to create group --> add a new group into the database
         const result = await modelCreateGroup (group.name, group.description || "", ownerId )
-        const newGroup = result.rows[0] // data from group table?
+        const newGroup = result.rows[0]
 
         console.log('Creating a new group')
 
@@ -68,6 +88,24 @@ const createGroup = async (req, res, next) =>
     }
 }
 
+
+// Return all groups from groups table / return all rows from groups table
+const returnAllGroups = async (req, res, next) =>
+{
+    try
+    {
+        const rows = await getAllGroups() // call model function, fetch groups from database
+        return res.status(200).json(rows) // respond with an array of groups
+    }
+    catch (err)
+    {
+        console.error('returnAllGroups error', err)
+        return res.status(500).json({error:err.message}) // return HTTP 500 error if database fetch fails
+    }
+}
+
+
+
 // Return group by ID
 const returnGroupById = async (req, res, next) =>
 {
@@ -85,15 +123,61 @@ const returnGroupById = async (req, res, next) =>
     catch (err)
     {
         console.error('returnGroupById error', err)
-        return res.status(500).json({error:err.message}) // 500 server error
+        return res.status(500).json({error:err.message})
     }
 }
-/* some issues with this code and approach, will figure it out later
+
+
+// Return group(s) where user is the owner
+const returnGroupByOwner = async (req, res,next) =>
+{
+    try
+    {
+        const ownerId = req.user.id // get id from the logged in user(owner)
+        const group = await getGroupByOwner(ownerId) // Get all the groups from db where "owner" matches with ownerId
+
+        if (group.length === 0) // if the return is no rows, that means that there is no groups where user is the owner
+        {
+            return res.status(404).json({message: 'No groups owned by this user'})
+        }
+        return res.status(200).json(group) // if rows were found, user is the owner of some group(s), send status 200 (OK)
+    }
+    catch (err)
+    {
+        console.error('returnGroupsByOwner error:', err)
+        return res.status(500).json({error:err.message})
+    }
+}
+
+
+
+// Return groups where the user is a member
+const returnGroupByMember = async (req,res,next) =>
+{
+    try
+    {
+        const memberId = req.user.id //get id from the logged in user(member)
+        const groups = await getGroupByMember(memberId)
+
+        if (groups.length === 0) // if no groups were found, return 404 (not found) 
+        {
+            return res.status(404).json({message:'No groups found for this member'})
+        }
+        return res.status(200).json(groups)
+    }
+    catch (err)
+    {
+        console.error('returnGroupByMember error:',err)
+        return res.status(500).json({error:err.message})
+    }
+}
+
+
 // Return group by name
 const returnGroupByName = async (req,res,next) =>
 {
     try 
-    {
+    { // AI suggested that I add here: const name = req.params.name 
         const group = await getGroupByName(req.params.name)
 
         if (!group)
@@ -107,9 +191,58 @@ const returnGroupByName = async (req,res,next) =>
         console.error('returnGroupByName error', err)
         return res.status(500).json({error:err.message}) // 500 server error
     }
-}*/
+}
 
 
+// Return the number of members in a group
+const returnGroupMemberCount = async (req, res, next) =>
+{
+    try
+    {
+        const groupId = parseInt(req.params.id, 10);
+
+        if (isNaN(groupId)) {
+            return res.status(400).json({ message: "Invalid group ID" });
+        }
+
+        const count = await getGroupMemberCount(groupId);
+
+        return res.status(200).json({ groupId, memberCount: count });
+    }
+    catch (err)
+    {
+        console.error('returnGroupMemberCount error:', err);
+        return res.status(500).json({ error: err.message });
+    }
+}
+
+// Return the username of the group owner
+const returnGroupOwner = async (req, res, next) =>
+{
+    try
+    {
+        const groupId = parseInt(req.params.id, 10);
+
+        if (isNaN(groupId)) {
+            return res.status(400).json({ message: "Invalid group ID" });
+        }
+
+        const username = await getGroupOwnerNickname(groupId);
+
+        if (!username) {
+            return res.status(404).json({ message: "Group or owner not found" });
+        }
+
+        return res.status(200).json({ groupId, owner: username });
+    }
+    catch (err)
+    {
+        console.error('returnGroupOwner error:', err);
+        return res.status(500).json({ error: err.message });
+    }
+}
+
+ 
 // Delete group by ID
 const removeGroupById = async (req, res, next) =>
 {
@@ -138,8 +271,282 @@ const removeGroupById = async (req, res, next) =>
         console.error('removeGroupById error:', err)
         return res.status(500).json({error: err.message})
     }
+}   
+
+// GROUP INVITES:
+
+// Send a join request (create a new group invite)
+const sendJoinRequest = async (req, res, next) => 
+{
+    try
+    {
+        const userId = req.user.id // logged in user
+        const {groupId} = req.body // the group user wants to join
+
+        // join request requires a group id
+        if (!groupId) 
+        {
+            return next(new ApiError('Group ID is required to send a join request', 400))
+        }
+        // check if the group exists. you can only join an existing group
+        const group = await getGroupById(groupId)
+        if (!group)
+        {
+            return next(new ApiError('Group not found', 404))
+        }
+
+        // prevent owner from sending a join request to their own group
+        if (group.owner === userId)
+        {
+            return next(new ApiError('Owner is already a member of the group', 400))
+        }
+
+        //check if user is already a member of this group
+        const isMember = await isUserMemberOfGroup(userId, groupId)
+        if (isMember) 
+        {
+            return next(new ApiError('You are already a member of this group', 400))
+        }
+
+        // check if user already has a pending invite for this group
+        const hasInvite = await hasPendingInvite (userId, groupId)
+        if (hasInvite)
+        {
+            return next(new ApiError('You already have a pending join request for this group', 400))
+        }
+
+        // if everything is ok, create the invite
+        const newInvite = await createGroupInvite (groupId, userId)
+        console.log(`Creating a group invite (sending a join request)`)
+
+        return res.status(201).json({
+            message:"Join request sent", 
+            id: newInvite.id,
+            groupid: newInvite.groupid,
+            user_id: newInvite.user_id,
+            created: newInvite.created
+        })
+    }
+    catch (err)
+    {
+        console.error("sendJoinRequest error:", err)
+        return next(new ApiError(500, err.message))
+    }
 }
 
+//Get pending invites for a group (only owner can see)
+const returnPendingInvite = async (req,res,next) =>
+{
+    try
+    {
+        const ownerId = req.user.id
+        const groupId = req.params.id
+
+        //check if group exists
+        const group = await getGroupById(groupId)
+        if (!group) 
+        {
+          return next(new ApiError('Group not found', 404))
+        }
+
+        //check if logged in user is the group owner
+        if (group.owner !== ownerId)
+        {
+            return next(new ApiError('Only group owner can view pending invites', 403))
+        }
+
+        //get pending invites
+        console.log(`Getting pending invites for group ${groupId} by owner ${ownerId}`);
+        const invites = await getPendingInviteByGroupId (groupId)
+        if (invites.length === 0)
+        {
+            return next(new ApiError('No pending invites for this group', 404))
+        }
+        return res.status(200).json(invites)
+    } catch (err) {
+        console.error("returnPendingInvites error:", err)
+        return res.status(500).json({error:err.message})
+    }
+}
+
+
+// Accept the pending invite
+const acceptInvite = async (req,res,next) =>
+{
+    try 
+    {
+        const ownerId = req.user.id
+        const { inviteId } = req.body
+
+        // check that invite exists
+        const invite = await getPendingInviteByInviteId(inviteId)
+        if (!invite) return next(new ApiError("Invite not found", 404))
+
+        // check that group exists
+        const group = await getGroupById(invite.groupid)
+        if (!group) return next (new ApiError("Group not found", 404))
+
+        // check if the logged in user is the group owner
+        if (group.owner !== ownerId) return next(new ApiError('Only group owner can accept invites', 403))
+
+        // accept invite
+        const member = await acceptGroupInvite(inviteId)
+
+        //if everything goes ok:
+        console.log(`Invite (id: ${inviteId}) accepted for group "${group.name}"`)
+        return res.status(200).json({
+            message: `Invite accepted. User has been added to group.`,
+            groupId: group.id,
+            groupName: group.name,
+            userId: member.user_id
+        })
+    } catch (err) {
+        console.error ("acceptInvite error:", err)
+        return next(err)
+    }
+}
+
+
+//Decline invite
+const declineInvite = async (req,res,next) =>
+{
+    try
+    {
+        const ownerId = req.user.id
+        const { inviteId } = req.body
+
+        // check that invite exists
+        const invite = await getPendingInviteByInviteId(inviteId)
+        if (!invite) return next(new ApiError("Invite not found", 404))
+
+        // check that group exists
+        const group = await getGroupById(invite.groupid)
+        if (!group) return next(new ApiError("Group not found", 404))
+
+        //only owner can decline
+        if (group.owner !== ownerId)
+        {
+            return next(new ApiError("Only group owner can decline invites", 403))
+        }
+
+        // delete invite after previous checks
+        const declined = await declineGroupInvite(inviteId)
+
+        console.log(`Invite (id: ${inviteId}) declined for group "${group.name}"`)
+        return res.status(200).json
+        ({
+            message: `Invite declined`,
+            groupId: group.id,
+            groupName: group.name,
+            userId: invite.user_id,
+            group_invite: declined
+        })
+    } catch (err) {
+        console.error("declinedInvite error:",err)
+        return res.status(500).json({error:err.message})
+    }
+}
+
+// LEAVING GROUP
+// ...and removing member
+
+const leaveGroupController = async (req,res,next) => 
+    {
+        try 
+        {
+            const userId = req.user.id
+            const { groupId } = req.body
+            console.log(`User ${userId} requested to leave group ${groupId}`)
+            
+            if (!groupId)
+            {
+                return res.status(400).json({message:"Group ID required"})
+            }
+
+            //make sure that group exists
+            const group = await getGroupById(groupId)
+            if (!group) return next(new ApiError("Group not found", 404))
+            
+            // owner cannot leave their own group
+            if (group.owner === userId)
+            {
+                return next(new ApiError("Group owner cannot leave their own group", 400))
+            }
+
+            // check if user is a member
+            const isMember = await isUserMemberOfGroup (userId, groupId)
+            if (!isMember)
+            {
+                return next(new ApiError("You are not a member of this group", 400))
+            }
+
+            // check if the row was actually deleted
+            // if "left" is null, leaving failed
+            // if "left" contains a row, deletion succeeded and user left the group
+            const left = await leaveGroup (userId, groupId)
+            if (!left)
+            {
+                return next(new ApiError("Failed to leave group", 500))
+            }
+
+            // if everything goes ok, leave group:
+            return res.status(200).json
+            ({
+                message: `You have left the group.`,
+                groupId: group.id,
+                groupName: group.name,
+                userId: userId
+            })
+        } catch (err) {
+            console.error("leaveGroupController error:",err)
+            return res.status(500).json({error:err.message})
+        }
+    }
+
+
+// Remove user from group (as group owner)
+const removeUserFromGroup = async (req,res,next) =>
+{
+    try
+    {
+        const ownerId = req.user.id
+        const {userId, groupId} = req.body
+
+        if (!groupId) return next(new ApiError("Group ID required", 400))
+        if (!userId) return next(new ApiError("Member's user ID required", 400))
+
+        // make sure that group exists
+        const group = await getGroupById(groupId)
+        if (!group) return next(new ApiError("Group not found", 404))
+
+        // check if the logged in user is the group owner
+        if (group.owner !== ownerId) return next(new ApiError("Only group owner can remove users from group", 403))
+
+        // owner cannot remove themselves from the group
+        if (group.owner === userId) return next(new ApiError("Group owner cannot remove themselves from group", 400))
+        
+        // check if user is a member
+        const isMember = await isUserMemberOfGroup (userId, groupId)
+        if (!isMember) return next(new ApiError("User you want to remove is not a member of this group", 400))
+
+        // if previous checks are ok, continue with the removal:
+        // reusing the model from leaving group, because functionality is the same
+        console.log(`Owner ${ownerId} is removing user ${userId} from group ${groupId}`)
+        const removed = await leaveGroup (userId, groupId)
+        if (!removed) return next(new ApiError("Failed to remove user from group", 500))
+
+        return res.status(200).json({
+            message: `User has been removed from group`,
+            groupId: group.id,
+            groupName: group.name,
+            userId: userId
+        })
+
+    } catch (err) {
+        console.error("removeUserFromGroup error:", err)
+        return res.status(500).json({error:err.message})
+    }
+} 
 
 
 
@@ -149,9 +556,21 @@ const removeGroupById = async (req, res, next) =>
 
 
 export {
-    returnAllGroups,
     createGroup,
+    returnAllGroups,
     returnGroupById,
-    //returnGroupByName,
-    removeGroupById
+    returnGroupByOwner,
+    returnGroupByMember,
+    returnGroupByName,
+    returnGroupMemberCount,
+    returnGroupOwner,
+    removeGroupById,
+    //group invites:
+    sendJoinRequest,
+    returnPendingInvite,
+    acceptInvite,
+    declineInvite,
+    //leaving group:
+    leaveGroupController,
+    removeUserFromGroup
 }
