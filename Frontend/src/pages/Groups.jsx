@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Groups() 
 {
@@ -52,7 +53,7 @@ export default function Groups()
                 {groups.map(group => (
                     <div className="card" key={group.id}>
                         <div className="card-body">
-                            <h5 className="card-title">{group.name}</h5>
+                            <h5 className="card-title"><Link to={`/groups/${group.id}`}>{group.name}</Link></h5>
                             <p className="card-text">{group.description || 'No description'}</p>
                             <p className="card-text">Owner: {group.owner}</p>
                             <p className="card-text">Members: {group.memberCount}</p>
