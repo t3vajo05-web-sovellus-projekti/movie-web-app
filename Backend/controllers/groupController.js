@@ -11,6 +11,8 @@ import {
     getGroupMemberCount,
     getGroupOwnerNickname,
     deleteGroupById,
+    getMemberOfGroupsCount, 
+    getOwnerOfGroupsCount,
     //group invites:
     createGroupInvite,
     getPendingInviteByGroupId,
@@ -550,6 +552,31 @@ const removeUserFromGroup = async (req,res,next) =>
 
 
 
+const returnMemberOfGroupsCount = async (req, res, next) => {
+    try {
+        const userId = req.params.id
+
+        const count = await getMemberOfGroupsCount(userId)
+
+        return res.status(200).json({count})
+    } catch (err) {
+        console.error('returnGroupMemberStats error:', err)
+        return res.status(500).json({error:err.message})
+    }
+}
+
+const returnOwnerOfGroupsCount = async (req, res, next) => {
+    try {
+        const userId = req.params.id
+
+        const count = await getOwnerOfGroupsCount(userId)
+
+        return res.status(200).json({count})
+    } catch (err) {
+        console.error('returnGroupOwnerStats error:', err)
+        return res.status(500).json({error:err.message})
+    }
+}
 
 
 
@@ -572,5 +599,8 @@ export {
     declineInvite,
     //leaving group:
     leaveGroupController,
-    removeUserFromGroup
+    removeUserFromGroup,
+    //returnGroupByName,
+    returnMemberOfGroupsCount,
+    returnOwnerOfGroupsCount
 }

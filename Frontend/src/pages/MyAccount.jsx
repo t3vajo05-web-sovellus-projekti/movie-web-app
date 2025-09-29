@@ -6,6 +6,9 @@ import ChangePassword from "../components/changeMyPassword.jsx";
 export default function MyAccount() 
 {
     const [userData, setUserData] = useState(null);
+    const [reviewCount, setReviewCount] = useState(null);
+    const [groupMemberStats, setGroupMemberStats] = useState(null);
+    const [groupOwnerStats, setGroupOwnerStats] = useState(null);
     const { user } = useContext(UserContext);
 
     useEffect(() => 
@@ -20,6 +23,23 @@ export default function MyAccount()
             .then(res => res.json())
             .then(data => setUserData(data))
             .catch(err => console.error(err));
+
+        fetch(`http://localhost:3001/reviews/user/${user.id}/count`)
+            .then(res => res.json())
+            .then(data => setReviewCount(data.count))
+            .catch(err => console.error("Error fetching review count:", err));
+
+        fetch(`http://localhost:3001/groups/member/${user.id}/count`)
+            .then(res =>res.json())
+            .then(data => setGroupMemberStats(data.count))
+            .catch(err => console.error("Error fetching group member count:", err));
+
+        fetch(`http://localhost:3001/groups/owner/${user.id}/count`)
+            .then(res =>res.json())
+            .then(data => setGroupOwnerStats(data.count))
+            .catch(err => console.error("Error fetching group owner count:", err))
+
+        
     }, [user]);
 
     if (!userData) return <p>Loading...</p>;
@@ -45,11 +65,23 @@ export default function MyAccount()
                         <th scope="row">Created</th>
                         <td>{new Date(userData.created).toLocaleDateString("fi-FI")}</td>
                     </tr>
+                    <tr>
+                        {/* Pitäisikö muuttaa lyhyemmäksi jotenkin? */}
+                        <th scope="row">Amount of groups I'm the owner in</th>
+                        <td>{groupOwnerStats !== null ? groupOwnerStats : "Loading..."}</td>
+                    </tr>
+                    <tr>
+                        {/* Pitäisikö muuttaa lyhyemmäksi jotenkin? */}
+                        <th scope="row">Amount of groups I'm a member in</th>
+                        <td>{groupMemberStats !== null ? groupMemberStats : "Loading..."}</td>
+                    </tr>
+                    <tr>
+                        {/* Maybe add a link to a page with all of users' reviews? */}
+                        <th scope="row">Amount of reviews I have done</th>
+                        <td>{reviewCount !== null ? reviewCount : "Loading..."}</td>
+                    </tr>
                 </tbody>
             </table>
-            Amount of groups im the owner in
-            Amount of groups im a member in
-            Amount of reviews i have done
             <ChangePassword />
             <DeleteUser />
         </div>

@@ -10,6 +10,9 @@ import {
     returnGroupMemberCount,
     returnGroupOwner,
     removeGroupById, 
+    returnMemberOfGroupsCount,
+    returnOwnerOfGroupsCount,
+
     //group invites:
     sendJoinRequest,
     acceptInvite,
@@ -41,5 +44,7 @@ router.get('/invite/pending/:id', auth, returnPendingInvite)
 router.get('/:id', returnGroupById) // keep this on the bottom of all the router.gets.
 
 router.delete('/:id', auth, removeGroupById)
+router.get('/member/:id/count', returnMemberOfGroupsCount)
+router.get('/owner/:id/count', returnOwnerOfGroupsCount)
 
 export default router
