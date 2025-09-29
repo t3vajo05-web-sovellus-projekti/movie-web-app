@@ -26,6 +26,13 @@ const modelCreateGroup = (name, description, owner) =>
     )
 }
 
+const changeGroupDescription = (groupId, newDescription) =>
+{
+    return pool.query(
+        'UPDATE groups SET description = $1 WHERE id = $2 RETURNING *', [newDescription, groupId]
+    )
+}
+
 // Add owner as member
 const addOwnerAsMember = (userId, groupId) =>
 {
@@ -143,15 +150,16 @@ const createGroupInvite = async (groupId, userId) =>
 
 //get pending group invite by group id
 const getPendingInviteByGroupId = async (groupId) =>
-{
-    const result = await pool.query
-    (
-        `SELECT *
-        FROM group_invites
-        WHERE groupid = $1`, [groupId]
-    )
-    return result.rows // return a list of pending invites
-}
+    {
+        const result = await pool.query(
+            `SELECT group_invites.id, group_invites.groupid, group_invites.user_id, group_invites.created, users.username
+             FROM group_invites
+             JOIN users ON group_invites.user_id = users.id
+             WHERE group_invites.groupid = $1`, [groupId]
+        );
+        return result.rows;
+    }
+    
 
 // get pending group invite by invite id
 const getPendingInviteByInviteId = async (inviteId) =>
@@ -217,6 +225,16 @@ const acceptGroupInvite = async (inviteId) =>
     }
 }
 
+// Gets group members
+const getGroupMembers = async (groupId) => {
+    const result = await pool.query(
+        `SELECT users.id, users.username, group_members.joined
+        FROM users
+        JOIN group_members ON users.id = group_members.user_id
+        WHERE group_members.memberof = $1`, [groupId]
+    )
+    return result.rows // return list of members
+}
 
 
 
@@ -264,6 +282,7 @@ const getOwnerOfGroupsCount = async (user_id) => {
 
 export {
     getAllGroups,
+    changeGroupDescription,
     modelCreateGroup,
     addOwnerAsMember,
     getGroupById,
@@ -273,6 +292,7 @@ export {
     getGroupMemberCount,
     getGroupOwnerNickname,
     deleteGroupById,
+    getGroupMembers,
     //group invites:
     createGroupInvite,
     getPendingInviteByGroupId,
