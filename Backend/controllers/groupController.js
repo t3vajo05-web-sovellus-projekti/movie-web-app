@@ -13,6 +13,7 @@ import {
     deleteGroupById,
     getMemberOfGroupsCount, 
     getOwnerOfGroupsCount,
+    getGroupMembers,
     //group invites:
     createGroupInvite,
     getPendingInviteByGroupId,
@@ -21,6 +22,7 @@ import {
     hasPendingInvite,
     acceptGroupInvite,
     declineGroupInvite,
+    changeGroupDescription,
     // leaving group:
     leaveGroup
     } from "../models/groupActions.js"
@@ -280,7 +282,21 @@ const removeGroupById = async (req, res, next) =>
         console.error('removeGroupById error:', err)
         return res.status(500).json({error: err.message})
     }
-}   
+}
+
+// Returns group members from given group id
+const returnGroupMembers = async (req,res,next) =>
+{
+    try
+    {
+        const groupId = req.params.id
+        const members = await getGroupMembers(groupId)
+        return res.status(200).json(members)
+    } catch (err) {
+        console.error('returnGroupMembers error:', err)
+        return res.status(500).json({error:err.message})
+    }
+}
 
 // GROUP INVITES:
 
@@ -290,7 +306,7 @@ const sendJoinRequest = async (req, res, next) =>
     try
     {
         const userId = req.user.id // logged in user
-        const {groupId} = req.body // the group user wants to join
+        const groupId = req.body.id // the group user wants to join
 
         // join request requires a group id
         if (!groupId) 
@@ -343,6 +359,42 @@ const sendJoinRequest = async (req, res, next) =>
     }
 }
 
+const modifyGroupDescription = async (req,res,next) =>
+{
+    try
+    {
+        const ownerId = req.user.id
+        const { groupId, newDescription } = req.body
+
+        if (!groupId) return next(new ApiError("Group ID required", 400))
+        if (newDescription === undefined) return next(new ApiError("New description required", 400))
+
+        // make sure that group exists
+        const group = await getGroupById(groupId)
+        if (!group) return next(new ApiError("Group not found", 404))
+
+        // check if the logged in user is the group owner
+        if (group.owner !== ownerId) return next(new ApiError("Only group owner can modify group description", 403))
+
+        // if previous checks are ok, continue with the modification:
+        console.log(`Owner ${ownerId} is modifying description of group ${groupId}`)
+
+        const result = await changeGroupDescription (groupId, newDescription)
+        if (!result) return next(new ApiError("Failed to modify group description", 500))
+
+        const modifiedGroup = result.rows[0]
+
+        return res.status(200).json({
+            message: "Group description modified",
+            id: modifiedGroup.id,
+            description: modifiedGroup.description
+        })
+    } catch (err) {
+        console.error("modifyGroupDescription error:", err)
+        return res.status(500).json({error:err.message})
+    }
+}
+
 //Get pending invites for a group (only owner can see)
 const returnPendingInvite = async (req,res,next) =>
 {
@@ -367,10 +419,7 @@ const returnPendingInvite = async (req,res,next) =>
         //get pending invites
         console.log(`Getting pending invites for group ${groupId} by owner ${ownerId}`);
         const invites = await getPendingInviteByGroupId (groupId)
-        if (invites.length === 0)
-        {
-            return next(new ApiError('No pending invites for this group', 404))
-        }
+
         return res.status(200).json(invites)
     } catch (err) {
         console.error("returnPendingInvites error:", err)
@@ -599,6 +648,8 @@ export {
     returnGroupMemberCount,
     returnGroupOwner,
     removeGroupById,
+    returnGroupMembers,
+    modifyGroupDescription,
     //group invites:
     sendJoinRequest,
     returnPendingInvite,

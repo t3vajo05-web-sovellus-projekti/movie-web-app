@@ -12,6 +12,8 @@ import {
     removeGroupById, 
     returnMemberOfGroupsCount,
     returnOwnerOfGroupsCount,
+    returnGroupMembers,
+    modifyGroupDescription,
 
     //group invites:
     sendJoinRequest,
@@ -31,6 +33,7 @@ router.post('/invite/accept',auth,acceptInvite)
 router.post('/invite/decline', auth, declineInvite)
 router.post('/leave', auth, leaveGroupController)
 router.post('/remove-user', auth, removeUserFromGroup)
+router.post('/modify-description', auth, modifyGroupDescription)
 
 router.get('/', returnAllGroups)
 
@@ -40,7 +43,8 @@ router.get('/owned', auth, returnGroupByOwner) // Gets all groups owned by the a
 router.get('/owned/:id', auth, returnGroupByOwner) // Gets all groups owned by the user with the specified ID
 router.get('/member',auth, returnGroupByMember)  // Gets all groups where the authenticated user is a member
 router.get('/member/:id', returnGroupByMember)  // Gets all groups where the user with the specified ID is a member
-router.get('/groupname/:name', returnGroupByName) 
+router.get('/members/:id', returnGroupMembers) // Get all members of a group by group id
+router.get('/groupname/:name', returnGroupByName)
 router.get('/invite/pending/:id', auth, returnPendingInvite)
 
 router.get('/:id', returnGroupById) // keep this on the bottom of all the router.gets.
