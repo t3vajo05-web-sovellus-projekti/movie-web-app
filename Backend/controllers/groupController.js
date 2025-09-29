@@ -36,6 +36,7 @@ File contains following controllers (in the following order):
 - delete group by id
 - group invites
 - leaving group
+- removing user from group (as owner)
 */
 
 

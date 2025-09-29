@@ -15,6 +15,7 @@ import Home from '../pages/Home.jsx'
 import BrowseShows from '../pages/BrowseShows.jsx'
 import NotFound from '../pages/NotFound.jsx'
 import Explore from '../pages/Explore.jsx'
+import Group from '../pages/Group.jsx'
 import Groups from '../pages/Groups.jsx'
 import Login from '../pages/Login.jsx'
 import Signup from '../pages/Signup.jsx'
@@ -67,6 +68,7 @@ function App() {
           <Route path="/browseshows" exact element={<BrowseShows />} />
           <Route path="/explore" exact element={<Explore />} />
           <Route path="/groups" exact element={<Groups />} />
+          <Route path="/groups/:id" exact element={<Group/>} />
           <Route path="/signup" exact element={<Signup />} />
           <Route path="/login" exact element={<Login />} />
           <Route path="/moviesearch" exact element={<Moviesearch />} />
