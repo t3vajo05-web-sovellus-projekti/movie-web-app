@@ -244,6 +244,7 @@ const leaveGroup = async (userId, groupId) => {
     return result.rows[0] || null
 }
 
+// get member and owner count for account page
 const getMemberOfGroupsCount = async (user_id) => {
     const result = await pool.query(
         'SELECT COUNT (*) AS member_count FROM group_members WHERE user_id = $1', [user_id]
