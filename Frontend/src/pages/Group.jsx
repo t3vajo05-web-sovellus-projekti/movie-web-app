@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { UserContext } from "../context/UserContext.js";
+import { useUser } from '../context/useUser.js'
 
 export default function Group()
 {
     const [group, setGroup] = useState(null);
     const [ownerName, setOwnerName] = useState(null);
     const { id } = useParams();
+    const { user } = useUser();
     
 
     useEffect(() =>
@@ -29,13 +31,16 @@ export default function Group()
 
     }, [id]); // Run again if "id" changes (user visits another group's page)
 
-if (!group) return <p>No group found</p>;
+    if (!group) return <p>No group found</p>;
 
-return (
-    <div className="container mt-4">
-        <h1>{group.name}</h1>
-        <p>Owner: {ownerName}</p>
-        <p>Description: {group.description}</p>
-    </div>
-);
+    return (
+        <div className="container mt-4">
+            <h1>{group.name}</h1>
+            <p>Owner: {ownerName}</p>
+            <p>Description: {group.description}</p>
+            {user.username  === ownerName && (
+                <Link to={`/groups/${id}/manage`} className="btn btn-primary mt-2">Manage Group</Link>
+            )}
+        </div>
+    );
 }
