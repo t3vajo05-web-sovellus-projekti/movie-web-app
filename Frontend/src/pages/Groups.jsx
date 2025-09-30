@@ -50,6 +50,7 @@ export default function Groups()
         <div className="container mt-4">
             <h1 className="mb-4">Groups</h1>
             <div className="d-flex flex-column gap-3">
+            <Link to="/creategroup" className="btn btn-success">Create Group</Link>
                 {groups.map(group => (
                     <div className="card" key={group.id}>
                         <div className="card-body">
