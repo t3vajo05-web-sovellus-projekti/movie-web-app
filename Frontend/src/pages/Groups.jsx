@@ -7,7 +7,6 @@ export default function Groups()
 {
     const { user } = useContext(UserContext);
     const [groups, setGroups] = useState([]);
-    const [inviteStatus, setInvitestatus] = useState([]);
 
 
     useEffect(() => 
@@ -20,6 +19,20 @@ export default function Groups()
                 const res = await fetch('http://localhost:3001/groups');
                 const data = await res.json();
 
+                // If logged in, fetch groups where user is already a member
+                let memberGroups = [];
+                if (user)
+                {
+                    const memberRes = await fetch("http://localhost:3001/groups/member", {
+                        headers: {"Authorization":`Bearer ${user?.token}`},
+                    });
+                    if(memberRes.ok) 
+                        {
+                            memberGroups = await memberRes.json();
+                        }
+                }
+
+
                 // For each group, fetch owner, member count, and invites for logged in user
                 const enrichedGroups = await Promise.all(
                     data.map(async (group) => 
@@ -27,9 +40,11 @@ export default function Groups()
                         const [ownerRes, countRes, inviteRes] = await Promise.all([
                             fetch(`http://localhost:3001/groups/owner/${group.id}`),
                             fetch(`http://localhost:3001/groups/membercount/${group.id}`),
+                            // if user is logged in, check if there is a pending invite
                             user ? fetch(`http://localhost:3001/groups/invite/pending/${group.id}/for-user`,
                                 { headers:{"Authorization": `Bearer ${user?.token}`}
                             })
+                            // if user is not logged in --> "no pending invite"
                             : Promise.resolve({ok:true, json: async() => ({pending:false})})
                         ]);
 
@@ -37,12 +52,18 @@ export default function Groups()
                         const countData = await countRes.json();
                         const inviteData = await inviteRes.json();
 
+                        //Determine whether the logged in user is already a member of the group or not
+                        const isAlreadyMember = memberGroups.some((alreadyMember) => 
+                            alreadyMember.id === group.id
+                        );
+
 
                         return {
                             ...group,
                             owner: ownerData.owner || 'Unknown',
                             memberCount: countData.memberCount || 0,
-                            inviteStatus: inviteData.pending
+                            inviteStatus: inviteData.pending, // true if pending invite exists, otherwise false
+                            isMember: isAlreadyMember // true if user is already member
                         };
                     })
                 );
@@ -56,7 +77,6 @@ export default function Groups()
         }
         fetchGroups();
     }, [user]);
-
 
 
 const handleJoinRequest = async (groupId) =>
@@ -78,9 +98,10 @@ const handleJoinRequest = async (groupId) =>
 
         if (!res.ok) throw new Error("Failed to create a join request");
 
+         // if request succeeded, update local state
         setGroups((prevGroups) =>
             prevGroups.map(group => 
-                group.id === groupId ? { ...group, inviteStatus: true} : group)
+                group.id === groupId ? { ...group, inviteStatus: true} : group) // update only for groups where inviteStatus=true, leave others unchanged
         );
     } catch (err) {
         alert(err.message)
@@ -95,17 +116,29 @@ const handleJoinRequest = async (groupId) =>
                 {groups.map(group => (
                     <div className="card" key={group.id}>
                         <div className="card-body">
-                            <h5 className="card-title"><Link to={`/groups/${group.id}`}>{group.name}</Link></h5>
+                            <h5 className="card-title">{group.name}</h5>
                             <p className="card-text">{group.description || 'No description'}</p>
                             <p className="card-text">Owner: {group.owner}</p>
                             <p className="card-text">Members: {group.memberCount}</p>
-                            <button 
+
+                            {user && group.isMember && (
+                                <Link to={`/groups/${group.id}`}
+                                className="btn btn-success mt-2">Open Group</Link>
+                            )}
+
+                            {user && !group.isMember && (
+                                <button 
                                 type="button" 
                                 className="btn btn-primary mt-2"
                                 onClick={() => handleJoinRequest(group.id)}
                                 disabled={group.inviteStatus}>
                                     {group.inviteStatus ? "Requested" : "Request to join group"}
-                            </button>
+                                </button>
+                            )}
+                            
+                            {!user && ( // Do we keep this for users that are not logged in or not?
+                                <p className="text-muted mt-2">Login to join group</p>
+                            )}
                         </div>
                     </div>
                 ))}
