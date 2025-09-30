@@ -1,5 +1,4 @@
 import { pool } from '../helper/db.js'
-import { ApiError } from "../helper/apiError.js"
 
 /* File contains following models (should be in order):
 - create your own group
@@ -48,7 +47,6 @@ const getAllGroups = async () =>
     return result.rows
 }
 
-
 // Get group by id
 const getGroupById = async (id) =>
 {
@@ -63,7 +61,6 @@ const getGroupByOwner = async (ownerId) =>
     return result.rows
 }
 
-
 // Get group(s) by member
 const getGroupByMember = async (memberId) =>
 {
@@ -76,7 +73,6 @@ const getGroupByMember = async (memberId) =>
     )
     return result.rows
 }
-
 
 // Get group by groupname
 const getGroupByName = async (name) =>
@@ -127,15 +123,6 @@ const deleteGroupById = async (id) =>
 
 //GROUP INVITES:
 
-/*
-- create new group invite
-- get pending invite by group id
-- get pending invite by invite id
-- accept invite
-- decline invite
- */
-
-
 //create new group invite
 const createGroupInvite = async (groupId, userId) =>
 {
@@ -160,7 +147,6 @@ const getPendingInviteByGroupId = async (groupId) =>
         return result.rows;
     }
     
-
 // get pending group invite by invite id
 const getPendingInviteByInviteId = async (inviteId) =>
 {
@@ -235,8 +221,6 @@ const getGroupMembers = async (groupId) => {
     )
     return result.rows // return list of members
 }
-
-
 
 //decline invite
 const declineGroupInvite = async (inviteId) =>

@@ -7,6 +7,7 @@ export default function Groups()
 {
     const { user } = useContext(UserContext);
     const [groups, setGroups] = useState([]);
+    const [inviteStatus, setInvitestatus] = useState([]);
 
 
     useEffect(() => 
@@ -19,22 +20,29 @@ export default function Groups()
                 const res = await fetch('http://localhost:3001/groups');
                 const data = await res.json();
 
-                // For each group, fetch owner and member count
+                // For each group, fetch owner, member count, and invites for logged in user
                 const enrichedGroups = await Promise.all(
                     data.map(async (group) => 
                     {
-                        const [ownerRes, countRes] = await Promise.all([
+                        const [ownerRes, countRes, inviteRes] = await Promise.all([
                             fetch(`http://localhost:3001/groups/owner/${group.id}`),
-                            fetch(`http://localhost:3001/groups/membercount/${group.id}`)
+                            fetch(`http://localhost:3001/groups/membercount/${group.id}`),
+                            user ? fetch(`http://localhost:3001/groups/invite/pending/${group.id}/for-user`,
+                                { headers:{"Authorization": `Bearer ${user?.token}`}
+                            })
+                            : Promise.resolve({ok:true, json: async() => ({pending:false})})
                         ]);
 
                         const ownerData = await ownerRes.json();
                         const countData = await countRes.json();
+                        const inviteData = await inviteRes.json();
+
 
                         return {
                             ...group,
                             owner: ownerData.owner || 'Unknown',
-                            memberCount: countData.memberCount || 0
+                            memberCount: countData.memberCount || 0,
+                            inviteStatus: inviteData.pending
                         };
                     })
                 );
@@ -46,9 +54,9 @@ export default function Groups()
                 console.error(err);
             }
         }
-
         fetchGroups();
-    }, []);
+    }, [user]);
+
 
 
 const handleJoinRequest = async (groupId) =>
@@ -69,8 +77,11 @@ const handleJoinRequest = async (groupId) =>
          });
 
         if (!res.ok) throw new Error("Failed to create a join request");
-        const data = await res.json();
-        console.log("Join request success:", data);
+
+        setGroups((prevGroups) =>
+            prevGroups.map(group => 
+                group.id === groupId ? { ...group, inviteStatus: true} : group)
+        );
     } catch (err) {
         alert(err.message)
     }
@@ -91,7 +102,10 @@ const handleJoinRequest = async (groupId) =>
                             <button 
                                 type="button" 
                                 className="btn btn-primary mt-2"
-                                onClick={() => handleJoinRequest(group.id)}>Request to join group</button>
+                                onClick={() => handleJoinRequest(group.id)}
+                                disabled={group.inviteStatus}>
+                                    {group.inviteStatus ? "Requested" : "Request to join group"}
+                            </button>
                         </div>
                     </div>
                 ))}
