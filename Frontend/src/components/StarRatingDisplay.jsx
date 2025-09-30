@@ -4,7 +4,7 @@ export default function StarRatingDisplay({ value10 }) {
     return <span>-</span>;
   }
   
-  const fiveScale = Math.max(0, Math.min(5, Math.round(Number(value10) / 2)));
+  const fiveScale = Math.max(0, Math.min(5, Math.round(Number(value10))));
 
   return (
     <span aria-label={`${value10}/10`} title={`${value10}/10`}>
