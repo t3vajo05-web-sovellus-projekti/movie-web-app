@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
+import { UserContext } from "../context/UserContext";
+
 
 export default function Groups() 
 {
+    const { user } = useContext(UserContext);
     const [groups, setGroups] = useState([]);
+
 
     useEffect(() => 
     {
@@ -46,6 +50,33 @@ export default function Groups()
         fetchGroups();
     }, []);
 
+
+const handleJoinRequest = async (groupId) =>
+{
+    if (!user) {alert("You must be logged in to request to join a group");
+        return;
+    }
+
+    try
+    {
+        const res = await fetch ("http://localhost:3001/groups/invite/join", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${user.token}`
+                    },
+                    body: JSON.stringify({id: groupId})
+         });
+
+        if (!res.ok) throw new Error("Failed to create a join request");
+        const data = await res.json();
+        console.log("Join request success:", data);
+    } catch (err) {
+        alert(err.message)
+    }
+};
+
+
     return (
         <div className="container mt-4">
             <h1 className="mb-4">Groups</h1>
@@ -57,7 +88,10 @@ export default function Groups()
                             <p className="card-text">{group.description || 'No description'}</p>
                             <p className="card-text">Owner: {group.owner}</p>
                             <p className="card-text">Members: {group.memberCount}</p>
-                            <button type="button" className="btn btn-primary mt-2">Request to join group</button>
+                            <button 
+                                type="button" 
+                                className="btn btn-primary mt-2"
+                                onClick={() => handleJoinRequest(group.id)}>Request to join group</button>
                         </div>
                     </div>
                 ))}
