@@ -2,6 +2,7 @@ import React, { useEffect, useContext, useState } from 'react'
 import { UserContext } from '../context/UserContext'
 import MyRecentReviews from '../components/myRecentReviews'
 import UserWatchlist from "../components/publicWatchlist.jsx";
+import MyGroups from '../components/myGroups.jsx';
 
 export default function MyProfile() {
     const [userData, setUserData] = useState(null);
@@ -30,8 +31,10 @@ export default function MyProfile() {
       
       <MyRecentReviews userId={userData.id} />
       
-      My Groups
-      <h2 className="h4 mb-3">My Watchlist</h2>       
+      <h2 className="h4 mt-5 mb-3">My Groups</h2>
+      <MyGroups userId={userData.id} />
+
+      <h2 className="h4 mt-5 mb-3">My Watchlist</h2>       
       <UserWatchlist userId={userData.id} />
     </div>
   );
