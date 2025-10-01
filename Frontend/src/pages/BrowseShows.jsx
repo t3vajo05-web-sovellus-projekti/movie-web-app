@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { fetchTheatres, fetchShows, formatDateTime } from "../components/Finnkino_api.js";
 import DateDropdown from "../components/dateDropdown.jsx";
+import { useUser } from '../context/useUser.js'
 
 export default function BrowseShows()
 {
@@ -8,6 +9,11 @@ export default function BrowseShows()
     const [selectedTheatre, setSelectedTheatre] = useState("");
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
     const [shows, setShows] = useState([]);
+    const [groups, setGroups] = useState([]);
+    const [selectedGroup, setSelectedGroup] = useState({});
+    const { user } = useUser();
+    const [showAddDropdown, setShowAddDropdown] = useState({});
+
 
     useEffect(() =>
     {
@@ -34,6 +40,54 @@ export default function BrowseShows()
     
         fetchShows(selectedTheatre, formattedDate).then(setShows);
     }, [selectedTheatre, theatres, selectedDate]);
+
+    useEffect(() => {
+        async function fetchGroups() {
+
+            if(!user) {
+                setGroups([]);
+                return;
+            }
+            const res = await fetch("http://localhost:3001/groups/member", {
+                headers: { Authorization: `Bearer ${user.token}` }
+            });
+            if (!res.ok) throw new Error("Failed to fetch groups");
+            const data = await res.json();
+            setGroups(data);
+        }
+
+        fetchGroups();
+    }, [user]);
+
+    async function addShowToGroup(groupId, s) {
+        console.log("Adding show to group:", groupId, s);
+        const response = await fetch(`http://localhost:3001/groups/showtime/add/${groupId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${user.token}`
+            },
+            body: JSON.stringify({
+                showtimeArray: [
+                    {
+                        theatername: s.theatre,
+                        auditoriumname: s.auditorium,
+                        title: s.title,
+                        show_start_time: s.start,
+                        runtime: s.runTime,
+                        year: s.year,
+                        finnkinourl: s.url,
+                        imageurl: s.image
+                    }
+                ]
+            })
+        });
+        if (!response.ok) {
+            alert("Failed to add show to group");
+        } else {
+            setSelectedGroup({ ...selectedGroup, [s.id]: "" }); // Reset selected group for this show
+        }
+    }
         
     return (
 <section className="container py-5">
@@ -79,9 +133,60 @@ export default function BrowseShows()
                             <p className="mb-1"><strong>Auditorium:</strong> {s.auditorium}</p>                
                             <p className="mb-1"><strong>Genres:</strong> {s.genres}</p>
                             <p className="mb-3"><strong>Language:</strong> {s.language}</p>
-                            <a href={s.url} target="_blank" rel="noreferrer" className="btn btn-sm btn-primary">
-                                More info
-                            </a>
+                            {/* Buttons row */}
+                            <div className="d-flex align-items-center gap-2 mt-2">
+                                <a
+                                    href={s.url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="btn btn-sm btn-primary"
+                                >
+                                    More info
+                                </a>
+                                { user && groups.length > 0 && (
+                                <button
+                                    className="btn btn-sm btn-secondary"
+                                    onClick={() =>
+                                        setShowAddDropdown(prev => ({
+                                            ...prev,
+                                            [s.id]: !prev[s.id] // toggle
+                                        }))
+                                    }
+                                >
+                                    {showAddDropdown[s.id] ? "Cancel Adding to Group" : "Add to Group"}
+                                </button>
+                                )}
+                            </div>
+
+                            {/* Dropdown row, below buttons */}
+                            {showAddDropdown[s.id] && (
+                                <div className="d-flex align-items-center gap-2 mt-1">
+                                    <select
+                                        className="form-select form-select-sm me-2"
+                                        value={selectedGroup[s.id] || ""}
+                                        onChange={e =>
+                                            setSelectedGroup({ ...selectedGroup, [s.id]: e.target.value })
+                                        }
+                                    >
+                                        <option value="">Select group</option>
+                                        {groups.map(g => (
+                                            <option key={g.id} value={g.id}>
+                                                {g.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <button
+                                        className="btn btn-sm btn-success"
+                                        disabled={!selectedGroup[s.id]}
+                                        onClick={() => {
+                                            addShowToGroup(selectedGroup[s.id], s);
+                                            setShowAddDropdown(prev => ({ ...prev, [s.id]: false })); // collapse after adding
+                                        }}
+                                    >
+                                        Add
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
