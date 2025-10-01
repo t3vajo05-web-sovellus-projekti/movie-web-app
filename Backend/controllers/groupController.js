@@ -355,9 +355,10 @@ const sendJoinRequest = async (req, res, next) =>
     catch (err)
     {
         console.error("sendJoinRequest error:", err)
-        return next(new ApiError(500, err.message))
+        return next(new ApiError(err.message, 500))
     }
 }
+
 
 const modifyGroupDescription = async (req,res,next) =>
 {
@@ -427,6 +428,28 @@ const returnPendingInvite = async (req,res,next) =>
     }
 }
 
+const hasPendingInviteForUserAndGroup = async (req,res,next) =>
+{
+    try
+    {
+        const userId = req.user.id;
+        const groupId = req.params.groupId;
+        
+        //check if group exists
+        const group = await getGroupById(groupId)
+        if (!group) 
+        {
+          return next(new ApiError('Group not found', 404))
+        }
+
+        const exists = await hasPendingInvite(userId, groupId)
+        res.json({pending: exists})
+    } catch (err)
+    {
+        console.error("hasPendingInviteForUserAndGroup error:",err)
+        return res.status(500).json({error:err.message})
+    }
+}
 
 // Accept the pending invite
 const acceptInvite = async (req,res,next) =>
@@ -606,7 +629,7 @@ const removeUserFromGroup = async (req,res,next) =>
     }
 } 
 
-
+// COUNTS:
 
 const returnMemberOfGroupsCount = async (req, res, next) => {
     try {
@@ -653,12 +676,13 @@ export {
     //group invites:
     sendJoinRequest,
     returnPendingInvite,
+    hasPendingInviteForUserAndGroup,
     acceptInvite,
     declineInvite,
     //leaving group:
     leaveGroupController,
     removeUserFromGroup,
-    //returnGroupByName,
+    //counts:
     returnMemberOfGroupsCount,
     returnOwnerOfGroupsCount
 }

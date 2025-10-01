@@ -14,12 +14,12 @@ import {
     returnOwnerOfGroupsCount,
     returnGroupMembers,
     modifyGroupDescription,
-
     //group invites:
     sendJoinRequest,
     acceptInvite,
     declineInvite,
     returnPendingInvite,
+    hasPendingInviteForUserAndGroup,
     //leaving group:
     leaveGroupController,
     removeUserFromGroup
@@ -46,6 +46,7 @@ router.get('/member/:id', returnGroupByMember)  // Gets all groups where the use
 router.get('/members/:id', returnGroupMembers) // Get all members of a group by group id
 router.get('/groupname/:name', returnGroupByName)
 router.get('/invite/pending/:id', auth, returnPendingInvite)
+router.get('/invite/pending/:groupId/for-user', auth, hasPendingInviteForUserAndGroup)
 
 router.get('/:id', returnGroupById) // keep this on the bottom of all the router.gets.
 
