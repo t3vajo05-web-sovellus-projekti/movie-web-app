@@ -197,7 +197,7 @@ export default function Navbar() {
                             className='form-control'
                             value={year}
                             onChange={(e) => setYear(e.target.value)}
-                            placeholder='e.g. 2000'
+                            placeholder='e.g. 2000 or 2000-2010'
                         />
                     </div>
                     <div className='col-md-3'>
