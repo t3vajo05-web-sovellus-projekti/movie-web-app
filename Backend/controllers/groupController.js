@@ -14,6 +14,8 @@ import {
     getMemberOfGroupsCount, 
     getOwnerOfGroupsCount,
     getGroupMembers,
+    addShowtimeToGroup,
+    getShowtimesForGroup,
     //group invites:
     createGroupInvite,
     getPendingInviteByGroupId,
@@ -657,6 +659,69 @@ const returnOwnerOfGroupsCount = async (req, res, next) => {
     }
 }
 
+const showtimeToGroup = async (req,res,next) =>
+{
+    try
+    {
+        const groupId = req.params.id
+        const { showtimeArray } = req.body
+
+        if (!groupId) return next(new ApiError("Group ID required", 400))
+
+        if (!showtimeArray || !Array.isArray(showtimeArray) || showtimeArray.length === 0)
+        {
+            return next(new ApiError("showtimeArray is required and must be a non-empty array", 400))
+        }
+
+        // showtimeArray can include:
+        // theatername, auditoriumname, title, show_start_time, runtime, year, finnkinourl, imageurl
+        // mandatory values in showtimeArray: theatername, title, show_start_time
+        if (!showtimeArray.every(showtime => showtime.theatername && showtime.title && showtime.show_start_time)) {
+            return next(new ApiError("Each showtime must include theatername, title, and show_start_time", 400));
+        }
+
+        // make sure that group exists
+        const group = await getGroupById(groupId)
+        if (!group) return next(new ApiError("Group not found", 404))
+
+        // if previous checks are ok, continue with adding showtime to group:
+        console.log(`Adding showtime to group ${groupId}`)
+
+        const added = await addShowtimeToGroup (groupId, showtimeArray)
+        if (!added)
+        {
+            return next(new ApiError("Failed to add showtime to group", 500))
+        }
+        return res.status(200).json({message:"Showtime added to group", added})
+    }
+    
+    catch (err) {
+        console.error('returnGroupOwnerStats error:', err)
+        return res.status(500).json({error:err.message})
+    }
+}
+
+const returnShowtimesForGroup = async (req,res,next) =>
+{
+    try
+    {
+        const groupId = req.params.id
+
+        if (!groupId) return next(new ApiError("Group ID required", 400))
+
+        const group = await getGroupById(groupId)
+        if (!group) return next(new ApiError("Group not found", 404))
+
+        const showtimes = await getShowtimesForGroup (groupId)
+        return res.status(200).json(showtimes)
+    }
+    catch (err) {
+        console.error('returnShowtimesForGroup error:', err)
+        return res.status(500).json({error:err.message})
+    }
+}
+    
+
 
 
 
@@ -673,6 +738,8 @@ export {
     removeGroupById,
     returnGroupMembers,
     modifyGroupDescription,
+    showtimeToGroup,
+    returnShowtimesForGroup,
     //group invites:
     sendJoinRequest,
     returnPendingInvite,
