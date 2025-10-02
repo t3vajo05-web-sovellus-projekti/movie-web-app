@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useUser } from '../context/useUser.js'
+import MovieCarousel from "../components/movieCarousel.jsx";
 
 export default function Group() {
     const [group, setGroup] = useState(null);
@@ -8,38 +9,52 @@ export default function Group() {
     const [showtimes, setShowtimes] = useState([]);
     const { id } = useParams();
     const { user } = useUser();
+    const [groupMovies, setGroupMovies] = useState([]);
+    
+    // pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
 
     useEffect(() => {
         async function fetchGroup() {
-            // fetch group data
             const res = await fetch(`http://localhost:3001/groups/${id}`);
-            if (!res.ok) throw new Error("Failed to fetch group");
             const data = await res.json();
             setGroup(data);
 
-            // fetch owner username
             const ownerRes = await fetch(`http://localhost:3001/users/${data.owner}/username`);
-            if (!ownerRes.ok) throw new Error("Failed to fetch owner username");
             const ownerData = await ownerRes.json();
             setOwnerName(ownerData.username);
         }
 
         async function fetchShowtimes() {
             const res = await fetch(`http://localhost:3001/groups/showtime/get/${id}`);
-            if (!res.ok) throw new Error("Failed to fetch showtimes");
             const data = await res.json();
             setShowtimes(data);
         }
 
+        async function fetchGroupMovies() {
+            const res = await fetch(`http://localhost:3001/groups/movies/${id}`, {
+                headers: { Authorization: `Bearer ${user.token}` }
+            });
+            const data = await res.json();
+            setGroupMovies(data);
+        }
+
         fetchGroup();
         fetchShowtimes();
+        fetchGroupMovies();
     }, [id]);
 
     if (!group) return <p>No group found</p>;
 
     const formatDateTime = (dateStr) => {
         return new Date(dateStr).toLocaleString("fi-FI", { timeZone: "Europe/Helsinki" });
-    }
+    };
+
+    // pagination logic
+    const totalPages = Math.ceil(showtimes.length / itemsPerPage);
+    const startIdx = (currentPage - 1) * itemsPerPage;
+    const currentShowtimes = showtimes.slice(startIdx, startIdx + itemsPerPage);
 
     return (
         <div className="container mt-4">
@@ -52,10 +67,10 @@ export default function Group() {
 
             <h3 className="mt-4">Group Showtimes</h3>
             <div className="d-flex flex-column gap-4">
-                {showtimes.length === 0 ? (
+                {currentShowtimes.length === 0 ? (
                     <p className="text-center text-muted">No shows</p>
                 ) : (
-                    showtimes.map(s => (
+                    currentShowtimes.map(s => (
                         <div key={s.id} className="card shadow-sm border-0">
                             <div className="row g-0 align-items-center">
                                 <div className="col-md-3">
@@ -83,6 +98,32 @@ export default function Group() {
                         </div>
                     ))
                 )}
+            </div>
+
+            {/* pagination controls */}
+            {totalPages > 1 && (
+                <div className="d-flex justify-content-center align-items-center mt-3 gap-2">
+                    <button 
+                        className="btn btn-sm btn-outline-primary"
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage(p => p - 1)}
+                    >
+                        Previous
+                    </button>
+                    <span>Page {currentPage} of {totalPages}</span>
+                    <button 
+                        className="btn btn-sm btn-outline-primary"
+                        disabled={currentPage === totalPages}
+                        onClick={() => setCurrentPage(p => p + 1)}
+                    >
+                        Next
+                    </button>
+                </div>
+            )}
+
+            <div className="mt-5">
+                <h3 className="mt-4">Group Movies</h3>
+                <MovieCarousel movies={groupMovies} carouselId="groupMoviesCarousel" />
             </div>
         </div>
     );

@@ -11,6 +11,7 @@ import {
     discoverMoviesFilter
 } from '../controllers/movieController.js';
 
+
 const router = Router();
 
 router.get('/search', searchMovies);
@@ -21,6 +22,5 @@ router.get('/:id/similar', getSimilarMoviesController)
 router.get('/discover', discoverMoviesFilter); // go to movieController.js for info on filters
 router.get('/genres', getMovieGenreList);
 router.get('/:id', getMovieById);
-
 
 export default router;

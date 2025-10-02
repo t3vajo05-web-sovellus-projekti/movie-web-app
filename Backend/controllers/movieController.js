@@ -10,6 +10,12 @@ import {
   getActorIdByName,
   discoverMovies
 } from '../helper/tmdb.js';
+import {
+  addMovieToGroup,
+  removeMovieFromGroup,
+  getMoviesForGroup
+} from '../models/movieActions.js';
+import { isUserMemberOfGroup } from '../models/groupActions.js'; // for adding / removing movie to a group
 
 // Kuvien filepathien url: https://image.tmdb.org/t/p/w500/ (filepath)
 // esim https://image.tmdb.org/t/p/w500/AbgEQO2mneCSOc8CSnOMa8pBS8I.jpg%22
@@ -184,4 +190,110 @@ export const discoverMoviesFilter = async (req, res, next) => {
     console.error('discoverMoviesFilter error:', err);
     return res.status(500).json({error:err.message});
   }
+};
+
+const addMovieToGroupController = async (req, res, next) => 
+{
+    const userId = req.user?.id;
+    if (!userId) return next(new ApiError("Unauthorized", 401));
+
+    const { groupId, movieId } = req.body;
+    if (!groupId || !movieId) 
+    {
+        return next(new ApiError("groupId and movieId are required", 400));
+    }
+
+    try 
+    {
+        const isMember = await isUserMemberOfGroup(userId, groupId);
+        if (!isMember) return next(new ApiError("You are not a member of this group", 403));
+
+        // check if movie already exists in group
+        const existingMovies = await getMoviesForGroup(groupId);
+        if (existingMovies.some(m => m.movie_id === movieId)) 
+        {
+            return next(new ApiError("Movie already exists in group", 400));
+        }
+
+        const movie = await addMovieToGroup(groupId, movieId);
+        if (!movie) return next(new ApiError("Failed to add movie to group", 500));
+
+        res.status(201).json(movie.rows[0]);
+    } 
+    catch (err) 
+    {
+        console.error("addMovieToGroupController error:", err);
+        res.status(500).json({ error: err.message });
+    }
+};
+
+const removeMovieFromGroupController = async (req, res, next) => 
+{
+    const userId = req.user?.id;
+    if (!userId) return next(new ApiError("Unauthorized", 401));
+
+    const { groupId, movieId } = req.body;
+    if (!groupId || !movieId) 
+    {
+        return next(new ApiError("groupId and movieId are required", 400));
+    }
+
+    try 
+    {
+        const isMember = await isUserMemberOfGroup(userId, groupId);
+        if (!isMember) return next(new ApiError("You are not a member of this group", 403));
+
+        const movie = await removeMovieFromGroup(groupId, movieId);
+        if (!movie) return next(new ApiError("Failed to remove movie from group", 500));
+
+        res.status(200)
+    } 
+    catch (err) 
+    {
+        console.error("removeMovieFromGroupController error:", err);
+        res.status(500).json({ error: err.message });
+    }
+};
+
+const getMoviesForGroupController = async (req, res, next) => 
+{
+    const userId = req.user?.id;
+    if (!userId) return next(new ApiError("Unauthorized", 401));
+
+    const groupId = req.params.id;
+    if (!groupId) 
+    {
+        return next(new ApiError("groupId is required", 400));
+    }
+
+    try 
+    {
+        const isMember = await isUserMemberOfGroup(userId, groupId);
+        if (!isMember) return next(new ApiError("You are not a member of this group", 403));
+
+        const movies = await getMoviesForGroup(groupId);
+
+        // gets movies from tmdb for each movieId in the group
+        const movieDetailsPromises = movies.map((movie) => 
+            searchMoviesById(movie.movie_id)
+        );
+        const movieDetails = await Promise.all(movieDetailsPromises);
+
+        // filter out any null or undefined results
+        const validMovies = movieDetails.filter((movie) => movie && !movie.error);
+
+        // return the valid movie details
+        return res.json(validMovies);
+    } 
+    catch (err) 
+    {
+        console.error("getMoviesForGroupController error:", err);
+        res.status(500).json({ error: err.message });
+    }
+};
+
+export {
+  addMovieToGroupController,
+  removeMovieFromGroupController,
+  getMoviesForGroupController,
 };

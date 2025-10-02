@@ -170,11 +170,6 @@ const returnGroupByMember = async (req, res, next) =>
     
             const groups = await getGroupByMember(memberId);
     
-            if (!groups || groups.length === 0)
-            {
-                return res.status(404).json({ message: 'No groups found for this member' });
-            }
-    
             return res.status(200).json(groups);
         }
         catch (err)

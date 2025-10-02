@@ -9,6 +9,7 @@ import FavoriteButton from "../components/buttonFavorites.jsx";
 import ReviewCreate from "../components/reviewsCreate.jsx";
 import ReviewsShow from "../components/reviewsShow.jsx";
 import MovieStats from "../components/movieStats.jsx";
+import AddToGroupSection from "../components/addMovieToGroupButton.jsx";
 
 
 export default function Movie() 
@@ -19,6 +20,7 @@ export default function Movie()
     const [watchlist, setWatchlist] = useState([]);
     const [favoritelist, setFavoritelist] = useState([]);
     const [refresh, setRefresh] = useState([]);
+    const [groups, setGroups] = useState([]);
 
     const isInFavorites = favoritelist.some(item => item.movie_id === id);
 
@@ -34,23 +36,51 @@ export default function Movie()
             if (!user) return;
 
             const resWatchlist = await fetch(`http://localhost:3001/watchlist`,
-                {
-                    headers: { Authorization: `Bearer ${user.token}` }
-                });
+            {
+                headers: { Authorization: `Bearer ${user.token}` }
+            });
             const watchlistData = await resWatchlist.json();
-            
-            // Exclude movies where status is 'Favorited only'
+
             const filteredWatchlist = watchlistData.filter(item => item.status !== "Favorited only");
             const filteredFavorites = watchlistData.filter(item => item.favorite === true);
-            
+
+            // fetch groups
+            const res_groups = await fetch("http://localhost:3001/groups/member", {
+                headers: { Authorization: `Bearer ${user.token}` }
+            });
+            if (!res_groups.ok) throw new Error("Failed to fetch groups");
+            const data_groups = await res_groups.json();
+            setGroups(data_groups);
+
             setWatchlist(filteredWatchlist);
-            setFavoritelist(filteredFavorites)
-                
+            setFavoritelist(filteredFavorites);
         }
 
         fetchData();
+    }, [id, user]);
 
-    }, [id, user]);    
+    async function addMovieToGroup(groupId, movieId) {
+        console.log("Adding movie to group:", groupId, movieId);
+        if (!user) return;
+
+        try {
+            const res = await fetch("http://localhost:3001/groups/movie/add", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${user.token}`
+                },
+                body: JSON.stringify({ groupId, movieId })
+            });
+
+            if (!res.ok) throw new Error("Failed to add movie to group");
+
+            const data = await res.json();
+            console.log("Movie added to group:", data);
+        } catch (err) {
+            console.error("Error adding movie to group:", err);
+        }
+    }
 
     if (!movie) return <p>No movie found</p>;
 
@@ -77,20 +107,30 @@ export default function Movie()
 
                     {user && <StarRating movieId={id} onRatingAdded={() => setRefresh(k => k + 1)} />}
                     <p className="mt-3">{movie.overview}</p>
-                    
+
                     <div className="d-flex gap-2 mt-3">
-                    {user && <WatchlistDropdown
-                        movieId={id}
-                        watchlist={watchlist}
-                        setWatchlist={setWatchlist}
-                    />}
-                    {user && <FavoriteButton
-                        movieId={id}
-                        favoritelist={favoritelist}
-                        setFavoritelist={setFavoritelist}
-                    />}
+                        {user && <WatchlistDropdown
+                            movieId={id}
+                            watchlist={watchlist}
+                            setWatchlist={setWatchlist}
+                        />}
+                        {user && <FavoriteButton
+                            movieId={id}
+                            favoritelist={favoritelist}
+                            setFavoritelist={setFavoritelist}
+                        />}
+                        
+                        {user && (
+                            <AddToGroupSection
+                                user={user}
+                                groups={groups}
+                                movieId={id}
+                                addMovieToGroup={addMovieToGroup}
+                            />
+                        )}
                     </div>
                 </div>
+
                 <MovieStats movieId={id} refreshTrigger={refresh} />
                 {user && <ReviewCreate movieId={id} onReviewAdded={() => setRefresh(k => k + 1)} />}
                 <ReviewsShow movieId={id} />
