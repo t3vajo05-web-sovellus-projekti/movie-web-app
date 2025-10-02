@@ -283,6 +283,21 @@ ALTER SEQUENCE public.user_watchlist_id_seq OWNED BY public.user_watchlist.id;
 
 
 --
+-- Name: group_tmdb_movies; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.group_tmdb_movies (
+    id SERIAL PRIMARY KEY,
+    group_id INTEGER NOT NULL,
+    movie_id VARCHAR(255) NOT NULL,
+    CONSTRAINT group_tmdb_movies_group_id_fkey FOREIGN KEY (group_id) REFERENCES public.groups(id) ON DELETE CASCADE
+);
+
+ALTER TABLE public.group_tmdb_movies OWNER TO postgres;
+
+
+
+--
 -- Name: users; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -422,7 +437,6 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.users VALUES (1, 'c81a239c-1fc9-4c86-9860-6281164a754e', 'testuser', 'testuser@example.com', 'testpasswordhash', '2025-09-04 16:49:58.673996');
 INSERT INTO public.users VALUES (3, '7ab03233-3c6e-4d60-9057-594e83aec2a2', 'testiuser1234', 'foo@foo.com', '$2b$10$r7o3BzCWgGz9kg2Bq9lE8.cl/Gg7lKyIIlU.7HNM0NCjG8ZGCBLv.', '2025-09-06 15:56:25.887593');
 INSERT INTO public.users VALUES (4, 'be8a972d-d556-4b76-987c-1315a38168f8', 'testiuser12345', 'foo2@foo.com', '$2b$10$68/mQgeXdtDYGtPi4tUZDeVP071taq.mdkQYY4Ka2P7lrBqeNpu5W', '2025-09-06 16:01:12.037344');
 INSERT INTO public.users VALUES (5, '9639091f-72b6-4917-87cf-dc7f49f2d1bf', 'testiusdder12345', 'foo4@foo.com', '$2b$10$R3W0zJHU3mh0DQ.935SB.OLbSnFFW2.eEd6tG2mZN9UC0aDXhigj.', '2025-09-06 16:05:08.393695');
