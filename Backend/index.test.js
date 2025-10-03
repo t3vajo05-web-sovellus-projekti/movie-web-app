@@ -33,6 +33,46 @@ describe('Testing user management', function () {
     createdUserId = data.id;
   });
 
+  it('should not sign up w/o username', async () => {
+    const { username, ...withoutUsername } = newUser;
+    const response = await fetch('http://localhost:3001/users/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user: withoutUsername }),
+    });
+    const data = await response.json();
+
+    expect(response.status).to.equal(400);
+    expect(data).to.have.property('error');
+    expect(data.error).to.include('username');
+  })
+
+  it('should not sign up w/o password', async () => {
+    const { password, ...withoutPassword } = newUser;
+    const response = await fetch('http://localhost:3001/users/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user: withoutPassword }),
+    });
+    const data = await response.json();
+    expect(response.status).to.equal(400);
+    expect(data).to.have.property('error');
+    expect(data.error).to.include('password');
+  })
+
+  it('should not sign up, too long password', async () => {
+    const longPasswordUser = { ...newUser, password: '1P'.repeat(256) };
+    const response = await fetch('http://localhost:3001/users/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user: longPasswordUser }),
+    });
+    const data = await response.json();
+    expect(response.status).to.equal(400);
+    expect(data).to.have.property('error');
+    expect(data.error).to.include('Password must be less than 255 characters');
+  })
+
   it('should sign in', async () => {
     const response = await fetch('http://localhost:3001/users/signin', {
       method: 'POST',
@@ -50,6 +90,18 @@ describe('Testing user management', function () {
 
     authToken = data.token;
   });
+
+  it('should not sign in, wrong username', async () => {
+    const response = await fetch('http://localhost:3001/users/signin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user: { identifier: 'wrong'+newUser.username, password: newUser.password } }),
+    });
+    const data = await response.json();
+    expect(response.status).to.equal(404);
+    expect(data).to.have.property('error');
+    expect(data.error).to.include('User not found');
+  })
 
   it('should delete user', async () => {
     const response = await fetch('http://localhost:3001/users/delete', {
