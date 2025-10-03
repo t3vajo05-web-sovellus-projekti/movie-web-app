@@ -1,4 +1,4 @@
-import { describe, it, after } from 'mocha';
+import { describe, it } from 'mocha';
 import { expect } from 'chai';
 
 describe('Testing user management', function () {
