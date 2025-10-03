@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useUser } from '../context/useUser.js'
 import MovieCarousel from "../components/movieCarousel.jsx";
+import RemoveButton from "../components/buttonRemoveShowtime.jsx";
 
 export default function Group() {
     const [group, setGroup] = useState(null);
@@ -51,6 +52,22 @@ export default function Group() {
         return new Date(dateStr).toLocaleString("fi-FI", { timeZone: "Europe/Helsinki" });
     };
 
+    const removeShowtime = async (showtimeId) => {
+            if (!window.confirm("Are you sure you want to remove this showtime from the group?")) return;
+
+            const res = await fetch(`http://localhost:3001/groups/showtime/remove/${id}`, {
+                method: "DELETE",
+                body: JSON.stringify({ showtimeId }),
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${user.token}`
+                }
+            });
+            if (res.ok) {
+                setShowtimes(prev => prev.filter(s => s.id !== showtimeId));
+            }
+        }
+
     // pagination logic
     const totalPages = Math.ceil(showtimes.length / itemsPerPage);
     const startIdx = (currentPage - 1) * itemsPerPage;
@@ -92,6 +109,7 @@ export default function Group() {
                                         <a href={s.finnkinourl} target="_blank" rel="noreferrer" className="btn btn-sm btn-primary">
                                             More info
                                         </a>
+                                        <RemoveButton onClick={() => removeShowtime(s.id)} corner={true} />
                                     </div>
                                 </div>
                             </div>

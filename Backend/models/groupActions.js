@@ -296,6 +296,13 @@ const getShowtimesForGroup = async (groupId) =>
     return result.rows;
 }
 
+const deleteShowtimeFromGroup = async (groupId, showtimeId) => {
+    const result = await pool.query(
+        'DELETE FROM group_movies WHERE group_id = $1 AND id = $2 RETURNING *', [groupId, showtimeId]
+    );
+    return result.rows[0] || null;
+}
+
 
 
 
@@ -314,6 +321,7 @@ export {
     getGroupMembers,
     addShowtimeToGroup,
     getShowtimesForGroup,
+    deleteShowtimeFromGroup,
     //group invites:
     createGroupInvite,
     getPendingInviteByGroupId,

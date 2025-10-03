@@ -16,6 +16,7 @@ import {
     getGroupMembers,
     addShowtimeToGroup,
     getShowtimesForGroup,
+    deleteShowtimeFromGroup,
     //group invites:
     createGroupInvite,
     getPendingInviteByGroupId,
@@ -715,9 +716,23 @@ const returnShowtimesForGroup = async (req,res,next) =>
         return res.status(500).json({error:err.message})
     }
 }
-    
 
+const removeShowtimeFromGroup = async (req,res,next) =>
+{
+    try
+    {
+        const groupId = req.params.id
+        const { showtimeId } = req.body
 
+        const removed = await deleteShowtimeFromGroup (groupId, showtimeId)
+        if (!removed) return next(new ApiError("Failed to remove showtime from group", 500))
+        return res.status(200).json({message:"Showtime removed from group", removed})
+    } 
+    catch (err) {
+        console.error('removeShowtimeFromGroup error:', err)
+        return res.status(500).json({error:err.message})
+    }
+}
 
 
 
@@ -735,6 +750,7 @@ export {
     modifyGroupDescription,
     showtimeToGroup,
     returnShowtimesForGroup,
+    removeShowtimeFromGroup,
     //group invites:
     sendJoinRequest,
     returnPendingInvite,
