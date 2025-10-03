@@ -16,6 +16,7 @@ import {
     modifyGroupDescription,
     showtimeToGroup,
     returnShowtimesForGroup,
+    removeShowtimeFromGroup,
     //group invites:
     sendJoinRequest,
     acceptInvite,
@@ -40,6 +41,7 @@ router.post('/modify-description', auth, modifyGroupDescription)
 
 router.post('/showtime/add/:id', auth, showtimeToGroup)
 router.get('/showtime/get/:id', returnShowtimesForGroup)
+router.delete('/showtime/remove/:id', auth, removeShowtimeFromGroup)
 
 router.post('/movie/add', auth, addMovieToGroupController)
 router.post('/movie/remove', auth, removeMovieFromGroupController)
