@@ -72,8 +72,8 @@ const rateMovie = async (req, res, next) => {
         if (!rating.movie_id) { 
             return next(new ApiError('Movie_id is required', 400))
         }
-        if (rating.rating < 0 || rating.rating > 10) {
-            return next(new ApiError('Rating cannot be under 0 or over 10', 400))
+        if (rating.rating < 0 || rating.rating > 5) {
+            return next(new ApiError('Rating cannot be under 0 or over 5', 400))
         }
 
         // Checks if the user has already rated a movie or not
