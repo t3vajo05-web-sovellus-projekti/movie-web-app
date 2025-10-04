@@ -144,6 +144,16 @@ describe('Testing Movie Reviews', function ()
           expect(data).to.have.property('message', 'Review deleted successfully');
       });
 
+      it('should not find the deleted review', async () =>
+      {
+          const response = await fetch(`http://localhost:3001/reviews/movie/${testReview.movie_id}`);
+          const data = await response.json();
+  
+          expect(response.status).to.equal(200);
+          expect(data).to.be.an('array');
+          expect(data.some(r => r.id === createdReviewId)).to.be.false;
+      });
+
       it('should delete user', async () => {
         const response = await fetch('http://localhost:3001/users/delete', {
           method: 'POST',
