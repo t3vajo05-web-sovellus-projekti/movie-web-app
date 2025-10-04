@@ -28,10 +28,6 @@ const returnReviewsByMovieId = async (req, res, next) => {
         const movieId = req.params.id
         const reviews = await getReviewsByMovieId(movieId)
 
-        if (!reviews || reviews.length === 0) {
-            return next(new ApiError('Reviews not found for movie', 404))
-        }
-
         return res.status(200).json(reviews)
     } catch (err) {
         console.error('returnReviewsByMovieId error:', err)
@@ -57,10 +53,6 @@ const returnLatestReviews = async (req, res, next) => {
         const limit = parseInt(req.query.limit) || 10
         const reviews = await getLatestReviews(limit)
 
-        if (!reviews || reviews.length === 0) {
-            return next(new ApiError('No reviews found', 404))
-        }
-
         return res.status(200).json(reviews)
     } catch (err) {
         console.error('returnLatestReviews error:', err)
@@ -73,10 +65,6 @@ const returnLatestReviewsByUser = async (req, res, next) => {
         const userId = req.params.id
         const limit = parseInt(req.query.limit) || 10
         const reviews = await getLatestReviewsByUserId(userId, limit)
-
-        if (!reviews || reviews.length === 0) {
-            return next(new ApiError('No reviews found for user', 404))
-        }
 
         return res.status(200).json(reviews)
     } catch (err) {

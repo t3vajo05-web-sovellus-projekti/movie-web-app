@@ -16,6 +16,7 @@ import {
     modifyGroupDescription,
     showtimeToGroup,
     returnShowtimesForGroup,
+    removeShowtimeFromGroup,
     //group invites:
     sendJoinRequest,
     acceptInvite,
@@ -26,6 +27,7 @@ import {
     leaveGroupController,
     removeUserFromGroup
      } from '../controllers/groupController.js'
+import { addMovieToGroupController, removeMovieFromGroupController, getMoviesForGroupController } from '../controllers/movieController.js';
 
 const router = Router()
 
@@ -39,6 +41,11 @@ router.post('/modify-description', auth, modifyGroupDescription)
 
 router.post('/showtime/add/:id', auth, showtimeToGroup)
 router.get('/showtime/get/:id', returnShowtimesForGroup)
+router.delete('/showtime/remove/:id', auth, removeShowtimeFromGroup)
+
+router.post('/movie/add', auth, addMovieToGroupController)
+router.post('/movie/remove', auth, removeMovieFromGroupController)
+router.get('/movies/:id', auth, getMoviesForGroupController)
 
 router.get('/', returnAllGroups)
 
