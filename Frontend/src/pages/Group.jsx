@@ -67,6 +67,10 @@ export default function Group() {
             setGroupMovies(data);
         }
 
+        fetchGroup();
+        fetchShowtimes();
+        fetchGroupMovies();
+
     }, [id,user]); // Run again if "id" or "user" changes
 
 
