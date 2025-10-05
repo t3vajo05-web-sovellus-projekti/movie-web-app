@@ -261,6 +261,48 @@ const getOwnerOfGroupsCount = async (user_id) => {
     return parseInt(result.rows[0].owned_count, 10)
 }
 
+const addShowtimeToGroup = async (groupId, showtimeInfoArray) =>
+{
+    const addedRows = [];
+
+    for (const s of showtimeInfoArray)
+    {
+        const result = await pool.query(
+            `INSERT INTO group_movies (group_id, theatername, auditoriumname, title, show_start_time, runtime, year, finnkinourl, imageurl)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+            [
+                groupId,
+                s.theatername,
+                s.auditoriumname,
+                s.title,
+                s.show_start_time,
+                s.runtime,
+                s.year,
+                s.finnkinourl,
+                s.imageurl
+            ]
+        );
+        addedRows.push(result.rows[0]);
+    }
+
+    return addedRows;
+};
+
+const getShowtimesForGroup = async (groupId) =>
+{
+    const result = await pool.query(
+        `SELECT * FROM group_movies WHERE group_id = $1 ORDER BY show_start_time ASC`, [groupId]
+    );
+    return result.rows;
+}
+
+const deleteShowtimeFromGroup = async (groupId, showtimeId) => {
+    const result = await pool.query(
+        'DELETE FROM group_movies WHERE group_id = $1 AND id = $2 RETURNING *', [groupId, showtimeId]
+    );
+    return result.rows[0] || null;
+}
+
 
 
 
@@ -277,6 +319,9 @@ export {
     getGroupOwnerNickname,
     deleteGroupById,
     getGroupMembers,
+    addShowtimeToGroup,
+    getShowtimesForGroup,
+    deleteShowtimeFromGroup,
     //group invites:
     createGroupInvite,
     getPendingInviteByGroupId,

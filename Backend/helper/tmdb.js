@@ -59,4 +59,30 @@ const getUpcomingMovies = async (page = 1, opts = {}) =>
   return tmdbGet(`/movie/upcoming`, { page, ...opts });
 };
 
-export { tmdbGet, searchMoviesByName, searchMoviesById, getMovieRecommendations, getSimilarMovies, getNowPlayingMovies, getUpcomingMovies};
+const getMovieGenres = async (opts = {}) => {
+  return tmdbGet(`/genre/movie/list`, { ...opts });
+};
+
+const getActorIdByName = async (query, page = 1, opts = {}) => {
+  return tmdbGet(`/search/person`, { query, page, ...opts});
+};
+
+const discoverMovies = async (params = {}) => {
+  return tmdbGet(`/discover/movie`, {
+    sort_by: 'popularity.desc',
+    ...params
+  });
+};
+
+export { 
+  tmdbGet, 
+  searchMoviesByName, 
+  searchMoviesById, 
+  getMovieRecommendations, 
+  getSimilarMovies, 
+  getNowPlayingMovies, 
+  getUpcomingMovies, 
+  getMovieGenres,
+  getActorIdByName,
+  discoverMovies
+};

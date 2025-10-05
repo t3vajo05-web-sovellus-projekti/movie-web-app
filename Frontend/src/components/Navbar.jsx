@@ -1,5 +1,5 @@
 import './Navbar.css'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useUser } from '../context/useUser.js'
 import axios from 'axios'
@@ -9,6 +9,13 @@ export default function Navbar() {
     const { user, logout } = useUser()
     const [query, setQuery] = useState('')
     const navigate = useNavigate()
+    const [showFilters, setShowFilters] = useState(false)
+
+    // filter search
+    const [genreList, setGenreList] = useState([])
+    const [genre, setGenre] = useState('')
+    const [year, setYear] = useState('')
+    const [cast, setCast] = useState('')
 
     const handleSearch = async (e) =>
     {
@@ -31,7 +38,51 @@ export default function Navbar() {
         }
     }
 
+    // fetches genres for dropdown list in filters
+    useEffect(() => {
+        const fetchGenres = async () => {
+            try {
+                const response = await axios.get('http://localhost:3001/movies/genres')
+                setGenreList(response.data.genres || [])
+            } catch (error) {
+                console.error("failed to fetch genre list:", error)
+            }
+        }
+
+        fetchGenres()
+    }, [])
+
+    // discover filter search
+    const handleFilterSearch = async (e) => {
+        e.preventDefault()
+
+        try {
+            let filters = {}
+
+            if (genre) filters.genres = genre
+
+            if (year.includes("-")) {
+                const [start, end] = year.split("-").map(y => y.trim())
+
+                if (start) filters.startDate = `${start}-01-01`
+                if (end) filters.endDate = `${end}-12-31`
+            } else {
+                filters.year = year
+            }
+
+            if (cast) filters.castName = cast
+
+            const response = await axios.get(`http://localhost:3001/movies/discover`, {params : filters})
+
+            navigate('/moviesearch', { state: { results: response.data } })
+        } catch (error) {
+            console.error("Filtered search failed: ", error)
+            alert("Filtered search failed. Check console for details.")
+        }
+    }
+
     return (
+    <>
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
         <div className="container-fluid">
             <Link className="navbar-brand" to="/">
@@ -73,6 +124,13 @@ export default function Navbar() {
                         onChange={(e) => setQuery(e.target.value)}
                     />
                     <button className="btn btn-outline-success" type="submit">Search </button>
+                    <button
+                        type='button'
+                        className='btn btn-outline-primary ms-2'
+                        onClick={() => setShowFilters(!showFilters)}
+                    >
+                        Filters
+                    </button>
                 </form>
 
                 {user && user.token ? (
@@ -114,5 +172,51 @@ export default function Navbar() {
             </div>
         </div>
     </nav>
+
+    {showFilters && (
+        <div className='bg-light p-3 border-top border-bottom'>
+            <form className='container' onSubmit={handleFilterSearch}>
+                <div className='row g-3 align-items-end'>
+                    <div className='col-md-3'>
+                        <label className='form-label'>Genre</label>
+                        <select 
+                            className='form-select'
+                            value={genre}
+                            onChange={(e) => setGenre(e.target.value)}
+                        >
+                            <option value="">Select Genre</option>
+                            {genreList.map((g) => (
+                                <option key={g.id} value={g.id}>{g.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className='col-md-3'>
+                        <label className='form-label'>Year</label>
+                        <input 
+                            type='text'
+                            className='form-control'
+                            value={year}
+                            onChange={(e) => setYear(e.target.value)}
+                            placeholder='e.g. 2000 or 2000-2010'
+                        />
+                    </div>
+                    <div className='col-md-3'>
+                        <label className='form-label'>Actor</label>
+                        <input 
+                            type='text'
+                            className='form-control'
+                            value={cast}
+                            onChange={(e) => setCast(e.target.value)}
+                            placeholder='Actor Name'
+                        />
+                    </div>
+                    <div className='col-md-3'>
+                        <button type='submit' className='btn btn-outline-success'>Apply filters</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    )}
+    </>
     )
 }
