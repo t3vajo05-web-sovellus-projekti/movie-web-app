@@ -113,7 +113,23 @@ const handleJoinRequest = async (groupId) =>
         <div className="container mt-4">
             <h1 className="mb-4">Groups</h1>
             <div className="d-flex flex-column gap-3">
+
+            <div className="mb-4">
+                <p>
+                    Welcome to the Groups feature! Here you can create your own crew of movie enthusiasts, or join an existing one! 
+                    Inside your groups you can propose movie showtimes from your local theatre, or propose an older movie for a cozy 
+                    night in with DVD's.
+                </p>
+                <p>
+                    It's all about meeting likeminded people and organizing watch parties without too much fuss. 
+                    Think of it as our very own movie club system - except with fewer rules, more popcorn, 
+                    and probably way too many debates about Batman remakes.
+                </p>
+            </div>
+
+           {user && (
             <Link to="/creategroup" className="btn btn-success">Create Group</Link>
+            )}
                 {groups.map(group => (
                     <div className="card" key={group.id}>
                         <div className="card-body">

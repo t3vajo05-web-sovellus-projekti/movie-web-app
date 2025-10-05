@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { UserContext } from "../context/UserContext.js";
 import { useUser } from '../context/useUser.js'
 import MovieCarousel from "../components/movieCarousel.jsx";
 import RemoveButton from "../components/buttonRemoveShowtime.jsx";
@@ -18,13 +19,38 @@ export default function Group() {
 
     useEffect(() => {
         async function fetchGroup() {
-            const res = await fetch(`http://localhost:3001/groups/${id}`);
-            const data = await res.json();
-            setGroup(data);
+            try
+            {
+                // fetch group data
+                const res = await fetch (`http://localhost:3001/groups/${id}`); // fetch group by id
+                if (!res.ok) throw new Error("Failed to fetch group");
+                const data = await res.json();
 
-            const ownerRes = await fetch(`http://localhost:3001/users/${data.owner}/username`);
-            const ownerData = await ownerRes.json();
-            setOwnerName(ownerData.username);
+                let member = false;
+                if (user)
+                {
+                    const memberRes = await fetch (`http://localhost:3001/groups/member/${user.id}`);
+                    if (!memberRes.ok) throw new Error ("Failed to fetch user's groups");
+                    const memberGroups = await memberRes.json();
+                    member = memberGroups.some(group => group.id === data.id) || user.id === data.owner;
+                }
+
+                if (!member)
+                {
+                    setGroup (null) // --> leads to show "group not found" if user is not a member
+                    return;
+                }
+
+                setGroup(data);
+
+                // fetch owner username
+                const ownerRes = await fetch (`http://localhost:3001/users/${data.owner}/username`);
+                if (!ownerRes.ok) throw new Error ("Failed to fetch owner username");
+                const ownerData = await ownerRes.json();
+                setOwnerName (ownerData.username);
+            } catch (err) {
+                console.error(err);
+            }
         }
 
         async function fetchShowtimes() {
@@ -44,7 +70,9 @@ export default function Group() {
         fetchGroup();
         fetchShowtimes();
         fetchGroupMovies();
-    }, [id]);
+
+    }, [id,user]); // Run again if "id" or "user" changes
+
 
     useEffect(() => {
         async function checkMembership() {

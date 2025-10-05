@@ -146,7 +146,9 @@ export default function Navbar() {
                             <li>
                                 <Link className="dropdown-item" to="/myaccount">Account</Link>
                             </li>
-                            <li><a className="dropdown-item" href="#">My Groups</a></li>
+                            <li>
+                                <Link className="dropdown-item" to="/mygroups">My Groups</Link>
+                            </li>
                             <div className="dropdown-divider"></div>
                             <li>
                                 <Link className="dropdown-item" to="/watchlist">Watchlist</Link>
