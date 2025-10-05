@@ -41,7 +41,7 @@ export default function Group() {
                     return;
                 }
 
-                setGroup(data);
+                setGroup(prev => ({ ...data, isMember: prev?.isMember }));
 
                 // fetch owner username
                 const ownerRes = await fetch (`http://localhost:3001/users/${data.owner}/username`);
