@@ -11,7 +11,7 @@ export default function myRecentReviews({userId}) {
     useEffect(() => {
         const fetchReviews = async () => {
             try {
-                const res = await axios.get(`http://localhost:3001/reviews/user/${userId}/latest`);
+                const res = await axios.get(`http://localhost:3001/reviews/user/${userId}/latest?limit=5`);
                 const reviewsData = res.data;
 
                 const reviewsWithDetails = await Promise.all(
