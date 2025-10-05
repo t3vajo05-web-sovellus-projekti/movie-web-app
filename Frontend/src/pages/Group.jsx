@@ -41,7 +41,7 @@ export default function Group() {
                     return;
                 }
 
-                setGroup(data);
+                setGroup(prev => ({ ...data, isMember: prev?.isMember }));
 
                 // fetch owner username
                 const ownerRes = await fetch (`http://localhost:3001/users/${data.owner}/username`);
@@ -74,6 +74,24 @@ export default function Group() {
     }, [id,user]); // Run again if "id" or "user" changes
 
 
+    useEffect(() => {
+        async function checkMembership() {
+            if (!user) return;
+
+            const res = await fetch("http://localhost:3001/groups/member", {
+                headers: { "Authorization": `Bearer ${user.token}` },
+            });
+
+            if (res.ok) {
+                const memberGroups = await res.json();
+                const isInGroup = memberGroups.some(g => g.id === parseInt(id));
+                setGroup(prev => ({ ...prev, isMember: isInGroup }));
+            }
+        }
+
+        checkMembership();
+    }, [user, id]);
+
     if (!group) return <p>No group found</p>;
 
     const formatDateTime = (dateStr) => {
@@ -101,11 +119,46 @@ export default function Group() {
     const startIdx = (currentPage - 1) * itemsPerPage;
     const currentShowtimes = showtimes.slice(startIdx, startIdx + itemsPerPage);
 
+    const handleLeaveGroup = async () => {
+        if(!window.confirm("Are you sure you want to leave this group?")) return;
+
+        try {
+            const res = await fetch(`http://localhost:3001/groups/leave`, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${user.token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ groupId: group.id}),
+            });
+
+            if (!res.ok) {
+                const errData = await res.json();
+                throw new Error(errData.message || "Failed to leave group");
+            }
+
+            const data = await res.json();
+            alert(data.message);
+            window.location.href = "/groups";
+        } catch (err) {
+            console.error("Failed to leave group:", err);
+            alert(err.message);
+        }
+    };
+
     return (
         <div className="container mt-4">
             <h1>{group.name}</h1>
             <p>Owner: {ownerName}</p>
             <p>Description: {group.description}</p>
+            {user && group?.isMember && user.id !== group.owner && (
+            <button
+                className="btn btn-danger mt-2"
+                onClick={handleLeaveGroup}
+            >
+                Leave Group
+            </button>
+            )}
             {user.username === ownerName && (
                 <Link to={`/groups/${id}/manage`} className="btn btn-primary mt-2">Manage Group</Link>
             )}
