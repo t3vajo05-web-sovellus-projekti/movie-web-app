@@ -28,6 +28,7 @@ import Movie from '../pages/Movie.jsx'
 import MyWatchlist from '../pages/MyWatchlist.jsx'
 import PublicWatchlist from '../pages/publicWatchlist.jsx'
 import GroupManager from '../pages/GroupManager.jsx'
+import MyGroupDashboard from '../pages/MyGroupDashboard.jsx'
 
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
           <Route path="/creategroup" exact element={<CreateGroup/>} />
           <Route path="/groups/:id" exact element={<Group/>} />
           <Route path="/groups/:id/manage" exact element={<GroupManager/>} />
+          <Route path="/mygroups" exact element={<MyGroupDashboard/>} />
           <Route path="/signup" exact element={<Signup />} />
           <Route path="/login" exact element={<Login />} />
           <Route path="/moviesearch" exact element={<Moviesearch />} />
