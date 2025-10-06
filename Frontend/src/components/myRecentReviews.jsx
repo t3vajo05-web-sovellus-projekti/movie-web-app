@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { StarsDisplay } from "./StarRating";
+import { API_URL } from "./API_URL.jsx";
 
 export default function myRecentReviews({userId}) {
     const [reviews, setReviews] = useState([]);
@@ -11,13 +12,13 @@ export default function myRecentReviews({userId}) {
     useEffect(() => {
         const fetchReviews = async () => {
             try {
-                const res = await axios.get(`http://localhost:3001/reviews/user/${userId}/latest?limit=5`);
+                const res = await axios.get(`${API_URL}/reviews/user/${userId}/latest?limit=5`);
                 const reviewsData = res.data;
 
                 const reviewsWithDetails = await Promise.all(
                     reviewsData.map(async (review) => {
                         try {
-                            const movieRes = await axios.get(`http://localhost:3001/movies/${review.movie_id}`);
+                            const movieRes = await axios.get(`${API_URL}/movies/${review.movie_id}`);
                             const movieTitle = movieRes.data.title || 'Unknown movie';
                             return { ...review, movieTitle};
                         } catch {
@@ -46,7 +47,7 @@ export default function myRecentReviews({userId}) {
                     reviews.map(async (review) => {
                         try {
                             const res = await axios.get(
-                                `http://localhost:3001/ratings/user/${userId}/movie/${review.movie_id}`
+                                `${API_URL}/ratings/user/${userId}/movie/${review.movie_id}`
                             );
                             const rating = res.data?.rating ?? null;
                             

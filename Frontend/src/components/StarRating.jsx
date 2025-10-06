@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useUser } from "../context/useUser.js";
+import { API_URL } from "./API_URL.jsx";
 
 // User rating
 export function StarRating({ movieId, onRatingAdded }) {
@@ -14,7 +15,7 @@ export function StarRating({ movieId, onRatingAdded }) {
         const fetchUserRating = async () => {
             try {
                 const res = await axios.get(
-                    `http://localhost:3001/ratings/user/${user.id}/movie/${movieId}`,
+                    `${API_URL}/ratings/user/${user.id}/movie/${movieId}`,
                     { headers: { Authorization: `Bearer ${user.token}` } }
                 );
                 
@@ -36,7 +37,7 @@ export function StarRating({ movieId, onRatingAdded }) {
 
         try {
             await axios.post(
-                "http://localhost:3001/ratings/rate",
+                `${API_URL}/ratings/rate`,
                 { movie_id: Number(movieId), rating: star },
                 { headers: { Authorization: `Bearer ${user.token}` } }
             );

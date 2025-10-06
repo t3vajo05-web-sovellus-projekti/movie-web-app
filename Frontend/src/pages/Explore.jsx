@@ -2,6 +2,8 @@ import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import MovieCarousel from "../components/movieCarousel.jsx";
 import { UserContext } from "../context/UserContext.js";
+import { API_URL } from "../components/API_URL.jsx";
+
 
 export default function Explore() {
     const [nowPlaying, setNowPlaying] = useState([]);
@@ -22,9 +24,9 @@ export default function Explore() {
                 if (user && user.token) 
                 {
                     [nowRes, upcomingRes, wlRes] = await Promise.all([
-                        axios.get('http://localhost:3001/movies/nowplaying'),
-                        axios.get('http://localhost:3001/movies/upcoming'),
-                        axios.get('http://localhost:3001/watchlist', {
+                        axios.get(`${API_URL}/movies/nowplaying`),
+                        axios.get(`${API_URL}/movies/upcoming`),
+                        axios.get(`${API_URL}/watchlist`, {
                             headers: { Authorization: `Bearer ${user.token}` }
                         })
                     ]);
@@ -32,8 +34,8 @@ export default function Explore() {
                 else 
                 {
                     [nowRes, upcomingRes] = await Promise.all([
-                        axios.get('http://localhost:3001/movies/nowplaying'),
-                        axios.get('http://localhost:3001/movies/upcoming')
+                        axios.get(`${API_URL}/movies/nowplaying`),
+                        axios.get(`${API_URL}/movies/upcoming`)
                     ]);
                     wlRes = { data: { results: [] } };
                 }
@@ -67,7 +69,7 @@ export default function Explore() {
         if (!featuredRecId) return;
         const fetchRecommendations = async () => {
             try {
-                const res = await axios.get(`http://localhost:3001/movies/${featuredRecId}/recommendations`);
+                const res = await axios.get(`${API_URL}/movies/${featuredRecId}/recommendations`);
                 setRecommendations(res.data.results || []);
             } catch (err) {
                 console.error(err);
@@ -81,7 +83,7 @@ export default function Explore() {
         if (!featuredSimId) return;
         const fetchSimilar = async () => {
             try {
-                const res = await axios.get(`http://localhost:3001/movies/${featuredSimId}/similar`);
+                const res = await axios.get(`${API_URL}/movies/${featuredSimId}/similar`);
                 setSimilar(res.data.results || []);
             } catch (err) {
                 console.error(err);

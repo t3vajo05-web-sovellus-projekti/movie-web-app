@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import StarRatingDisplay from "../components/StarRatingDisplay.jsx";
 import { Link } from "react-router-dom";
+import { API_URL } from "./API_URL.jsx";
 
 export default function UserWatchlist({ userId }) {
     const [wlData, setWlData] = useState([]);
@@ -11,7 +12,7 @@ export default function UserWatchlist({ userId }) {
         if (!userId) return;
 
         axios
-            .get(`http://localhost:3001/watchlist/user/${userId}`)
+            .get(`${API_URL}/watchlist/user/${userId}`)
             .then(res => setWlData(Array.isArray(res.data) ? res.data : []))
             .catch(() => setWlData([]));
     }, [userId]);
@@ -24,15 +25,15 @@ export default function UserWatchlist({ userId }) {
                 const detailedRows = await Promise.all(
                     wlData.map(async (w) => {
                         const movieRes = await axios
-                            .get(`http://localhost:3001/movies/${w.movie_id}`)
+                            .get(`${API_URL}/movies/${w.movie_id}`)
                             .catch(() => ({ data: null }));
 
                         const ratingRes = await axios
-                            .get(`http://localhost:3001/ratings/user/${userId}/movie/${w.movie_id}`)
+                            .get(`${API_URL}/ratings/user/${userId}/movie/${w.movie_id}`)
                             .catch(err => (err.response?.status === 404 ? { data: null } : Promise.reject(err)));
 
                         const reviewRes = await axios
-                            .get(`http://localhost:3001/reviews/user/${userId}/movie/${w.movie_id}`)
+                            .get(`${API_URL}/reviews/user/${userId}/movie/${w.movie_id}`)
                             .catch(err => (err.response?.status === 404 ? { data: null } : Promise.reject(err)));
 
                         const movie  = movieRes?.data || {};

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { StarsDisplay, PartialStarsDisplay } from "./StarRating.jsx";
+import { API_URL } from "./API_URL.jsx";
 
 export default function MovieStats({ movieId, refreshTrigger }) {
     const [stats, setStats] = useState(null);
@@ -9,8 +10,8 @@ export default function MovieStats({ movieId, refreshTrigger }) {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const ratingRes = await axios.get(`http://localhost:3001/ratings/movie/stats/${movieId}`);
-                const reviewRes = await axios.get(`http://localhost:3001/reviews/movie/${movieId}/count`);
+                const ratingRes = await axios.get(`${API_URL}/ratings/movie/stats/${movieId}`);
+                const reviewRes = await axios.get(`${API_URL}/reviews/movie/${movieId}/count`);
 
                 setStats({
                     avgRating: ratingRes.data.average_rating ?? 0,

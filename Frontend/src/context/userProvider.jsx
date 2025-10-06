@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { UserContext } from "./UserContext"
 import axios from 'axios'
+import { API_URL } from "../components/API_URL.jsx";
 
 export default function UserProvider({children}) {
     const userFromStorage = localStorage.getItem('user')
@@ -8,13 +9,13 @@ export default function UserProvider({children}) {
 
     const signUp = async(userData) => {
         const headers = {headers: {'Content-Type': 'application/json'}}
-        const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/signup`, 
+        const response = await axios.post(`${API_URL}/users/signup`, 
             { user: {username: userData.username, email: userData.email, password: userData.password} }, headers)
         return response
     }
     const signIn = async(userData) => {
         const headers = {headers: {'Content-Type': 'application/json'}}
-        const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/signin`, 
+        const response = await axios.post(`${API_URL}/users/signin`, 
             {user: {identifier: userData.identifier, password: userData.password}}, headers)
 
         const loggedInUser = {
@@ -35,7 +36,7 @@ export default function UserProvider({children}) {
     const deleteUserAccount = async (password) => {
         if(!user?.token) throw new Error("No token available")
 
-        const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/delete`, 
+        const response = await axios.post(`${API_URL}/users/delete`, 
             {password}, {headers: {Authorization: `Bearer ${user.token}`}}
         )
 

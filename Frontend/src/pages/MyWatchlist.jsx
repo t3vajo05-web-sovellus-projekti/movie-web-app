@@ -7,6 +7,7 @@ import StatusDropdown from "../components/StatusDropdown.jsx";
 import { Link } from "react-router-dom";
 import "../components/watchlist.css";
 import PublicWatchlistLink from "../components/myWatchListLink.jsx";
+import { API_URL } from "../components/API_URL.jsx";
 
 export default function MyWatchlist() {
   const { user } = useContext(UserContext);
@@ -22,7 +23,7 @@ export default function MyWatchlist() {
   useEffect(() => {
     if (!user?.token) return;
     axios
-      .get("http://localhost:3001/watchlist", {
+      .get(`${API_URL}/watchlist`, {
         headers: { Authorization: `Bearer ${user.token}` },
       })
       .then((res) => setWlData(Array.isArray(res.data) ? res.data : []))
@@ -39,15 +40,15 @@ export default function MyWatchlist() {
         wlData.map(async (w) => {
           
           const movieRes = await axios
-            .get(`http://localhost:3001/movies/${w.movie_id}`)
+            .get(`${API_URL}/movies/${w.movie_id}`)
             .catch(() => ({ data: null })); 
 
           const ratingRes = await axios
-            .get(`http://localhost:3001/ratings/user/${user.id}/movie/${w.movie_id}`)
+            .get(`${API_URL}/ratings/user/${user.id}/movie/${w.movie_id}`)
             .catch(err => (err.response?.status === 404 ? { data: null } : Promise.reject(err)));
 
           const reviewRes = await axios
-            .get(`http://localhost:3001/reviews/user/${user.id}/movie/${w.movie_id}`)
+            .get(`${API_URL}/reviews/user/${user.id}/movie/${w.movie_id}`)
             .catch(err => (err.response?.status === 404 ? { data: null } : Promise.reject(err)));
 
           const movie  = movieRes?.data || {};
@@ -95,7 +96,7 @@ export default function MyWatchlist() {
 
     try {
       const res = await axios.patch(
-        `http://localhost:3001/watchlist/item/${movieId}/favorite`,
+        `${API_URL}/watchlist/item/${movieId}/favorite`,
         null,
         { headers: { Authorization: `Bearer ${user.token}` } }
       );

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
+import { API_URL } from "../components/API_URL.jsx";
 
 export default function MyGroupDashboard()
 {
@@ -25,7 +26,7 @@ export default function MyGroupDashboard()
             try
             {
                 // Get all groups the user is a member of
-                const res = await fetch(`http://localhost:3001/groups/member/${user.id}`, {
+                const res = await fetch(`${API_URL}/groups/member/${user.id}`, {
                     headers: {"Authorization": `Bearer ${user?.token}`}
                 });
                 const data = await res.json();
@@ -34,8 +35,8 @@ export default function MyGroupDashboard()
                     data.map(async (group) => 
                     {
                         const [ownerRes, countRes] = await Promise.all([
-                            fetch(`http://localhost:3001/groups/owner/${group.id}`),
-                            fetch(`http://localhost:3001/groups/membercount/${group.id}`),
+                            fetch(`${API_URL}/groups/owner/${group.id}`),
+                            fetch(`${API_URL}/groups/membercount/${group.id}`),
                         ]);
 
                         const ownerData = await ownerRes.json();

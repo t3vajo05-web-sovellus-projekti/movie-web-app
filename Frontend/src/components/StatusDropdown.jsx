@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
+import { API_URL } from "./API_URL.jsx";
 
 export default function StatusDropdown({ movieId, currentStatus, setWatchlist }) {
   const { user } = useContext(UserContext);
@@ -12,7 +13,7 @@ export default function StatusDropdown({ movieId, currentStatus, setWatchlist })
 
     if (selectedStatus === "Remove") {
       try {
-        const res = await fetch(`http://localhost:3001/watchlist/${idStr}`, {
+        const res = await fetch(`${API_URL}/watchlist/${idStr}`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${user.token}` },
         });
@@ -26,7 +27,7 @@ export default function StatusDropdown({ movieId, currentStatus, setWatchlist })
     }
 
     try {
-      const res = await fetch(`http://localhost:3001/watchlist/${idStr}`, {
+      const res = await fetch(`${API_URL}/watchlist/${idStr}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
