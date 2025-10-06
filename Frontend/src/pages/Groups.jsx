@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
+import { API_URL } from "../components/API_URL.jsx";
 
 
 export default function Groups() 
@@ -16,14 +17,14 @@ export default function Groups()
             try 
             {
                 // Get all groups
-                const res = await fetch('http://localhost:3001/groups');
+                const res = await fetch(`${API_URL}/groups`);
                 const data = await res.json();
 
                 // If logged in, fetch groups where user is already a member
                 let memberGroups = [];
                 if (user)
                 {
-                    const memberRes = await fetch("http://localhost:3001/groups/member", {
+                    const memberRes = await fetch(`${API_URL}/groups/member`, {
                         headers: {"Authorization":`Bearer ${user?.token}`},
                     });
                     if(memberRes.ok) 
@@ -38,10 +39,10 @@ export default function Groups()
                     data.map(async (group) => 
                     {
                         const [ownerRes, countRes, inviteRes] = await Promise.all([
-                            fetch(`http://localhost:3001/groups/owner/${group.id}`),
-                            fetch(`http://localhost:3001/groups/membercount/${group.id}`),
+                            fetch(`${API_URL}/groups/owner/${group.id}`),
+                            fetch(`${API_URL}/groups/membercount/${group.id}`),
                             // if user is logged in, check if there is a pending invite
-                            user ? fetch(`http://localhost:3001/groups/invite/pending/${group.id}/for-user`,
+                            user ? fetch(`${API_URL}/groups/invite/pending/${group.id}/for-user`,
                                 { headers:{"Authorization": `Bearer ${user?.token}`}
                             })
                             // if user is not logged in --> "no pending invite"
@@ -87,7 +88,7 @@ const handleJoinRequest = async (groupId) =>
 
     try
     {
-        const res = await fetch ("http://localhost:3001/groups/invite/join", {
+        const res = await fetch (`${API_URL}/groups/invite/join`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useUser } from '../context/useUser.js'
 import axios from 'axios'
+import { API_URL } from "./API_URL.jsx";
 
 export default function Navbar() {
 
@@ -24,7 +25,7 @@ export default function Navbar() {
 
         try
         {
-            const response = await axios.get(`http://localhost:3001/movies/search`, {
+            const response = await axios.get(`${API_URL}/movies/search`, {
                 params: { query }
             })
 
@@ -42,7 +43,7 @@ export default function Navbar() {
     useEffect(() => {
         const fetchGenres = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/movies/genres')
+                const response = await axios.get(`${API_URL}/movies/genres`)
                 setGenreList(response.data.genres || [])
             } catch (error) {
                 console.error("failed to fetch genre list:", error)
@@ -72,7 +73,7 @@ export default function Navbar() {
 
             if (cast) filters.castName = cast
 
-            const response = await axios.get(`http://localhost:3001/movies/discover`, {params : filters})
+            const response = await axios.get(`${API_URL}/movies/discover`, {params : filters})
 
             navigate('/moviesearch', { state: { results: response.data } })
         } catch (error) {

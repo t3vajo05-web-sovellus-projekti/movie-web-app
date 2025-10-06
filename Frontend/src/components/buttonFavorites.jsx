@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { UserContext } from "../context/UserContext.js";
+import { API_URL } from "./API_URL.jsx";
 
 export default function FavoriteButton({ movieId, favoritelist, setFavoritelist }) {
     const { user } = useContext(UserContext);
@@ -9,7 +10,7 @@ export default function FavoriteButton({ movieId, favoritelist, setFavoritelist 
         if (!user) return;
 
         try {
-            const res = await fetch(`http://localhost:3001/watchlist/item/${movieId}/favorite`, {
+            const res = await fetch(`${API_URL}/watchlist/item/${movieId}/favorite`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",

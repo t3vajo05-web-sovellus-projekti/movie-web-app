@@ -4,6 +4,7 @@ import { UserContext } from "../context/UserContext.js";
 import { useUser } from '../context/useUser.js'
 import MovieCarousel from "../components/movieCarousel.jsx";
 import RemoveButton from "../components/buttonRemoveShowtime.jsx";
+import { API_URL } from "../components/API_URL.jsx";
 
 export default function Group() {
     const [group, setGroup] = useState(null);
@@ -22,14 +23,14 @@ export default function Group() {
             try
             {
                 // fetch group data
-                const res = await fetch (`http://localhost:3001/groups/${id}`); // fetch group by id
+                const res = await fetch (`${API_URL}/groups/${id}`); // fetch group by id
                 if (!res.ok) throw new Error("Failed to fetch group");
                 const data = await res.json();
 
                 let member = false;
                 if (user)
                 {
-                    const memberRes = await fetch (`http://localhost:3001/groups/member/${user.id}`);
+                    const memberRes = await fetch (`${API_URL}/groups/member/${user.id}`);
                     if (!memberRes.ok) throw new Error ("Failed to fetch user's groups");
                     const memberGroups = await memberRes.json();
                     member = memberGroups.some(group => group.id === data.id) || user.id === data.owner;
@@ -44,7 +45,7 @@ export default function Group() {
                 setGroup(prev => ({ ...data, isMember: prev?.isMember }));
 
                 // fetch owner username
-                const ownerRes = await fetch (`http://localhost:3001/users/${data.owner}/username`);
+                const ownerRes = await fetch (`${API_URL}/users/${data.owner}/username`);
                 if (!ownerRes.ok) throw new Error ("Failed to fetch owner username");
                 const ownerData = await ownerRes.json();
                 setOwnerName (ownerData.username);
@@ -54,13 +55,13 @@ export default function Group() {
         }
 
         async function fetchShowtimes() {
-            const res = await fetch(`http://localhost:3001/groups/showtime/get/${id}`);
+            const res = await fetch(`${API_URL}/groups/showtime/get/${id}`);
             const data = await res.json();
             setShowtimes(data);
         }
 
         async function fetchGroupMovies() {
-            const res = await fetch(`http://localhost:3001/groups/movies/${id}`, {
+            const res = await fetch(`${API_URL}/groups/movies/${id}`, {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
             const data = await res.json();
@@ -78,7 +79,7 @@ export default function Group() {
         async function checkMembership() {
             if (!user) return;
 
-            const res = await fetch("http://localhost:3001/groups/member", {
+            const res = await fetch(`${API_URL}/groups/member`, {
                 headers: { "Authorization": `Bearer ${user.token}` },
             });
 
@@ -101,7 +102,7 @@ export default function Group() {
     const removeShowtime = async (showtimeId) => {
             if (!window.confirm("Are you sure you want to remove this showtime from the group?")) return;
 
-            const res = await fetch(`http://localhost:3001/groups/showtime/remove/${id}`, {
+            const res = await fetch(`${API_URL}/groups/showtime/remove/${id}`, {
                 method: "DELETE",
                 body: JSON.stringify({ showtimeId }),
                 headers: {
@@ -123,7 +124,7 @@ export default function Group() {
         if(!window.confirm("Are you sure you want to leave this group?")) return;
 
         try {
-            const res = await fetch(`http://localhost:3001/groups/leave`, {
+            const res = await fetch(`${API_URL}/groups/leave`, {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${user.token}`,

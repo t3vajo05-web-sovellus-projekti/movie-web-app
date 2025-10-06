@@ -1,6 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import { UserContext } from "../context/UserContext";
 import { Link } from "react-router-dom";
+import { API_URL } from "./API_URL.jsx";
 
 export default function MyGroups()
 {
@@ -13,7 +14,7 @@ export default function MyGroups()
         {
             try
             {
-                const res = await fetch(`http://localhost:3001/groups/member/${user.id}`, {
+                const res = await fetch(`${API_URL}/groups/member/${user.id}`, {
                     headers: {
                     "Authorization": `Bearer ${user.token}`}
                 });

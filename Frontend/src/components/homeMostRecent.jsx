@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from "react-router-dom";
 import { StarsDisplay } from './StarRating.jsx';
+import { API_URL } from "./API_URL.jsx";
 
 export default function HomeMostRecent() 
 {
@@ -15,7 +16,7 @@ export default function HomeMostRecent()
             try 
             {
                 // Fetch latest reviews
-                const res = await axios.get('http://localhost:3001/reviews/latest?limit=3');
+                const res = await axios.get(`${API_URL}/reviews/latest?limit=3`);
                 const reviewsData = res.data;
 
                 // Fetch usernames and movie titles for each review
@@ -25,16 +26,16 @@ export default function HomeMostRecent()
                         try 
                         {
                             // Fetch username
-                            const userRes = await axios.get(`http://localhost:3001/users/${review.user_id}/username`);
+                            const userRes = await axios.get(`${API_URL}/users/${review.user_id}/username`);
                             const username = userRes.data.username;
 
                             // Fetch movie info
-                            const movieRes = await axios.get(`http://localhost:3001/movies/${review.movie_id}`);
+                            const movieRes = await axios.get(`${API_URL}/movies/${review.movie_id}`);
                             const movieTitle = movieRes.data.title || 'Unknown Movie';
 
                             // Fetch rating for user and movie
                             const ratingRes = await axios.get(
-                                `http://localhost:3001/ratings/user/${review.user_id}/movie/${review.movie_id}`
+                                `${API_URL}/ratings/user/${review.user_id}/movie/${review.movie_id}`
                             );
                             const rating = ratingRes.data?.rating || null;
 
