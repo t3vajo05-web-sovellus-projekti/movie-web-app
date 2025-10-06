@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { fetchTheatres, fetchShows, formatDateTime } from "../components/Finnkino_api.js";
 import DateDropdown from "../components/dateDropdown.jsx";
 import { useUser } from '../context/useUser.js'
+import { API_URL } from "../components/API_URL.jsx";
 
 export default function BrowseShows()
 {
@@ -48,7 +49,7 @@ export default function BrowseShows()
                 setGroups([]);
                 return;
             }
-            const res = await fetch("http://localhost:3001/groups/member", {
+            const res = await fetch(`${API_URL}/groups/member`, {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
             if (!res.ok) throw new Error("Failed to fetch groups");
@@ -61,7 +62,7 @@ export default function BrowseShows()
 
     async function addShowToGroup(groupId, s) {
         console.log("Adding show to group:", groupId, s);
-        const response = await fetch(`http://localhost:3001/groups/showtime/add/${groupId}`, {
+        const response = await fetch(`${API_URL}/groups/showtime/add/${groupId}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

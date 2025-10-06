@@ -1,6 +1,7 @@
 import React, { useContext, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
+import { API_URL } from "../components/API_URL.jsx";
 
 export default function CreateGroup()
 {
@@ -18,7 +19,7 @@ export default function CreateGroup()
             e.preventDefault();
             try
             {
-                const res = await fetch ("http://localhost:3001/groups/create", {
+                const res = await fetch (`${API_URL}/groups/create`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
