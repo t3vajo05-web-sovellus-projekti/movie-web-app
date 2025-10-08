@@ -1,0 +1,21 @@
+<!-- /public/images/poster-placeholder.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300" role="img" aria-label="No poster found">
+  <title>No poster found</title>
+
+  <!-- Background (neutral, works in light/dark UIs) -->
+  <rect width="200" height="300" fill="#eef1f4"></rect>
+
+  <!-- Centered logo: update the href below to your file name -->
+  <g transform="translate(100,125)">
+    <!-- Scale the logo by adjusting width/height -->
+    <image href="/images/brand-logo.svg" x="-42" y="-42" width="84" height="84" preserveAspectRatio="xMidYMid meet" opacity="0.95"></image>
+  </g>
+
+  <!-- Divider line (subtle) -->
+  <line x1="50" x2="150" y1="210" y2="210" stroke="#cfd6dd" stroke-width="1"></line>
+
+  <!-- Caption -->
+  <text x="100" y="240" font-family="system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" font-size="12" letter-spacing="1.6" text-anchor="middle" fill="#6b7280" style="text-transform:uppercase">
+    NO POSTER FOUND
+  </text>
+</svg>

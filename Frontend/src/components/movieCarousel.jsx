@@ -10,6 +10,8 @@ export default function MovieCarousel({ movies, carouselId })
         chunks.push(movies.slice(i, i + 3));
     }
 
+    const PLACEHOLDER = "/images/poster-placeholder.svg";
+
     return (
         <div id={carouselId} className="carousel slide" data-bs-ride="carousel">
             <div className="carousel-inner">
@@ -24,13 +26,11 @@ export default function MovieCarousel({ movies, carouselId })
                                     style={{ width: '320px' }}
                                 >
                                     <div className="card h-100 shadow-sm" style={{ width: '300px' }}>
-                                        {movie.poster_path && (
                                             <img
-                                                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                                                src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : PLACEHOLDER}
                                                 className="card-img-top"
                                                 alt={movie.title}
                                             />
-                                        )}
                                         <div className="card-body d-flex flex-column">
                                             <h5 className="card-title">{movie.title}</h5>
                                             <p
