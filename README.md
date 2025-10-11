@@ -20,6 +20,6 @@ A full-stack web application for movie enthusiasts. Users can search and review 
 
 ## Installing
 
-For installation instructions, see [this guide](INSTALLATION.md).
+For installation instructions, see [this guide](Docs/INSTALLATION.md).
 
 ---
