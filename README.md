@@ -3,6 +3,8 @@
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/t3vajo05-web-sovellus-projekti/movie-web-app/deploy.yml)
 ![Website](https://img.shields.io/website?url=http%3A%2F%2F135.181.32.176%2F)
 
+[Link to website](http://135.181.32.176/)
+
 A full-stack web application for movie enthusiasts. Users can search and review movies, view showtimes from theaters, create and manage groups, add movies and showtimes to groups, and maintain personal favorite lists and watchlists that can be shared with friends.
 
 ---
