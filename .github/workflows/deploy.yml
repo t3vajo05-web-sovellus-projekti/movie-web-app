@@ -4,11 +4,17 @@ on:
   push:
     branches: 
       - main
+    paths:
+      - 'Backend/**'
+      - 'Frontend/**'
 
   pull_request:
     types: [closed]
     branches:
       - main
+    paths:
+      - 'Backend/**'
+      - 'Frontend/**'
 
 jobs:
   deploy:
