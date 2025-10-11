@@ -4,12 +4,11 @@ on:
   push:
     branches: 
       - main
-      - 124-cicd-workflown-määrittely
+
   pull_request:
     types: [closed]
     branches:
       - main
-      - 124-cicd-workflown-määrittely
 
 jobs:
   deploy:
