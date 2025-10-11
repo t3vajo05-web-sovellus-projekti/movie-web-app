@@ -15,27 +15,25 @@ export default function Moviesearch()
         )
     }
 
-    
+    const PLACEHOLDER = "/images/poster-placeholder.svg";
 
     return (
         <div className="container mt-5">
             <h3 className="mb-4">Search Results</h3>
             <div className="row">
                 {results.map((movie) => (
-                    <div className="col-md-4 mb-4" key={movie.id}>
+                    <div className="col-md-4 mb-4 d-flex" key={movie.id}>
                         <Link 
                             to={`/movie/${movie.id}`} 
-                            className="text-decoration-none text-dark"
+                            className="text-decoration-none text-dark d-flex w-100"
                             style={{ display: "block" }}
                         >
-                            <div className="card h-100 shadow-sm">
-                                {movie.poster_path && (
+                            <div className="card h-100 w-100 shadow-sm">
                                     <img 
-                                        src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} 
+                                        src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : PLACEHOLDER}
                                         className="card-img-top w-50 mx-auto d-block" 
                                         alt={movie.title} 
                                     />
-                                )}
                                 <div className="card-body d-flex flex-column">
                                     <h5 className="card-title">{movie.title}</h5>
                                     <p className="card-text" style={{ flexGrow: 1 }}>
