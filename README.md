@@ -18,9 +18,8 @@ A full-stack web application for movie enthusiasts. Users can search and review 
 
 ---
 
-## Requirements
+## Installing
 
-- **Node.js** >= 20  
-- **PostgreSQL** database  
+For installation instructions, see [this guide](INSTALLATION.md).
 
 ---
