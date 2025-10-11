@@ -3,7 +3,7 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext.js";
 import { useUser } from '../context/useUser.js'
 import MovieCarousel from "../components/movieCarousel.jsx";
-import RemoveButton from "../components/buttonRemoveShowtime.jsx";
+import RemoveButton from "../components/buttonRemove.jsx";
 import { API_URL } from "../components/API_URL.jsx";
 
 export default function Group() {
@@ -115,6 +115,21 @@ export default function Group() {
             }
         }
 
+    const removeMovie = async (movieId) => {
+            if (!window.confirm("Are you sure you want to remove this movie from the group?")) return;
+            const res = await fetch(`${API_URL}/groups/movie/remove`, {
+                method: "POST",
+                body: JSON.stringify({ groupId: group.id, movieId }),
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${user.token}`
+                }
+            });
+            if (res.ok) {
+                setGroupMovies(prev => prev.filter(m => m.id !== movieId));
+            }
+    }
+
     // pagination logic
     const totalPages = Math.ceil(showtimes.length / itemsPerPage);
     const startIdx = (currentPage - 1) * itemsPerPage;
@@ -223,7 +238,11 @@ export default function Group() {
 
             <div className="mt-5">
                 <h3 className="mt-4">Group Movies</h3>
-                <MovieCarousel movies={groupMovies} carouselId="groupMoviesCarousel" />
+                <MovieCarousel 
+                    movies={groupMovies} 
+                    carouselId="groupMoviesCarousel" 
+                    onRemove={removeMovie}
+                />
             </div>
         </div>
     );

@@ -2,8 +2,8 @@ import { useState } from "react";
 
 export default function RemoveButton({
     onClick,
-    title="Remove showtime",
-    ariaLabel="Remove showtime",
+    title="Remove",
+    ariaLabel="Remove",
     size = 16,
     corner = false,
     style = {},

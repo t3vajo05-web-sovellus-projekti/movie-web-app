@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-
-export default function MovieCarousel({ movies, carouselId }) 
+import RemoveButton from "./buttonRemove";
+export default function MovieCarousel({ movies, carouselId, onRemove }) 
 {
     if (!movies || movies.length === 0) return null;
 
@@ -25,7 +25,17 @@ export default function MovieCarousel({ movies, carouselId })
                                     key={movie.id}
                                     style={{ width: '320px' }}
                                 >
-                                    <div className="card h-100 shadow-sm" style={{ width: '300px' }}>
+                                    <div className="card h-100 shadow-sm" style={{ width: '300px', position: 'relative' }}>
+                                        {onRemove && (
+                                            <RemoveButton
+                                                corner style={{ zIndex: 2 }}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    onRemove(movie.id);
+                                                }}
+                                            />
+                                        )}
                                             <img
                                                 src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : PLACEHOLDER}
                                                 className="card-img-top"
