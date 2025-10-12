@@ -6,6 +6,7 @@ import GroupDescription from "../components/GroupManager_groupDescription.jsx";
 import MembersTable from "../components/GroupManager_membersTable.jsx";
 import PendingInvitesTable from "../components/GroupManager_pendingInvitesTable.jsx";
 import DeleteGroupButton from "../components/GroupManager_deleteButton.jsx";
+import { API_URL } from "../components/API_URL.jsx";
 
 export default function GroupManager() {
     const { id } = useParams();
@@ -22,13 +23,13 @@ export default function GroupManager() {
 
     useEffect(() => {
         async function fetchGroup() {
-            const res = await fetch(`http://localhost:3001/groups/${id}`);
+            const res = await fetch(`${API_URL}/groups/${id}`);
             if (!res.ok) throw new Error("Failed to fetch group");
             const data = await res.json();
             setGroup(data);
             setDescriptionValue(data.description || "");
 
-            const ownerRes = await fetch(`http://localhost:3001/users/${data.owner}/username`);
+            const ownerRes = await fetch(`${API_URL}/users/${data.owner}/username`);
             if (!ownerRes.ok) throw new Error("Failed to fetch owner username");
             const ownerData = await ownerRes.json();
             setOwnerName(ownerData.username);
@@ -40,14 +41,14 @@ export default function GroupManager() {
     }, [id]);
 
     async function fetchMembers() {
-        const res = await fetch(`http://localhost:3001/groups/members/${id}`);
+        const res = await fetch(`${API_URL}/groups/members/${id}`);
         if (!res.ok) throw new Error("Failed to fetch members");
         const data = await res.json();
         setGroupMembers(data);
     }
 
     async function fetchPending() {
-        const res = await fetch(`http://localhost:3001/groups/invite/pending/${id}`, {
+        const res = await fetch(`${API_URL}/groups/invite/pending/${id}`, {
             headers: { Authorization: `Bearer ${user.token}` }
         });
         if (!res.ok) throw new Error("Failed to fetch pending invites");
@@ -59,7 +60,7 @@ export default function GroupManager() {
     if (user.username !== ownerName) return <p>You do not have permission to manage this group.</p>;
 
     async function removeUser(userId) {
-        await fetch("http://localhost:3001/groups/remove-user", {
+        await fetch(`${API_URL}/groups/remove-user`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -71,7 +72,7 @@ export default function GroupManager() {
     }
 
     async function acceptInvite(inviteId) {
-        await fetch("http://localhost:3001/groups/invite/accept", {
+        await fetch(`${API_URL}/groups/invite/accept`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -84,7 +85,7 @@ export default function GroupManager() {
     }
 
     async function declineInvite(inviteId) {
-        await fetch("http://localhost:3001/groups/invite/decline", {
+        await fetch(`${API_URL}/groups/invite/decline`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -97,7 +98,7 @@ export default function GroupManager() {
 
     // Save updated description
     async function saveDescription() {
-        await fetch("http://localhost:3001/groups/modify-description", {
+        await fetch(`${API_URL}/groups/modify-description`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -118,7 +119,7 @@ export default function GroupManager() {
     {
         if (!window.confirm("Are you sure you want to delete this group?")) return;
 
-        const res = await fetch(`http://localhost:3001/groups/${id}`, {
+        const res = await fetch(`${API_URL}/groups/${id}`, {
             method: "DELETE",
             headers: {
                 "Authorization": `Bearer ${user.token}`

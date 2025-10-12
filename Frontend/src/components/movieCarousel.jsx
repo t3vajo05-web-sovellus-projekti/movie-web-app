@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-
-export default function MovieCarousel({ movies, carouselId }) 
+import RemoveButton from "./buttonRemove";
+export default function MovieCarousel({ movies, carouselId, onRemove }) 
 {
     if (!movies || movies.length === 0) return null;
 
@@ -9,6 +9,8 @@ export default function MovieCarousel({ movies, carouselId })
     for (let i = 0; i < movies.length; i += 3) {
         chunks.push(movies.slice(i, i + 3));
     }
+
+    const PLACEHOLDER = "/images/poster-placeholder.svg";
 
     return (
         <div id={carouselId} className="carousel slide" data-bs-ride="carousel">
@@ -23,14 +25,22 @@ export default function MovieCarousel({ movies, carouselId })
                                     key={movie.id}
                                     style={{ width: '320px' }}
                                 >
-                                    <div className="card h-100 shadow-sm" style={{ width: '300px' }}>
-                                        {movie.poster_path && (
+                                    <div className="card h-100 shadow-sm" style={{ width: '300px', position: 'relative' }}>
+                                        {onRemove && (
+                                            <RemoveButton
+                                                corner style={{ zIndex: 2 }}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    onRemove(movie.id);
+                                                }}
+                                            />
+                                        )}
                                             <img
-                                                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                                                src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : PLACEHOLDER}
                                                 className="card-img-top"
                                                 alt={movie.title}
                                             />
-                                        )}
                                         <div className="card-body d-flex flex-column">
                                             <h5 className="card-title">{movie.title}</h5>
                                             <p

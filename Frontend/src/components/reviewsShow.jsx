@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useUser } from "../context/useUser.js";
 import { StarsDisplay } from "./StarRating.jsx";
+import { API_URL } from "./API_URL.jsx";
 
 export default function ReviewsShow({ movieId }) 
 {
@@ -16,7 +17,7 @@ export default function ReviewsShow({ movieId })
         {
             try
             {
-                const res = await axios.get(`http://localhost:3001/reviews/movie/${movieId}/latest?limit=5`);
+                const res = await axios.get(`${API_URL}/reviews/movie/${movieId}/latest?limit=5`);
                 const filtered = user?.id
                     ? res.data.filter(r => r.user_id !== user.id)
                     : res.data;
@@ -41,7 +42,7 @@ export default function ReviewsShow({ movieId })
                     reviews.map(async (review) => {
                         try {
                             const res = await axios.get(
-                                `http://localhost:3001/ratings/user/${review.user_id}/movie/${review.movie_id}`
+                                `${API_URL}/ratings/user/${review.user_id}/movie/${review.movie_id}`
                             );
 
                             const rating = res.data?.rating ?? null;
@@ -76,7 +77,7 @@ export default function ReviewsShow({ movieId })
                 const newUsernames = {};
                 await Promise.all(missingIds.map(async (id) =>
                 {
-                    const res = await axios.get(`http://localhost:3001/users/${id}/username`);
+                    const res = await axios.get(`${API_URL}/users/${id}/username`);
                     newUsernames[id] = res.data.username;
                 }));
                 setUsernames(prev => ({ ...prev, ...newUsernames }));

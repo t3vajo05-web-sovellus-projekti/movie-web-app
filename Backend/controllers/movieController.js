@@ -246,7 +246,7 @@ const removeMovieFromGroupController = async (req, res, next) =>
         const movie = await removeMovieFromGroup(groupId, movieId);
         if (!movie) return next(new ApiError("Failed to remove movie from group", 500));
 
-        res.status(200)
+        res.status(200).json({ message: "Movie removed from group" });
     } 
     catch (err) 
     {

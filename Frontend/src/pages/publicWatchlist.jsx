@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import UserWatchlist from "../components/publicWatchlist.jsx";
 import "../components/watchlist.css";
+import { API_URL } from "../components/API_URL.jsx";
 
 
 export default function PublicWatchlist() 
@@ -16,7 +17,7 @@ export default function PublicWatchlist()
         if (!userId) return;
 
         axios
-            .get(`http://localhost:3001/users/${userId}/username`)
+            .get(`${API_URL}/users/${userId}/username`)
             .then(res => setUsername(res.data.username))
             .catch(() => setError("Failed to load watchlist. User may not exist."));
     }, [userId]);

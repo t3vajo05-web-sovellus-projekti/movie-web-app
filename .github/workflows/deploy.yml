@@ -1,0 +1,29 @@
+name: Deploy app to cloud server
+
+on:
+  push:
+    branches: 
+      - main
+    paths:
+      - 'Backend/**'
+      - 'Frontend/**'
+
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+    paths:
+      - 'Backend/**'
+      - 'Frontend/**'
+
+jobs:
+  deploy:
+    if: github.event_name == 'push' || github.event.pull_request.merged == true
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run deploy script
+        run: bash ~/deploy.sh

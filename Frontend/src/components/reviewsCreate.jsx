@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useUser } from "../context/useUser.js";
+import { API_URL } from "./API_URL.jsx";
 
 export default function ReviewCreate({ movieId, onReviewAdded }) 
 {
@@ -21,7 +22,7 @@ export default function ReviewCreate({ movieId, onReviewAdded })
 
             try
             {
-                const res = await axios.get(`http://localhost:3001/reviews/user/${user.id}`, {
+                const res = await axios.get(`${API_URL}/reviews/user/${user.id}`, {
                     headers: { Authorization: `Bearer ${user.token}` }
                 });
 
@@ -61,13 +62,13 @@ export default function ReviewCreate({ movieId, onReviewAdded })
             // If editing, delete the old one first
             if (isEditing && existingReviewID)
             {
-                await axios.delete(`http://localhost:3001/reviews/${existingReviewID}`, {
+                await axios.delete(`${API_URL}/reviews/${existingReviewID}`, {
                     headers: { Authorization: `Bearer ${user.token}` }
                 });
             }
 
             const res = await axios.post(
-                "http://localhost:3001/reviews/review",
+                `${API_URL}/reviews/review`,
                 {
                     movie_id: movieId,
                     review_text: reviewText
@@ -103,7 +104,7 @@ export default function ReviewCreate({ movieId, onReviewAdded })
 
         try
         {
-            await axios.delete(`http://localhost:3001/reviews/${existingReviewID}`, {
+            await axios.delete(`${API_URL}/reviews/${existingReviewID}`, {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
             setExistingReview(null);

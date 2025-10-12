@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { UserContext } from "../context/UserContext.js";
 import DeleteUser from "../components/DeleteUser.jsx";
 import ChangePassword from "../components/changeMyPassword.jsx";
+import { API_URL } from "../components/API_URL.jsx";
 
 export default function MyAccount() 
 {
@@ -15,7 +16,7 @@ export default function MyAccount()
     {
         if (!user) return;
 
-        fetch("http://localhost:3001/users/me", {
+        fetch(`${API_URL}/users/me`, {
             headers: {
                 "Authorization": `Bearer ${user.token}`
             }
@@ -24,17 +25,17 @@ export default function MyAccount()
             .then(data => setUserData(data))
             .catch(err => console.error(err));
 
-        fetch(`http://localhost:3001/reviews/user/${user.id}/count`)
+        fetch(`${API_URL}/reviews/user/${user.id}/count`)
             .then(res => res.json())
             .then(data => setReviewCount(data.count))
             .catch(err => console.error("Error fetching review count:", err));
 
-        fetch(`http://localhost:3001/groups/member/${user.id}/count`)
+        fetch(`${API_URL}/groups/member/${user.id}/count`)
             .then(res =>res.json())
             .then(data => setGroupMemberStats(data.count))
             .catch(err => console.error("Error fetching group member count:", err));
 
-        fetch(`http://localhost:3001/groups/owner/${user.id}/count`)
+        fetch(`${API_URL}/groups/owner/${user.id}/count`)
             .then(res =>res.json())
             .then(data => setGroupOwnerStats(data.count))
             .catch(err => console.error("Error fetching group owner count:", err))

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import MovieCarousel from "./movieCarousel.jsx";
+import { API_URL } from "./API_URL.jsx";
 
 export default function HomeInTheatres() 
 {
@@ -13,7 +14,7 @@ export default function HomeInTheatres()
         {
             try 
             {
-                const res = await axios.get('http://localhost:3001/movies/nowplaying');
+                const res = await axios.get(`${API_URL}/movies/nowplaying`);
                 setNowPlaying(res.data.results || []);
             } 
             catch (err) 

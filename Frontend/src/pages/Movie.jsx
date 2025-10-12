@@ -10,6 +10,7 @@ import ReviewCreate from "../components/reviewsCreate.jsx";
 import ReviewsShow from "../components/reviewsShow.jsx";
 import MovieStats from "../components/movieStats.jsx";
 import AddToGroupSection from "../components/addMovieToGroupButton.jsx";
+import { API_URL } from "../components/API_URL.jsx";
 
 
 export default function Movie() 
@@ -28,14 +29,14 @@ export default function Movie()
     {
         async function fetchData()
         {
-            const res = await fetch(`http://localhost:3001/movies/${id}`);
+            const res = await fetch(`${API_URL}/movies/${id}`);
             if (!res.ok) throw new Error("Failed to fetch movie");
             const data = await res.json();
             setMovie(data);
 
             if (!user) return;
 
-            const resWatchlist = await fetch(`http://localhost:3001/watchlist`,
+            const resWatchlist = await fetch(`${API_URL}/watchlist`,
             {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
@@ -45,7 +46,7 @@ export default function Movie()
             const filteredFavorites = watchlistData.filter(item => item.favorite === true);
 
             // fetch groups
-            const res_groups = await fetch("http://localhost:3001/groups/member", {
+            const res_groups = await fetch(`${API_URL}/groups/member`, {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
             if (!res_groups.ok) throw new Error("Failed to fetch groups");
@@ -64,7 +65,7 @@ export default function Movie()
         if (!user) return;
 
         try {
-            const res = await fetch("http://localhost:3001/groups/movie/add", {
+            const res = await fetch(`${API_URL}/groups/movie/add`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useUser } from "../context/useUser.js";
+import { API_URL } from "./API_URL.jsx";
 
 export default function ChangePassword() 
 {
@@ -29,7 +30,7 @@ export default function ChangePassword()
         setLoading(true);
         try 
         {
-            const res = await axios.post("http://localhost:3001/users/changepw", 
+            const res = await axios.post(`${API_URL}/users/changepw`, 
             {
                 oldPassword,
                 newPassword

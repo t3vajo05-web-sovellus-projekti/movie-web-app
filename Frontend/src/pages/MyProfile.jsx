@@ -3,6 +3,7 @@ import { UserContext } from '../context/UserContext'
 import MyRecentReviews from '../components/myRecentReviews'
 import UserWatchlist from "../components/publicWatchlist.jsx";
 import MyGroups from '../components/myGroups.jsx';
+import { API_URL } from "../components/API_URL.jsx";
 
 export default function MyProfile() {
     const [userData, setUserData] = useState(null);
@@ -11,7 +12,7 @@ export default function MyProfile() {
     useEffect(() => {
       if (!user) return;
 
-      fetch("http://localhost:3001/users/me", {
+      fetch(`${API_URL}/users/me`, {
         headers: {
           "Authorization": `Bearer ${user.token}`
         }
