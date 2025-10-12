@@ -29,12 +29,13 @@ export default function MyProfile() {
 
       <p><strong>Username:</strong> {userData.username}</p>
       
+      <h3 className="mb-3">My recent Reviews</h3>
       <MyRecentReviews userId={userData.id} />
       
-      <h2 className="h4 mt-5 mb-3">My Groups</h2>
+      <h3 className="mt-5 mb-3">My Groups</h3>
       <MyGroups userId={userData.id} />
 
-      <h2 className="h4 mt-5 mb-3">My Watchlist</h2>       
+      <h3 className="mt-5 mb-3">My Watchlist</h3>       
       <UserWatchlist userId={userData.id} />
     </div>
   );

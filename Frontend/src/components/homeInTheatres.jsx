@@ -31,7 +31,7 @@ export default function HomeInTheatres()
 
     return (
         <section className="container py-5">
-            <h2 className="h3 mb-4">In Theatres Right Now</h2>
+            <h3 className="mb-4">In Theatres Right Now</h3>
 
             {loading ? (
                 <div className="d-flex justify-content-center my-5">

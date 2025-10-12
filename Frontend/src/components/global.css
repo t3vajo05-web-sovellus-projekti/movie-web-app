@@ -1,0 +1,63 @@
+/* Global body styles */
+body {
+  background-color: #101d23 !important;
+  color: #fffcf0 !important; /* light beige for readability */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* clean modern system font stack */
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  padding-bottom: 65px; /*footer height: 56.31px, added a bit more so that stuff doesnt touch the footer directly*/
+  text-decoration: none;
+}
+
+/* Headings */
+h1, h3, h4, h5, h6 {
+  color: #f9be1a; /* gold accent for headings */
+  font-weight: 600;
+  margin-top: 1.2rem;
+  margin-bottom: 0.8rem;
+}
+
+h2 {
+    color:  #ff6982 !important; /* only pink heading */
+}
+
+/* Links */
+a {
+  color: #f9be1a;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #fffcf0; /* invert on hover */
+  text-decoration: none;
+}
+
+/* Paragraphs */
+p {
+  margin-bottom: 1rem;
+}
+
+/*Other text related styles*/
+.text-muted {
+  color: #adaba4 !important; /* soft beige-gray */
+}
+
+/*Card styles*/
+.card {
+  background-color: #0a1519 !important; /* same dark as navbar */
+  color: #fffcf0 !important;
+  border: 2px solid transparent;
+  border-radius: 0.75rem;
+  background-image: linear-gradient(#0a1519, #0a1519),
+                    linear-gradient(135deg, #e8b730, #ff4d73);
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card:hover {
+  box-shadow: 0 0 20px rgba(255, 77, 115, 0.25);
+}

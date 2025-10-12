@@ -72,7 +72,6 @@ export default function myRecentReviews({userId}) {
 
     return (
         <section className="mt-4">
-            <h2 className="h4 mb-3">My recent Reviews</h2>
                 {reviews.map((review) => (
                     <div key={review.id} className="border rounded p-2 mb-2">
                         <div className="d-flex justify-content-between align-items-start">

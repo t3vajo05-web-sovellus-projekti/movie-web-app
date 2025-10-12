@@ -91,7 +91,7 @@ export default function BrowseShows()
         
     return (
 <section className="container py-5">
-    <h2 className="h3 mb-4">Browse Showtimes</h2>
+    <h3 className="mb-4">Browse Showtimes</h3>
 
     <div className="row mb-4 g-3">
         <div className="col-md-6">

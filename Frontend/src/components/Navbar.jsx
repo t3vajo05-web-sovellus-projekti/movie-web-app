@@ -87,10 +87,10 @@ export default function Navbar() {
         <div className="container-fluid">
             <Link className="navbar-brand" to="/">
                 <img 
-                    src="/images/wired-gradient-499-clipboard-film-clap.svg" 
+                    src="/images/wired-gradient-499-clipboard-film-clap-mustard_regular.svg" 
                     alt="Image stolen from https://lordicon.com/icons/wired/gradient/499-clipboard-film-clap" 
                     className="img-fluid rounded" 
-                    style={{ maxWidth: "35px", height: "auto" }}
+                    style={{ maxWidth: "35px", height: "auto"}}
                 />
             </Link>
             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

@@ -64,7 +64,7 @@ export default function HomeMostRecent()
 
     return (
         <section className="container py-5">
-            <h2 className="h3 mb-4">Most Recent Reviews</h2>
+            <h3 className="mb-4">Most Recent Reviews</h3>
 
             {loading ? (
                 <div className="d-flex justify-content-center my-5">
