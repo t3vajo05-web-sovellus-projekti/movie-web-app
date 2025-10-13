@@ -1,0 +1,85 @@
+/* All button overrides */
+
+/* Base button settings */
+.btn {
+  border-radius: 10px;
+  font-weight: 500;
+  border: none;
+  color: #fff;
+
+}
+
+/* PRIMARY */
+.btn-primary {
+  background-color: #f9be1a;
+  color: #0a1519;
+}
+.btn-primary:hover {
+  background-color: #b48400;
+  color: #fffcf0; /* beige white */
+}
+
+/* OUTLINE PRIMARY */
+.btn-outline-primary {
+  color: #fffcf0;
+  border: 2px solid #fffcf0;
+  background-color: transparent;
+}
+.btn-outline-primary:hover,
+.btn-outline-primary:active,
+.btn-outline-primary:focus {
+  color: #f9be1a;
+  border-color: #f9be1a;
+  background-color: transparent;
+}
+
+/* SUCCESS  */
+.btn-success {
+  background-color: #1d803e;
+  color: #fffcf0;
+}
+.btn-success:hover,
+.btn-success:active,
+.btn-success:focus {
+  background-color: #0d3f1e;
+  color: #f9be1a;
+}
+
+/* OUTLINE SUCCESS  */
+.btn-outline-success {
+  color: #fffcf0;
+  border: 2px solid #1d803e;
+  background-color: transparent;
+}
+.btn-outline-success:hover {
+  color: #fffcf0;
+  border-color: #1d803e;
+  background-color: #155a2c;
+}
+
+/* WARNING */
+.btn-warning {
+  background-color: #8a292f;
+  color: #fffcf0;
+}
+.btn-warning:hover {
+  background-color: #591a1e;
+  color: #f9be1a;
+}
+
+/* INFO  */
+.btn-info {
+  background-color: #186b9b;
+  color: #fffcf0;
+}
+.btn-info:hover {
+  background-color: #0e425f;
+  color: #f9be1a;
+}
+
+/*  DISABLED STATE  */
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}

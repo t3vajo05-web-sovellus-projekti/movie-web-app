@@ -74,7 +74,8 @@ export default function myRecentReviews({userId}) {
     return (
         <section className="mt-4">
                 {reviews.map((review) => (
-                    <div key={review.id} className="border rounded p-2 mb-2">
+                    <div key={review.id} className="card shadow-sm mb-3">
+                        <div className="card-body">
                         <div className="d-flex justify-content-between align-items-start">
                             <Link to={`/movie/${review.movie_id}`}>
                                 <h5 className="mb-2">{review.movieTitle}</h5>
@@ -87,6 +88,7 @@ export default function myRecentReviews({userId}) {
                         <small className="text-muted">
                             Reviewed on: {new Date(review.created).toLocaleDateString("fi-FI")}
                         </small>
+                        </div>
                     </div>
                 ))}
         </section>

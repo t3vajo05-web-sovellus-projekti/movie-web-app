@@ -40,20 +40,27 @@ if (groups.length === 0)
 // Show list of groups:
 return (
     <section className="mt-4">
-        <div className="border rounded p-3">
-           <ul className="mb-0">
-               {groups.map(group => 
-                   (
-                    <li key = {group.id}>
-                         <Link to={`/groups/${group.id}`}>
-                            {group.owner === user.id ? (<strong>{group.name}</strong>) : (group.name)}                   
-                         </Link>
-                     </li>
-                    )
-                  )}
-             </ul>
-         </div>
+        <div className="row g-3">
+            {groups.map(group => (
+                <div key={group.id} className="col-md-6 col-lg-4">
+                    <div className="card h-100 shadow-sm">
+                        <div className="card-body p-3">
+                            <h5 className="card-title m-0">
+                                <Link
+                                to={`/groups/${group.id}`}
+                                className={`group-link ${group.owner === user.id ? "owned" : "not-owned"}`}>
+                                {group.name}
+                                </Link>
+
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            ))}
+        </div>
     </section>
 );
+
+
 
 }

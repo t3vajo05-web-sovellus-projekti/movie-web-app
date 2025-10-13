@@ -58,6 +58,139 @@ p {
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.card:hover {
-  box-shadow: 0 0 20px rgba(255, 77, 115, 0.25);
+
+
+
+/* See more / See less buttons */
+.btn-see-toggle {
+  color: #ada4a9 !important;         /* muted color, same as .text-muted */
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: color 0.15s ease;
+}
+
+.btn-see-toggle:hover {
+  color: #f9be1a !important;        /* gold hover */
+  text-decoration: none;
+}
+
+
+
+/* FIELDS, INPUTS, SELECTS */
+
+/* Global form field styles: inputs and selects */
+input, select, textarea {
+  background-color: #0a1519 !important;  /* dark background */
+  color: #fffcf0 !important;             /* light text */
+  border: 1px solid #254554 !important;  /* muted dark blue border */
+  border-radius: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+}
+
+/* Placeholder text */
+input::placeholder,
+select::placeholder,
+textarea::placeholder {
+  color: #95a2b3 !important;  /* light grey/blue placeholder */
+  opacity: 1;
+}
+
+/* Focus state: match navbar filters */
+input:focus,
+select:focus,
+textarea:focus {
+  box-shadow: none;                    /* remove default Bootstrap glow */
+  background-color: #0a1519 !important;
+  color: #fffcf0 !important;
+  outline: none;
+}
+
+
+
+
+/* TABLES */
+
+.table {
+    background-color: #0a1519 !important;
+    color: #fffcf0 !important;             /* Light beige text */
+    border-color: #254554 !important;      /* Muted dark blue for all cell borders */
+    border-radius: 0.75rem !important;         /* rounded corners */
+    overflow: hidden;                          /* ensures gradient doesn't show under table cells */
+    border: none !important;                   /* prevents double borders with parent cards */
+    box-shadow: none !important;               /* keeps table flat, shadow on parent card only */
+}
+
+.table thead {
+    background-color: #101d23 !important;  /* Slightly lighter for contrast */
+    color: #f9be1a !important;             /* Gold accent for table headings */
+}
+
+.table th, .table td {
+    background-color: #0a1519 !important;
+    color: #fffcf0 !important;
+    border-color: #254554 !important;
+}
+
+.table tr:first-child th {
+  background-color: #14242d !important; /* lighter header row */
+  color: #fffcf0 !important;
+  border-bottom: 2px solid #254554 !important;
+}
+
+.table-light {
+    background-color: #101d23 !important;  /* Override Bootstrap's .table-light */
+    color: #f9be1a !important;
+}
+
+.table-responsive {
+    background-color: transparent !important;
+}
+
+.table .movie-link {
+    color: #fffcf0 !important;
+}
+
+.table .movie-link:hover {
+    color: #f9be1a !important;
+    text-decoration: none !important;
+}
+
+
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+  background-color: #0c1a1f !important; /* dark base */
+}
+
+.table-striped > tbody > tr:nth-of-type(even) > * {
+  background-color: #101e25 !important; /* slightly lighter alternate row */
+}
+
+/* MY PROFILE: MY GROUPS LIST*/
+
+/* Group card links */
+.group-link {
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* Owned groups = pink */
+.group-link.owned {
+  color: #ff6982 !important;
+}
+
+/* Non-owned groups = yellow */
+.group-link.not-owned {
+  color: #f9be1a !important;
+}
+
+/* On hover, all go white */
+.group-link:hover {
+  color: #ffffff !important;
+  text-decoration: none !important;
 }

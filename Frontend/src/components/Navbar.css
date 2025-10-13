@@ -37,6 +37,32 @@
 }
 
 
+.filter-section {
+  border-top: 1px solid #254554 !important;   /* same muted dark blue as dropdown divider */
+  border-bottom: 1px solid #254554 !important;
+}
+.filter-section .form-label {
+  color: #fffcf0 !important;
+  
+}
+
+.filter-section .form-control,
+.filter-section .form-select {
+  background-color: #0a1519 !important;
+  color: #fffcf0 !important;
+  border: 1px solid #254554 !important;
+  
+}
+
+/* Placeholder text color for filter inputs */
+.filter-section .form-control::placeholder,
+.filter-section .form-select::placeholder {
+  color: #95a2b3 !important;
+  opacity: 1; /* ensure full color, some browsers dim it by default */
+}
+
+
+
 /* Hamburger toggler */
 .navbar-toggler {
   border: none;

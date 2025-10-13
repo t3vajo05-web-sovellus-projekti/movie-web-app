@@ -1,4 +1,5 @@
 // src/components/AddToGroupSection.jsx
+import './buttons.css'
 import React, { useState } from "react";
 
 export default function AddToGroupSection({ user, groups, movieId, addMovieToGroup }) 

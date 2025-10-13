@@ -129,7 +129,8 @@ const handleJoinRequest = async (groupId) =>
             </div>
 
            {user && (
-            <Link to="/creategroup" className="btn btn-success">Create Group</Link>
+            <div className="d-flex gap-3 mb-3"><Link to="/mygroups" className="btn btn-info">My Groups</Link>
+            <Link to="/creategroup" className="btn btn-outline-success">Create Group</Link></div>
             )}
                 {groups.map(group => (
                     <div className="card" key={group.id}>
@@ -141,7 +142,7 @@ const handleJoinRequest = async (groupId) =>
 
                             {user && group.isMember && (
                                 <Link to={`/groups/${group.id}`}
-                                className="btn btn-success mt-2">Open Group</Link>
+                                className="btn btn-outline-success mt-2">Open Group</Link>
                             )}
 
                             {user && !group.isMember && (

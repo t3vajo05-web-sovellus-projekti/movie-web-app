@@ -1,3 +1,4 @@
+import './buttons.css'
 import './Navbar.css'
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
@@ -88,7 +89,7 @@ export default function Navbar() {
         <div className="container-fluid">
             <Link className="navbar-brand" to="/">
                 <img 
-                    src="/images/wired-gradient-499-clipboard-film-clap-mustard_regular.svg" 
+                    src="/images/wired-gradient-499-clipboard-film-clap-salmonmustard2.svg" 
                     alt="Image stolen from https://lordicon.com/icons/wired/gradient/499-clipboard-film-clap" 
                     className="img-fluid rounded" 
                     style={{ maxWidth: "35px", height: "auto"}}
@@ -124,7 +125,7 @@ export default function Navbar() {
                         required
                         onChange={(e) => setQuery(e.target.value)}
                     />
-                    <button className="btn btn-outline-success" type="submit">Search </button>
+                    <button className="btn btn-outline-primary btn-hover" type="submit">Search </button>
                     <button
                         type='button'
                         className='btn btn-outline-primary ms-2'
@@ -177,7 +178,7 @@ export default function Navbar() {
     </nav>
 
     {showFilters && (
-        <div className='bg-light p-3 border-top border-bottom'>
+        <div className='filter-section p-3 border-top border-bottom'>
             <form className='container' onSubmit={handleFilterSearch}>
                 <div className='row g-3 align-items-end'>
                     <div className='col-md-3'>

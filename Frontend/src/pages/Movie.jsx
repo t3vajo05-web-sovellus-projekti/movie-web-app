@@ -98,7 +98,7 @@ export default function Movie()
                     )}
                 </div>
                 <div className="col-md-8">
-                    <h2>{movie.title} ({movie.release_date.split("-")[0]})</h2>
+                    <h1>{movie.title} ({movie.release_date.split("-")[0]})</h1>
                     <div className="d-flex gap-2 mb-1">
                         <p className="mt-3"><strong>TMDB Rating:</strong></p>
                         <TmdbStarRating rating={movie.vote_average} />
