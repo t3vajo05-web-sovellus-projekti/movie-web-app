@@ -5,6 +5,8 @@
 
 [Link to website](http://135.181.32.176/)
 
+[Link to API Documentation](https://documenter.getpostman.com/view/40316719/2sB3QMLUZH)
+
 A full-stack web application for movie enthusiasts. Users can search and review movies, view showtimes from theaters, create and manage groups, add movies and showtimes to groups, and maintain personal favorite lists and watchlists that can be shared with friends.
 
 ---
