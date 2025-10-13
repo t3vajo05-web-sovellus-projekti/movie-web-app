@@ -137,7 +137,7 @@ export default function GroupManager() {
 
     return (
         <div className="container mt-4">
-            <h2>Manage Group: {group?.name}</h2>
+            <h1>Manage Group: {group?.name}</h1>
     
             <GroupDescription
                 group={group}
