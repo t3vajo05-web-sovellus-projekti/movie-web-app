@@ -48,7 +48,7 @@ export default function MyAccount()
     return (
         <div className="container mt-4">
             <h1 className="mb-4">My Account</h1>
-            <div className="card mb-4">
+            <div className="mb-4">
             <table className="table table-striped">
                 <tbody>
                     <tr>

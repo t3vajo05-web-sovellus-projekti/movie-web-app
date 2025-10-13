@@ -1,3 +1,4 @@
+import '../components/buttons.css'
 import React, { useEffect, useState } from "react";
 import { fetchTheatres, fetchShows, formatDateTime } from "../components/Finnkino_api.js";
 import DateDropdown from "../components/dateDropdown.jsx";
@@ -114,7 +115,7 @@ export default function BrowseShows()
         <p className="text-center text-muted">No shows</p>
     ) : (
         shows.map(s => (
-            <div key={s.id} className="card shadow-sm border-0">
+            <div key={s.id} className="card shadow-sm border-1">
                 <div className="row g-0 align-items-center">
                     <div className="col-md-3">
                         <img 
@@ -146,7 +147,7 @@ export default function BrowseShows()
                                 </a>
                                 { user && groups.length > 0 && (
                                 <button
-                                    className="btn btn-sm btn-secondary"
+                                    className="btn btn-sm btn-info"
                                     onClick={() =>
                                         setShowAddDropdown(prev => ({
                                             ...prev,

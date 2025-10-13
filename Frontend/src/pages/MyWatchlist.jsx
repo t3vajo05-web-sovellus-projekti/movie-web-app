@@ -124,7 +124,7 @@ export default function MyWatchlist() {
   const renderTable = (list) => {
     if (!list?.length) return <p className="text-muted">No movies in this category.</p>;
     return (
-      <div className="card mb-3">
+      <div className="mb-3">
         <div className="table-responsive" style={{ overflow: "visible" }}>
           <table className="table table-sm table-hover align-middle mb-0">
             <colgroup>

@@ -44,23 +44,6 @@ p {
   color: #adaba4 !important; /* soft beige-gray */
 }
 
-/*Card styles*/
-.card {
-  background-color: #0a1519 !important; /* same dark as navbar */
-  color: #fffcf0 !important;
-  border: 2px solid transparent;
-  border-radius: 0.75rem;
-  background-image: linear-gradient(#0a1519, #0a1519),
-                    linear-gradient(135deg, #e8b730, #ff4d73);
-  background-origin: border-box;
-  background-clip: content-box, border-box;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-
-
-
 /* See more / See less buttons */
 .btn-see-toggle {
   color: #ada4a9 !important;         /* muted color, same as .text-muted */
@@ -76,19 +59,18 @@ p {
 }
 
 .btn-see-toggle:hover {
-  color: #f9be1a !important;        /* gold hover */
+  color: #f9be1a !important;
   text-decoration: none;
 }
-
 
 
 /* FIELDS, INPUTS, SELECTS */
 
 /* Global form field styles: inputs and selects */
 input, select, textarea {
-  background-color: #0a1519 !important;  /* dark background */
-  color: #fffcf0 !important;             /* light text */
-  border: 1px solid #254554 !important;  /* muted dark blue border */
+  background-color: #0a1519 !important;  
+  color: #fffcf0 !important;           
+  border: 1px solid #254554 !important;
   border-radius: 0.375rem;
   padding: 0.375rem 0.75rem;
   font-size: 1rem;
@@ -98,7 +80,7 @@ input, select, textarea {
 input::placeholder,
 select::placeholder,
 textarea::placeholder {
-  color: #95a2b3 !important;  /* light grey/blue placeholder */
+  color: #95a2b3 !important; 
   opacity: 1;
 }
 
@@ -106,13 +88,43 @@ textarea::placeholder {
 input:focus,
 select:focus,
 textarea:focus {
-  box-shadow: none;                    /* remove default Bootstrap glow */
+  box-shadow: none;                 
   background-color: #0a1519 !important;
   color: #fffcf0 !important;
   outline: none;
 }
 
+/* help text under form fields (like password rules) */
+.form-text {
+  color: #d3d0c7 !important;
+  font-size: 0.9rem;
+}
 
+
+/* ------------ CARDS AND TABLES ---------------- */
+
+
+/*Card styles*/
+.card {
+  background-color: #0a1519 !important; /* same dark as navbar */
+  color: #fffcf0 !important;
+  border: 2px solid transparent;
+  border-radius: 0.75rem;
+  background-image: linear-gradient(#0a1519, #0a1519),
+                    linear-gradient(135deg, #e8b730, #ff4d73);
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+/*adjustement for sharp image corners clipping with rounded borders (eg. movie carousel movie posters)*/
+.card img {
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
+  object-fit: cover;
+  display: block;
+}
 
 
 /* TABLES */
@@ -121,11 +133,11 @@ textarea:focus {
     background-color: #0a1519 !important;
     color: #fffcf0 !important;             /* Light beige text */
     border-color: #254554 !important;      /* Muted dark blue for all cell borders */
-    border-radius: 0.75rem !important;         /* rounded corners */
-    overflow: hidden;                          /* ensures gradient doesn't show under table cells */
+    overflow: visible !important; 
     border: none !important;                   /* prevents double borders with parent cards */
     box-shadow: none !important;               /* keeps table flat, shadow on parent card only */
 }
+
 
 .table thead {
     background-color: #101d23 !important;  /* Slightly lighter for contrast */
@@ -151,7 +163,9 @@ textarea:focus {
 
 .table-responsive {
     background-color: transparent !important;
+    overflow: visible !important;
 }
+
 
 .table .movie-link {
     color: #fffcf0 !important;
@@ -170,6 +184,8 @@ textarea:focus {
 .table-striped > tbody > tr:nth-of-type(even) > * {
   background-color: #101e25 !important; /* slightly lighter alternate row */
 }
+
+
 
 /* MY PROFILE: MY GROUPS LIST*/
 
@@ -193,4 +209,48 @@ textarea:focus {
 .group-link:hover {
   color: #ffffff !important;
   text-decoration: none !important;
+}
+
+
+
+/* WATCHLIST TABS */
+
+/* Watchlist tabs styling */
+.nav-tabs {
+  border-bottom: 1px solid #254554 !important;
+}
+
+.nav-tabs .nav-link {
+  color: #fffcf0 !important;
+  background-color: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: 0.375rem 0.375rem 0 0 !important;
+  margin-right: 0.25rem;
+}
+
+.nav-tabs .nav-link:hover {
+  color: #f9be1a !important;
+  background-color: #254554 !important;
+  border-color: #254554 !important;
+}
+
+.nav-tabs .nav-link.active {
+  color: #f9be1a !important;
+  background-color: #0a1519 !important;
+  border-color: #254554 !important;
+  border-bottom-color: #0a1519 !important;
+}
+
+
+/* CAROUSEL ARROWS */
+
+/* Invert carousel arrows for dark theme (recolor bootstrap default) */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+ filter: invert(95%) contrast(100%);
+}
+
+.carousel-control-prev-icon:hover,
+.carousel-control-next-icon:hover {
+  filter: invert(100%) contrast(100%);
 }
