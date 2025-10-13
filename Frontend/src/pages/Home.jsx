@@ -1,3 +1,4 @@
+import '../components/global.css'
 import React from 'react'
 import HomeWelcome from '../components/homeWelcome.jsx'
 import HomeMostRecent from '../components/homeMostRecent.jsx'

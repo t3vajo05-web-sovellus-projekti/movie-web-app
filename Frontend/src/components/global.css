@@ -1,0 +1,256 @@
+/* Global body styles */
+body {
+  background-color: #101d23 !important;
+  color: #fffcf0 !important; /* light beige for readability */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* clean modern system font stack */
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  padding-bottom: 65px; /*footer height: 56.31px, added a bit more so that stuff doesnt touch the footer directly*/
+  text-decoration: none;
+}
+
+/* Headings */
+h1, h3, h4, h5, h6 {
+  color: #f9be1a; /* gold accent for headings */
+  font-weight: 600;
+  margin-top: 1.2rem;
+  margin-bottom: 0.8rem;
+}
+
+h2 {
+    color:  #ff6982 !important; /* only pink heading */
+}
+
+/* Links */
+a {
+  color: #f9be1a;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #fffcf0; /* invert on hover */
+  text-decoration: none;
+}
+
+/* Paragraphs */
+p {
+  margin-bottom: 1rem;
+}
+
+/*Other text related styles*/
+.text-muted {
+  color: #adaba4 !important; /* soft beige-gray */
+}
+
+/* See more / See less buttons */
+.btn-see-toggle {
+  color: #ada4a9 !important;         /* muted color, same as .text-muted */
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: color 0.15s ease;
+}
+
+.btn-see-toggle:hover {
+  color: #f9be1a !important;
+  text-decoration: none;
+}
+
+
+/* FIELDS, INPUTS, SELECTS */
+
+/* Global form field styles: inputs and selects */
+input, select, textarea {
+  background-color: #0a1519 !important;  
+  color: #fffcf0 !important;           
+  border: 1px solid #254554 !important;
+  border-radius: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+}
+
+/* Placeholder text */
+input::placeholder,
+select::placeholder,
+textarea::placeholder {
+  color: #95a2b3 !important; 
+  opacity: 1;
+}
+
+/* Focus state: match navbar filters */
+input:focus,
+select:focus,
+textarea:focus {
+  box-shadow: none;                 
+  background-color: #0a1519 !important;
+  color: #fffcf0 !important;
+  outline: none;
+}
+
+/* help text under form fields (like password rules) */
+.form-text {
+  color: #d3d0c7 !important;
+  font-size: 0.9rem;
+}
+
+
+/* ------------ CARDS AND TABLES ---------------- */
+
+
+/*Card styles*/
+.card {
+  background-color: #0a1519 !important; /* same dark as navbar */
+  color: #fffcf0 !important;
+  border: 2px solid transparent;
+  border-radius: 0.75rem;
+  background-image: linear-gradient(#0a1519, #0a1519),
+                    linear-gradient(135deg, #e8b730, #ff4d73);
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+/*adjustement for sharp image corners clipping with rounded borders (eg. movie carousel movie posters)*/
+.card img {
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
+  object-fit: cover;
+  display: block;
+}
+
+
+/* TABLES */
+
+.table {
+    background-color: #0a1519 !important;
+    color: #fffcf0 !important;             /* Light beige text */
+    border-color: #254554 !important;      /* Muted dark blue for all cell borders */
+    overflow: visible !important; 
+    border: none !important;                   /* prevents double borders with parent cards */
+    box-shadow: none !important;               /* keeps table flat, shadow on parent card only */
+}
+
+
+.table thead {
+    background-color: #101d23 !important;  /* Slightly lighter for contrast */
+    color: #f9be1a !important;             /* Gold accent for table headings */
+}
+
+.table th, .table td {
+    background-color: #0a1519 !important;
+    color: #fffcf0 !important;
+    border-color: #254554 !important;
+}
+
+.table tr:first-child th {
+  background-color: #14242d !important; /* lighter header row */
+  color: #fffcf0 !important;
+  border-bottom: 2px solid #254554 !important;
+}
+
+.table-light {
+    background-color: #101d23 !important;  /* Override Bootstrap's .table-light */
+    color: #f9be1a !important;
+}
+
+.table-responsive {
+    background-color: transparent !important;
+    overflow: visible !important;
+}
+
+
+.table .movie-link {
+    color: #fffcf0 !important;
+}
+
+.table .movie-link:hover {
+    color: #f9be1a !important;
+    text-decoration: none !important;
+}
+
+
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+  background-color: #0c1a1f !important; /* dark base */
+}
+
+.table-striped > tbody > tr:nth-of-type(even) > * {
+  background-color: #101e25 !important; /* slightly lighter alternate row */
+}
+
+
+
+/* MY PROFILE: MY GROUPS LIST*/
+
+/* Group card links */
+.group-link {
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* Owned groups = pink */
+.group-link.owned {
+  color: #ff6982 !important;
+}
+
+/* Non-owned groups = yellow */
+.group-link.not-owned {
+  color: #f9be1a !important;
+}
+
+/* On hover, all go white */
+.group-link:hover {
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
+
+
+
+/* WATCHLIST TABS */
+
+/* Watchlist tabs styling */
+.nav-tabs {
+  border-bottom: 1px solid #254554 !important;
+}
+
+.nav-tabs .nav-link {
+  color: #fffcf0 !important;
+  background-color: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: 0.375rem 0.375rem 0 0 !important;
+  margin-right: 0.25rem;
+}
+
+.nav-tabs .nav-link:hover {
+  color: #f9be1a !important;
+  background-color: #254554 !important;
+  border-color: #254554 !important;
+}
+
+.nav-tabs .nav-link.active {
+  color: #f9be1a !important;
+  background-color: #0a1519 !important;
+  border-color: #254554 !important;
+  border-bottom-color: #0a1519 !important;
+}
+
+
+/* CAROUSEL ARROWS */
+
+/* Invert carousel arrows for dark theme (recolor bootstrap default) */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+ filter: invert(95%) contrast(100%);
+}
+
+.carousel-control-prev-icon:hover,
+.carousel-control-next-icon:hover {
+  filter: invert(100%) contrast(100%);
+}

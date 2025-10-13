@@ -48,6 +48,7 @@ export default function MyAccount()
     return (
         <div className="container mt-4">
             <h1 className="mb-4">My Account</h1>
+            <div className="mb-4">
             <table className="table table-striped">
                 <tbody>
                     <tr>
@@ -67,8 +68,7 @@ export default function MyAccount()
                         <td>{new Date(userData.created).toLocaleDateString("fi-FI")}</td>
                     </tr>
                     <tr>
-                        {/* Pitäisikö muuttaa lyhyemmäksi jotenkin? */}
-                        <th scope="row">Amount of groups I'm the owner in</th>
+                        <th scope="row">Groups owned</th>
                         <td>{groupOwnerStats !== null ? groupOwnerStats : "Loading..."}</td>
                     </tr>
                     <tr>
@@ -78,11 +78,12 @@ export default function MyAccount()
                     </tr>
                     <tr>
                         {/* Maybe add a link to a page with all of users' reviews? */}
-                        <th scope="row">Amount of reviews I have done</th>
+                        <th scope="row">Reviews written</th>
                         <td>{reviewCount !== null ? reviewCount : "Loading..."}</td>
                     </tr>
                 </tbody>
             </table>
+            </div>
             <ChangePassword />
             <DeleteUser />
         </div>

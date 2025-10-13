@@ -38,7 +38,7 @@ export default function PublicWatchlist()
 
     return (
         <div className="container mt-4">
-            <h2>{username}'s Watchlist</h2>
+            <h3>{username}'s Watchlist</h3>
             <UserWatchlist userId={userId} />
         </div>
     );

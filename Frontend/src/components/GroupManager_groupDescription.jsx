@@ -16,7 +16,7 @@ export default function GroupDescription({ group, editingDescription, descriptio
             ) : (
                 <>
                     <p className="mb-0 me-2">{group?.description || "No description"}</p>
-                    <button className="btn btn-light p-1" style={{ fontSize: "1rem" }} onClick={() => setEditingDescription(true)}>
+                    <button className="btn btn-dark p-1" style={{ fontSize: "1rem" }} onClick={() => setEditingDescription(true)}>
                         📝
                     </button>
                 </>

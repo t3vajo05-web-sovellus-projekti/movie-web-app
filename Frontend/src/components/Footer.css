@@ -1,11 +1,44 @@
+
+/* Footer position */
 footer {
     position: fixed;
     bottom: 0;
     width: 100%;
-    background-color: #222;
-    text-align: center;
 }
 
-footer .text-muted {
-    color: #fff!important
+/* Footer background */
+.footer {
+  background-color: #0a1519 !important; /* same dark as navbar */
+  color: #fffcf0 !important;           /* light text */
+}
+
+/* Container alignment */
+.footer .container {
+  display: flex;
+  justify-content: center;  /* center links horizontally */
+  align-items: center;
+}
+
+/* Nav links inside footer */
+.footer .nav-link {
+  color: #fffcf0 !important;     /* almost white text */
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.footer .nav-link:hover {
+  color: #f9be1a !important;          /* mustard hover */
+  text-decoration: none;
+}
+
+/* Remove Bootstrap padding from list */
+.footer .navbar-nav {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Nav items spacing */
+.footer .nav-item {
+  margin: 0;
 }

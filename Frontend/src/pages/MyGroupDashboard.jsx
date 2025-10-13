@@ -92,15 +92,15 @@ return (
                                     <Link to={`/groups/${group.id}`} className="text-decoration-none"> {group.name} </Link>
                                 </h5>
 
-                                <p className="card-text">
+                                <p className="card-text mb-1">
                                     {isExpanded || !collapse ? description : description.substring (0, 125) + "..."}
                                 </p>
 
                                 {collapse && (
                                     <button
                                     onClick={() => toggleExpansion(group.id)}
-                                    className="btn btn-link p-0">
-                                        {isExpanded ? "See less" : "See more"}
+                                    className="btn btn-see-toggle">
+                                        {isExpanded ? "See less" : "See more..."}
                                     </button>
                                 )}
                             </div>

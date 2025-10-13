@@ -1,3 +1,4 @@
+import './buttons.css'
 import React, { useContext } from "react";
 import { UserContext } from "../context/UserContext.js";
 import { API_URL } from "./API_URL.jsx";
@@ -37,7 +38,7 @@ export default function FavoriteButton({ movieId, favoritelist, setFavoritelist 
     };
 
     return (
-        <button className="btn btn-warning" onClick={toggleFavorites}>
+        <button className="btn btn-info" onClick={toggleFavorites}>
             {isInFavorites ? "Remove from Favorites" : "Add to Favorites"}
         </button>
     );

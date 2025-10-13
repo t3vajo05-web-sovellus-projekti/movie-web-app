@@ -1,0 +1,75 @@
+/* Navbar background */
+.navbar {
+  background-color: #0a1519 !important;
+}
+
+/* Brand and nav links */
+.navbar .navbar-brand,
+.navbar .nav-link {
+  color: #fffcf0 !important; /* almost white */
+}
+
+.navbar .navbar-brand:hover,
+.navbar .nav-link:hover {
+  color: #f9be1a !important; /* primary mustard */
+}
+
+/* Dropdown menu */
+.navbar .dropdown-menu {
+  background-color: #101d23 !important;
+  border: 1px solid #254554 !important; /*same color as the divider*/
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+.navbar .dropdown-item {
+  color: #fffcf0 !important; /* almost white */
+}
+
+.navbar .dropdown-item:hover {
+  background-color: #071114 !important; /* secondary dark blue */
+  color: #f9be1a !important; /* primary mustard */
+}
+
+.dropdown-divider {
+  border-top: 1px solid #254554 !important; /* muted dark blue */
+  opacity: 1; /* ensure it shows full color */
+}
+
+
+.filter-section {
+  border-top: 1px solid #254554 !important;   /* same muted dark blue as dropdown divider */
+  border-bottom: 1px solid #254554 !important;
+}
+.filter-section .form-label {
+  color: #fffcf0 !important;
+  
+}
+
+.filter-section .form-control,
+.filter-section .form-select {
+  background-color: #0a1519 !important;
+  color: #fffcf0 !important;
+  border: 1px solid #254554 !important;
+  
+}
+
+/* Placeholder text color for filter inputs */
+.filter-section .form-control::placeholder,
+.filter-section .form-select::placeholder {
+  color: #95a2b3 !important;
+  opacity: 1; /* ensure full color, some browsers dim it by default */
+}
+
+
+
+/* Hamburger toggler */
+.navbar-toggler {
+  border: none;
+  background-color: #0a1519;
+  padding: 0.5rem;
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(236,240,241,0.9)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
